@@ -1,2 +1,1 @@
-Django==1.7b3
 djangorestframework==2.3.13
