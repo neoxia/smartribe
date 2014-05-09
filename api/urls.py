@@ -10,6 +10,8 @@ router.register(r'permissions', views.PermissionViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.
 urlpatterns = patterns('',
-        url(r'^v1/', include(router.urls)),
-        url(r'^v1/auth/', include('rest_framework.urls', namespace='rest_framework'))
-)
+                       url(r'^v1/', include(router.urls)),
+                       url(r'^v1/auth/', include('rest_framework.urls',
+                                                 namespace='rest_framework')
+                           )
+                       )
