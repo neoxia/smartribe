@@ -18,4 +18,6 @@ class Profile(models.Model):
     bio = models.TextField()
 
     class Meta:
+        verbose_name = 'profile'
+        verbose_name_plural = 'profiles'
         app_label = 'core'

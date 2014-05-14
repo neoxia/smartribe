@@ -6,4 +6,6 @@ class Community(models.Model):
     
 
     class Meta:
+        verbose_name = 'community'
+        verbose_name_plural = 'communities'
         app_label = 'core'
