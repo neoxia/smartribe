@@ -5,7 +5,7 @@ from .models import Tos
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['user']
 
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
