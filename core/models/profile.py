@@ -13,5 +13,9 @@ class Profile(models.Model):
                               choices=GENDER_CHOICES,
                               default='O')
 
+    birthdate = models.DateField()
+
+    bio = models.TextField()
+
     class Meta:
         app_label = 'core'
