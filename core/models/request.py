@@ -7,6 +7,8 @@ class Request(models.Model):
 
     user = models.ForeignKey(User)
 
+    title = models.CharField(max_length=50)
+
     description = models.TextField()
 
     class Meta:

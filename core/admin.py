@@ -24,7 +24,7 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
-    list_display = ['user']
+    list_display = ['title']
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
