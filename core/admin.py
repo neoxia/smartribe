@@ -3,6 +3,8 @@ from .models import Profile
 from .models import Community
 from .models import Tos
 from .models import Skill
+from .models import Request
+from .models import Offer
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -10,12 +12,20 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
-	list_display = ['name']
+    list_display = ['name']
 
 @admin.register(Tos)
 class TosAdmin(admin.ModelAdmin):
-	list_display = ['version']
+    list_display = ['version']
 
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
-	list_display = ['user']
+    list_display = ['user']
+
+@admin.register(Request)
+class RequestAdmin(admin.ModelAdmin):
+    list_display = ['user']
+
+@admin.register(Offer)
+class OfferAdmin(admin.ModelAdmin):
+    list_display = ['request']
