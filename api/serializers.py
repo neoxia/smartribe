@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group, Permission
+from core.models import Profile
 from rest_framework import serializers
 
 
@@ -18,3 +19,9 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Permission
         fields = ('url', 'name', 'codename')
+
+
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('user', 'birthdate', 'gender', 'bio')
