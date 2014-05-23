@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'corsheaders',
     'rest_framework',
     'api',
     'core',
@@ -55,6 +56,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+)
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:9000',
+    'localhost/',
 )
 
 ROOT_URLCONF = 'smartribe.urls'
