@@ -16,3 +16,6 @@ urlpatterns = patterns('',
                                                  namespace='rest_framework')
                            )
                        )
+urlpatterns += patterns('',
+    url(r'^v1/api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token')
+)
