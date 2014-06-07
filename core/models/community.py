@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Community(models.Model):
@@ -6,10 +7,14 @@ class Community(models.Model):
 
     description = models.TextField()
 
-    banner = models.ImageField(null=True)
+    creator = models.ForeignKey(User)
 
-    logo = models.ImageField(null=True)
-    
+    banner = models.ImageField(blank=True,
+                               null=True)
+
+    logo = models.ImageField(blank=True,
+                             null=True)
+
     class Meta:
         verbose_name = 'community'
         verbose_name_plural = 'communities'
