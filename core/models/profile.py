@@ -13,9 +13,15 @@ class Profile(models.Model):
                               choices=GENDER_CHOICES,
                               default='O')
 
+    pseudo = models.CharField(max_length=50,null=True)
+
+    # address = models.
+
     birthdate = models.DateField()
 
     bio = models.TextField()
+
+    photo = models.ImageField(blank=True, null=True)
 
     class Meta:
         verbose_name = 'profile'
