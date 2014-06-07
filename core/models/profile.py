@@ -14,13 +14,16 @@ class Profile(models.Model):
                               default='O')
 
     pseudo = models.CharField(max_length=50,
+                              blank=True,
                               null=True)
 
-    # address = models.
+    # address
 
-    birthdate = models.DateField()
+    birthdate = models.DateField(blank=True,
+                                 null=True)
 
-    bio = models.TextField()
+    bio = models.TextField(blank=True,
+                           null=True)
 
     photo = models.ImageField(blank=True,
                               null=True)
