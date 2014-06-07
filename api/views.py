@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User, Group, Permission
-from core.models import Profile
+from core.models import Profile, Community
 from rest_framework import viewsets
 from api.serializers import UserSerializer
 from api.serializers import GroupSerializer
 from api.serializers import PermissionSerializer
 from api.serializers import ProfileSerializer
+from api.serializers import CommunitySerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -37,3 +38,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
     """
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+
+class CommunityViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Community.objects.all()
+    serializer_class = CommunitySerializer

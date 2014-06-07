@@ -5,7 +5,11 @@ class Skill(models.Model):
 
     user = models.ForeignKey(User)
 
+    # Skill category
+
     description = models.TextField()
+
+    # Skill level
 
     class Meta:
         verbose_name = 'skill'

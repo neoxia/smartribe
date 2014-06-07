@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Group, Permission
-from core.models import Profile
+from core.models import Profile, Community
 from rest_framework import serializers
 
 
@@ -25,3 +25,8 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ('user', 'birthdate', 'gender', 'bio')
+
+class CommunitySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Community
+        fields = ('name','description')
