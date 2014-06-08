@@ -24,7 +24,7 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
-        fields = ('user', 'birthdate', 'gender', 'bio')
+        fields = ('user', 'gender', 'pseudo', 'birthdate', 'bio', 'photo')
 
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

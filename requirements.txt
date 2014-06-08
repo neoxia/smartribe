@@ -1,1 +1,4 @@
+Django==1.7b3
+Pillow==2.4.0
+django-cors-headers==0.12
 djangorestframework==2.3.13
