@@ -19,6 +19,8 @@ class Profile(models.Model):
 
     # address
 
+    # phone = models.CharField(max_length=15)
+
     birthdate = models.DateField(blank=True,
                                  null=True)
 
