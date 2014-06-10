@@ -1,4 +1,6 @@
 Django==1.7b3
 Pillow==2.4.0
+PyJWT==0.2.1
 django-cors-headers==0.12
 djangorestframework==2.3.13
+djangorestframework-jwt==0.1.5
