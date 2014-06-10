@@ -1,11 +1,20 @@
+import hashlib
 from django.contrib.auth.models import User, Group, Permission
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
+from rest_framework.parsers import JSONParser
 from core.models import Profile, Community
 from rest_framework import viewsets
 from api.serializers import UserSerializer
 from api.serializers import GroupSerializer
+from api.serializers import TokenSerializer
 from api.serializers import PermissionSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import CommunitySerializer
+from rest_framework.renderers import JSONRenderer
+from django.contrib.auth.hashers import make_password
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,6 +32,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+class TokenViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Token.objects.all()
+    serializer_class = TokenSerializer
 
 class PermissionViewSet(viewsets.ModelViewSet):
     """
@@ -45,3 +60,20 @@ class CommunityViewSet(viewsets.ModelViewSet):
     """
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
+
+@csrf_exempt
+def Create_User(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        data['password'] = make_password(data['password'])
+        serial_user = UserSerializer(data = data)
+        if serial_user.is_valid():
+            serial_user.save()
+            return JSONResponse(serial_user.data)
+
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        del data['password']
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
