@@ -18,5 +18,5 @@ urlpatterns = patterns('',
                            )
                        )
 urlpatterns += patterns('',
-    url(r'^v1/api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token')
+    url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token')
 )
