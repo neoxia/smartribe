@@ -13,6 +13,7 @@ from api.serializers import PermissionSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import CommunitySerializer
 from rest_framework.renderers import JSONRenderer
+from django.contrib.auth.hashers import make_password
 
 
 
@@ -64,7 +65,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
 def Create_User(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        # data['password'] = hashlib.sha256(data['password'])
+        data['password'] = make_password(data['password'])
         serial_user = UserSerializer(data = data)
         if serial_user.is_valid():
             serial_user.save()
