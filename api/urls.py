@@ -15,8 +15,7 @@ urlpatterns = patterns('',
                        url(r'^v1/', include(router.urls)),
                        url(r'^v1/auth/', include('rest_framework.urls',
                                                  namespace='rest_framework')
-                           ),
-                       url(r'^v1/auth/createuser', 'api.views.Create_User')
+                           )
                        )
 urlpatterns += patterns('',
     url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token')
