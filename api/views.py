@@ -3,12 +3,13 @@ from django.contrib.auth.models import User, Group, Permission
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework_jwt import authentication
+import sys
 from core.models import Profile, Community
 from rest_framework import viewsets
 from api.serializers import UserSerializer
@@ -31,6 +32,11 @@ class UserViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
     model = User
 
+    #def list(self, request):
+        #queryset = User.objects.all()
+        #serializer = UserSerializer(queryset, many=True)
+        #return Response(serializer.data)
+
     def create(self, request):
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
@@ -46,10 +52,12 @@ class UserViewSet(viewsets.ViewSet):
             user = get_object_or_404(queryset, pk=pk)
         except (TypeError, ValueError):
             return Response(status=status.HTTP_404_NOT_FOUND)
-        #user = User.objects.get(pk=pk)
         serializer = UserSerializer(user)
-        return Response(serializer.data)
-        #return Response('{"toto":"tutu"}')
+        return Response(serializer.data, content_type='application/json')
+
+
+
+
 
 
 class GroupViewSet(viewsets.ModelViewSet):
