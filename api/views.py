@@ -1,9 +1,14 @@
 import hashlib
 from django.contrib.auth.models import User, Group, Permission
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import JSONParser
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework_jwt import authentication
 from core.models import Profile, Community
 from rest_framework import viewsets
 from api.serializers import UserSerializer
@@ -14,15 +19,37 @@ from api.serializers import ProfileSerializer
 from api.serializers import CommunitySerializer
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.hashers import make_password
+from rest_framework import status
 
 
-
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    #queryset = User.objects.all()
+    #serializer = UserSerializer
+    permission_classes = [permissions.AllowAny]
+    model = User
+
+    def create(self, request):
+        data = JSONParser().parse(request)
+        data['password'] = make_password(data['password'])
+        serial_user = UserSerializer(data=data)
+        if serial_user.is_valid():
+            serial_user.save()
+            return Response(serial_user.data, status=status.HTTP_201_CREATED)
+        return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = User.objects.all()
+        try:
+            user = get_object_or_404(queryset, pk=pk)
+        except (TypeError, ValueError):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        #user = User.objects.get(pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+        #return Response('{"toto":"tutu"}')
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -46,7 +73,6 @@ class PermissionViewSet(viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
 
-
 class ProfileViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
@@ -60,6 +86,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
     """
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
+
 
 @csrf_exempt
 def Create_User(request):
