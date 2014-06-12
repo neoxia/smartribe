@@ -14,8 +14,8 @@ from api.serializers import TokenSerializer
 from api.serializers import PermissionSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import CommunitySerializer
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from rest_framework import exceptions
+
+from api.authenticate import AuthUser
 
 class UserViewSet(viewsets.ViewSet):
 
@@ -32,13 +32,10 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        try:
-            if not JSONWebTokenAuthentication().authenticate(request):
-                raise exceptions.AuthenticationFailed({"detail":"Missing credentials"})
-            user,_ = JSONWebTokenAuthentication().authenticate(request)
-        except exceptions.AuthenticationFailed as ex:
-            return Response(ex.detail, status=status.HTTP_401_UNAUTHORIZED)
-        if str(user.id) != pk:
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return response
+        elif str(user.id) != pk:
             return Response({"detail":"Access denied"}, status=status.HTTP_403_FORBIDDEN)
         serializer = UserSerializer(user)
         return Response(serializer.data)
