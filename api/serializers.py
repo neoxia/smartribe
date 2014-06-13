@@ -10,6 +10,7 @@ class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email', 'password', 'groups')
         write_only_fields = ('password',)
 
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -23,6 +24,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ('url', 'name', 'permissions')
 
+
 class TokenSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Token
@@ -34,33 +36,39 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
         model = Permission
         fields = ('url', 'name', 'codename')
 
+
 class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
 
-class ProfileSerializer(serializers.HyperlinkedModelSerializerÒ):
+
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
         read_only_fields = ('user',)
 
+
 class SkillSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Skill
-        fields = ('user','description')
+        fields = ('user', 'description')
+
 
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Community
-        fields = ('name','description')
+        fields = ('name', 'description')
+
 
 class RequestSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Request
         fields = ('user', 'title', 'description')
 
+
 class OfferSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Offer
-        fields = ('request','description')
+        fields = ('request', 'description')
