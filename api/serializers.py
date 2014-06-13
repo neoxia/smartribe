@@ -4,10 +4,17 @@ from core.models import Profile, Skill, Community, Request, Offer
 from rest_framework import serializers
 
 
+class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ('url', 'username', 'email', 'password', 'groups')
+        write_only_fields = ('password',)
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'password', 'groups')
+        read_only_fields = ('username',)
         write_only_fields = ('password',)
 
 
@@ -27,11 +34,16 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
         model = Permission
         fields = ('url', 'name', 'codename')
 
-
-class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
-        fields = ('user', 'gender', 'pseudo', 'birthdate', 'bio', 'photo')
+        fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
+
+class ProfileSerializer(serializers.HyperlinkedModelSerializerÒ):
+    class Meta:
+        model = Profile
+        fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
+        read_only_fields = ('user',)
 
 class SkillSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

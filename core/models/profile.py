@@ -13,10 +13,6 @@ class Profile(models.Model):
                               choices=GENDER_CHOICES,
                               default='O')
 
-    pseudo = models.CharField(max_length=50,
-                              blank=True,
-                              null=True)
-
     # address
 
     # phone = models.CharField(max_length=15)
