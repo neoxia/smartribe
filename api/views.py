@@ -8,13 +8,16 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from api.permissions import IsJWTAuthenticated, IsJWTOwner
 from core.models import Profile, Community
-from api.serializers import UserSerializer, ProfileSerializer, ProfileCreateSerializer
+from api.serializers import UserSerializer
+from api.serializers import ProfileSerializer
+from api.serializers import ProfileCreateSerializer
 from api.serializers import GroupSerializer
 from api.serializers import TokenSerializer
 from api.serializers import PermissionSerializer
 from api.serializers import CommunitySerializer
 
 from api.authenticate import AuthUser
+
 
 class UserViewSet(viewsets.ViewSet):
 
@@ -32,19 +35,21 @@ class UserViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         user, response = AuthUser().authenticate(request)
+        forbidden = status.HTTP_403_FORBIDDEN
         if not user:
             return response
         elif str(user.id) != pk:
-           return Response({"detail":"Access denied"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail": "Access denied"}, status=forbidden)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def update(self, request, pk=None):
         user, response = AuthUser().authenticate(request)
+        forbidden = status.HTTP_403_FORBIDDEN
         if not user:
             return response
         elif str(user.id) != pk:
-            return Response({"detail":"Access denied"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"detail": "Access denied"}, status=forbidden)
         data = JSONParser().parse(request)
         if 'password' in data:
             data['password'] = make_password(data['password'])
@@ -62,6 +67,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+
 class TokenViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
@@ -69,12 +75,14 @@ class TokenViewSet(viewsets.ModelViewSet):
     queryset = Token.objects.all()
     serializer_class = TokenSerializer
 
+
 class PermissionViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
+
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
@@ -95,9 +103,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         else:
             return [IsJWTOwner()]
 
-
-
-
     """
     def create(self, request):
         data = JSONParser().parse(request)
@@ -107,6 +112,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
             return Response(serial_profile.data, status=status.HTTP_201_CREATED)
         return Response(serial_profile.errors, status=status.HTTP_400_BAD_REQUEST)
     """
+
 
 class CommunityViewSet(viewsets.ModelViewSet):
     """
