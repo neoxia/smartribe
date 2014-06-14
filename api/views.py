@@ -98,7 +98,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     API endpoint that allows profiles to be viewed or edited.
     """
     model = Profile
-    serializer_class = ProfileCreateSerializer
+    serializer_class = ProfileSerializer
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
@@ -108,11 +108,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [permissions.IsAuthenticated()]
+            return [IsJWTAuthenticated()]
         elif self.request.method == 'POST':
             return [IsJWTSelf()]
         else:
-            #return [permissions.IsAuthenticated()]
             return [IsJWTOwner()]
 
     """

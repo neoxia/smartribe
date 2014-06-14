@@ -19,7 +19,7 @@ class IsJWTOwner(BasePermission):
         user, response = AuthUser().authenticate(request)
         if not user:
             return False
-        if user.id == obj.pk:
+        if user.id == obj.user.id:
             return True
         else:
             return False
