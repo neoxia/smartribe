@@ -1,4 +1,4 @@
-// Generated on 2014-05-28 using generator-angular 0.8.0
+// Generated on 2014-06-14 using generator-angular 0.8.0
 'use strict';
 
 // # Globbing
@@ -99,7 +99,6 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
-        jshintignore: '.jshintignore',
         reporter: require('jshint-stylish')
       },
       all: [
