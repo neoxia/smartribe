@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group, Permission
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -10,7 +11,7 @@ from api.permissions import IsJWTAuthenticated, IsJWTOwner
 from core.models import Profile, Community
 from api.serializers import UserSerializer
 from api.serializers import ProfileSerializer
-from api.serializers import ProfileCreateSerializer
+from api.serializers import UserCreateSerializer
 from api.serializers import GroupSerializer
 from api.serializers import TokenSerializer
 from api.serializers import PermissionSerializer
@@ -27,7 +28,7 @@ class UserViewSet(viewsets.ViewSet):
     def create(self, request):
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
-        serial_user = UserSerializer(data=data)
+        serial_user = UserCreateSerializer(data=data)
         if serial_user.is_valid():
             serial_user.save()
             return Response(serial_user.data, status=status.HTTP_201_CREATED)
@@ -58,6 +59,16 @@ class UserViewSet(viewsets.ViewSet):
             serial_user.save()
             return Response(serial_user.data, status=status.HTTP_201_CREATED)
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(['GET'])
+    def retrieve_current_user(self, request):
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return response
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -94,14 +105,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == 'POST':
-            serializer_class = ProfileCreateSerializer
+            serializer_class = ProfileSerializer
         return serializer_class
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsJWTAuthenticated()]
+            return [permissions.IsAuthenticated()]
         else:
-            return [IsJWTOwner()]
+            return [permissions.IsAuthenticated()]
+            #return [IsJWTOwner()]
 
     """
     def create(self, request):
