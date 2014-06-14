@@ -19,6 +19,20 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         write_only_fields = ('password',)
 
 
+class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
+    tracks = serializers.HyperlinkedRelatedField(view_name='ProfileViewSet.retreive')
+    class Meta:
+        model = Profile
+        fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
+
+
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
+        read_only_fields = ('user',)
+
+
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
@@ -35,19 +49,6 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Permission
         fields = ('url', 'name', 'codename')
-
-
-class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
-
-
-class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
-        read_only_fields = ('user',)
 
 
 class SkillSerializer(serializers.HyperlinkedModelSerializer):

@@ -9,6 +9,7 @@ from rest_framework import status
 from api.permissions import IsJWTAuthenticated, IsJWTOwner
 from core.models import Profile, Community
 from api.serializers import UserSerializer
+from api.serializers import UserCreateSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import ProfileCreateSerializer
 from api.serializers import GroupSerializer
@@ -27,7 +28,7 @@ class UserViewSet(viewsets.ViewSet):
     def create(self, request):
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
-        serial_user = UserSerializer(data=data)
+        serial_user = UserCreateSerializer(data=data)
         if serial_user.is_valid():
             serial_user.save()
             return Response(serial_user.data, status=status.HTTP_201_CREATED)
