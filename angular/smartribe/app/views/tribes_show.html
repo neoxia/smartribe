@@ -1,0 +1,25 @@
+<ol class="breadcrumb">
+  <li><a href="#/">Home</a></li>
+  <li><a href="#/tribes">Tribes</a></li>
+  <li class="active">Show</li>
+</ol>
+<h1 class="page-header">Tribe</h1>
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Name</td>
+        <td>{{ tribe.name }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>
+  <a class="btn btn-default" href="#/tribes/{{ tribe.id }}/edit">Edit</a>
+</p>

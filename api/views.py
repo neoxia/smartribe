@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User, Group, Permission
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -60,8 +59,7 @@ class UserViewSet(viewsets.ViewSet):
             return Response(serial_user.data, status=status.HTTP_201_CREATED)
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(['GET'])
-    def retrieve_current_user(self, request):
+    def list(self, request):
         user, response = AuthUser().authenticate(request)
         if not user:
             return response
