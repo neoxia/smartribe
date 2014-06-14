@@ -6,17 +6,15 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from api.permissions import IsJWTAuthenticated, IsJWTOwner
+from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
 from core.models import Profile, Community
-from api.serializers import UserSerializer
-from api.serializers import UserCreateSerializer
+from api.serializers import UserSerializer, ProfileCreateSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import UserCreateSerializer
 from api.serializers import GroupSerializer
 from api.serializers import TokenSerializer
 from api.serializers import PermissionSerializer
 from api.serializers import CommunitySerializer
-
 from api.authenticate import AuthUser
 
 
@@ -88,7 +86,7 @@ class TokenViewSet(viewsets.ModelViewSet):
 
 class PermissionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows permissions to be viewed or edited.
     """
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
@@ -96,7 +94,7 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows profiles to be viewed or edited.
     """
     model = Profile
     serializer_class = ProfileSerializer
@@ -104,31 +102,36 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == 'POST':
-            serializer_class = ProfileSerializer
+            serializer_class = ProfileCreateSerializer
         return serializer_class
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [permissions.IsAuthenticated()]
+            return [IsJWTAuthenticated()]
+        elif self.request.method == 'POST':
+            return [IsJWTSelf()]
         else:
-            return [permissions.IsAuthenticated()]
-            #return [IsJWTOwner()]
-
-    """
-    def create(self, request):
-        data = JSONParser().parse(request)
-        serial_profile = ProfileSerializer(data=data)
-        if serial_profile.is_valid():
-            serial_profile.save()
-            return Response(serial_profile.data, status=status.HTTP_201_CREATED)
-        return Response(serial_profile.errors, status=status.HTTP_400_BAD_REQUEST)
-    """
+            return [IsJWTOwner()]
 
 
 class CommunityViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows communities to be viewed or edited.
     """
-    queryset = Community.objects.all()
+    model = Community
     serializer_class = CommunitySerializer
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == 'POST':
+            serializer_class = ProfileCreateSerializer
+        return serializer_class
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsJWTAuthenticated()]
+        elif self.request.method == 'POST':
+            return [IsJWTSelf()]
+        else:
+            return [IsJWTOwner()]
 
