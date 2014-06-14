@@ -38,12 +38,16 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+
     class Meta:
         model = Profile
         fields = ('user', 'gender', 'birthdate', 'bio', 'photo')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+
     class Meta:
         model = Profile
         fields = ('user', 'gender', 'birthdate', 'bio', 'photo')

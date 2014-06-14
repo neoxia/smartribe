@@ -7,10 +7,9 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from api.permissions import IsJWTAuthenticated, IsJWTOwner
+from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
 from core.models import Profile, Community
-from api.serializers import UserSerializer
-from api.serializers import UserCreateSerializer
+from api.serializers import UserSerializer, ProfileCreateSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import UserCreateSerializer
 from api.serializers import GroupSerializer
@@ -90,7 +89,7 @@ class TokenViewSet(viewsets.ModelViewSet):
 
 class PermissionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows permissions to be viewed or edited.
     """
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
@@ -98,23 +97,25 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows profiles to be viewed or edited.
     """
     model = Profile
-    serializer_class = ProfileSerializer
+    serializer_class = ProfileCreateSerializer
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == 'POST':
-            serializer_class = ProfileSerializer
+            serializer_class = ProfileCreateSerializer
         return serializer_class
 
     def get_permissions(self):
         if self.request.method == 'GET':
             return [permissions.IsAuthenticated()]
+        elif self.request.method == 'POST':
+            return [IsJWTSelf()]
         else:
-            return [permissions.IsAuthenticated()]
-            #return [IsJWTOwner()]
+            #return [permissions.IsAuthenticated()]
+            return [IsJWTOwner()]
 
     """
     def create(self, request):
@@ -129,7 +130,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 class CommunityViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    API endpoint that allows communities to be viewed or edited.
     """
     queryset = Community.objects.all()
     serializer_class = CommunitySerializer
