@@ -10,6 +10,7 @@ from rest_framework import status
 from api.permissions import IsJWTAuthenticated, IsJWTOwner
 from core.models import Profile, Community
 from api.serializers import UserSerializer
+from api.serializers import UserCreateSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import UserCreateSerializer
 from api.serializers import GroupSerializer
