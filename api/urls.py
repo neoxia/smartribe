@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url, include
 from rest_framework import routers
 from api import views
 
-router = routers.DefaultRouter(trailing_slash=False)
+router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'permissions', views.PermissionViewSet)
