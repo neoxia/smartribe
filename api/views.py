@@ -15,7 +15,6 @@ from api.serializers import GroupSerializer
 from api.serializers import TokenSerializer
 from api.serializers import PermissionSerializer
 from api.serializers import CommunitySerializer
-
 from api.authenticate import AuthUser
 
 
@@ -113,16 +112,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
             return [IsJWTSelf()]
         else:
             return [IsJWTOwner()]
-
-    """
-    def create(self, request):
-        data = JSONParser().parse(request)
-        serial_profile = ProfileSerializer(data=data)
-        if serial_profile.is_valid():
-            serial_profile.save()
-            return Response(serial_profile.data, status=status.HTTP_201_CREATED)
-        return Response(serial_profile.errors, status=status.HTTP_400_BAD_REQUEST)
-    """
 
 
 class CommunityViewSet(viewsets.ModelViewSet):
