@@ -1,14 +1,15 @@
 from django.contrib.auth.models import User, Group, Permission
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
+from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf, IsCommunityOwner
 from core.models import Profile, Community
-from api.serializers import UserSerializer, ProfileCreateSerializer
+from api.serializers import UserSerializer, ProfileCreateSerializer, CommunityCreateSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import UserCreateSerializer
 from api.serializers import GroupSerializer
@@ -124,14 +125,20 @@ class CommunityViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == 'POST':
-            serializer_class = ProfileCreateSerializer
+            serializer_class = CommunityCreateSerializer
         return serializer_class
 
     def get_permissions(self):
-        if self.request.method == 'GET':
+        """
+        An authenticated user can create a new community or see existing communities.
+        Only owner can modify an existing community.
+        """
+        if self.request.method == 'GET' or self.request.method == 'POST':
             return [IsJWTAuthenticated()]
-        elif self.request.method == 'POST':
-            return [IsJWTSelf()]
         else:
-            return [IsJWTOwner()]
+            return [IsCommunityOwner()]
+
+    @action('POST')
+    def create_owner(self, request):
+        pass
 

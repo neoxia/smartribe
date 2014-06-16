@@ -15,6 +15,10 @@ class Community(models.Model):
     logo = models.ImageField(blank=True,
                              null=True)
 
+    creation_date = models.DateField(auto_created=True)
+
+    auto_accept_member = models.BooleanField(default=False)
+
     class Meta:
         verbose_name = 'community'
         verbose_name_plural = 'communities'

@@ -17,7 +17,7 @@ class CommunityAdmin(admin.ModelAdmin):
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ['user']
+    list_display = ['user', 'community']
 
 @admin.register(Tos)
 class TosAdmin(admin.ModelAdmin):
