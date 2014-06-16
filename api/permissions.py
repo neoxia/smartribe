@@ -3,6 +3,8 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from api.authenticate import AuthUser
+from core.models import Member
+
 
 class IsJWTAuthenticated(BasePermission):
 
@@ -36,3 +38,14 @@ class IsJWTSelf(BasePermission):
         else:
             return True
 
+class IsCommunityOwner(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        user, response = AuthUser().authenticate(request)
+
+
+class IsCommunityModerator(BasePermission):
+    pass
+
+class IsCommunityMember(BasePermission):
+    pass

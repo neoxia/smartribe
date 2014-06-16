@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group, Permission
 from rest_framework.authtoken.models import Token
-from core.models import Profile, Skill, Community, Request, Offer
+from core.models import Profile, Skill, Community, Request, Offer, Member
 from rest_framework import serializers
 
 
@@ -63,6 +63,20 @@ class CommunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Community
         fields = ('name', 'description')
+
+class MemberCreateSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    community = serializers.PrimaryKeyRelatedField()
+
+    class Meta:
+        model = Member
+        fields = ('url', 'user', 'community', 'status', 'registration_date', 'last_modification_date')
+
+class MemberSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Member
+        fields = ('url', 'user', 'community', 'status', 'registration_date', 'last_modification_date')
+        read_only_fields = ('user','community', 'registration_date')
 
 
 class RequestSerializer(serializers.HyperlinkedModelSerializer):

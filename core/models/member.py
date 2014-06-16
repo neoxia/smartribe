@@ -10,13 +10,13 @@ class Member(models.Model):
     community = models.ForeignKey(Community)
 
     STATUS_CHOICES = (
-                     (0, 'Owner'),
-                     (1, 'Moderator'),
-                     (2, 'Member'),
+                     ("0", 'Owner'),
+                     ("1", 'Moderator'),
+                     ("2", 'Member'),
     )
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,
-                              default=2)
+                              default="2")
 
     registration_date = models.DateField(auto_created=True)
 
