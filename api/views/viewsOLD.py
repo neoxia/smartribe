@@ -10,64 +10,15 @@ from rest_framework import status
 from rest_framework.status import HTTP_200_OK
 from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf, IsCommunityOwner, IsCommunityModerator
 from core.models import Profile, Community, Member
-from api.serializers import UserSerializer, ProfileCreateSerializer, CommunityCreateSerializer, MemberSerializer, \
+from api.serializers.serializers import UserSerializer, ProfileCreateSerializer, CommunityCreateSerializer, MemberSerializer, \
     MemberCreateSerializer
-from api.serializers import ProfileSerializer
-from api.serializers import UserCreateSerializer
-from api.serializers import GroupSerializer
-from api.serializers import TokenSerializer
-from api.serializers import PermissionSerializer
-from api.serializers import CommunitySerializer
+from api.serializers.serializers import ProfileSerializer
+from api.serializers.serializers import UserCreateSerializer
+from api.serializers.serializers import GroupSerializer
+from api.serializers.serializers import TokenSerializer
+from api.serializers.serializers import PermissionSerializer
+from api.serializers.serializers import CommunitySerializer
 from api.authenticate import AuthUser
-
-
-class UserViewSet(viewsets.ViewSet):
-
-    permission_classes = [permissions.AllowAny]
-    model = User
-
-    def create(self, request):
-        data = JSONParser().parse(request)
-        data['password'] = make_password(data['password'])
-        serial_user = UserCreateSerializer(data=data)
-        if serial_user.is_valid():
-            serial_user.save()
-            return Response(serial_user.data, status=status.HTTP_201_CREATED)
-        return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def retrieve(self, request, pk=None):
-        user, response = AuthUser().authenticate(request)
-        forbidden = status.HTTP_403_FORBIDDEN
-        if not user:
-            return response
-        elif str(user.id) != pk:
-            return Response({"detail": "Access denied"}, status=forbidden)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    def update(self, request, pk=None):
-        user, response = AuthUser().authenticate(request)
-        forbidden = status.HTTP_403_FORBIDDEN
-        if not user:
-            return response
-        elif str(user.id) != pk:
-            return Response({"detail": "Access denied"}, status=forbidden)
-        data = JSONParser().parse(request)
-        if 'password' in data:
-            data['password'] = make_password(data['password'])
-        serial_user = UserSerializer(user, data=data, partial=True)
-        if serial_user.is_valid():
-            serial_user.save()
-            return Response(serial_user.data, status=status.HTTP_201_CREATED)
-        return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request):
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return response
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
 
 
 
