@@ -9,15 +9,29 @@ class Member(models.Model):
 
     community = models.ForeignKey(Community)
 
+    ROLE_CHOICES = (
+                     ("0", 'Owner'),
+                     ("1", 'Moderator'),
+                     ("2", 'Member'),
+    )
+    role = models.CharField(max_length=10,
+                              choices=ROLE_CHOICES,
+                              default="2")
+
     STATUS_CHOICES = (
-                     (0, 'Owner'),
-                     (1, 'Moderator'),
-                     (2, 'Member'),
+                     ("0", 'Pending'),
+                     ("1", 'Accepted'),
+                     ("2", 'Banned'),
     )
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,
-                              default=2)
+                              default="0")
 
-    registration_date = models.DateField(auto_created=True)
+    registration_date = models.DateField(auto_now_add=True)
 
     last_modification_date = models.DateField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'member'
+        verbose_name_plural = 'members'
+        app_label = 'core'

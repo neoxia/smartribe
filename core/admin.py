@@ -1,4 +1,5 @@
 from django.contrib import admin
+from core.models import Member
 from .models import Profile
 from .models import Community
 from .models import Tos
@@ -13,6 +14,10 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
     list_display = ['name']
+
+@admin.register(Member)
+class MemberAdmin(admin.ModelAdmin):
+    list_display = ['user', 'community']
 
 @admin.register(Tos)
 class TosAdmin(admin.ModelAdmin):
