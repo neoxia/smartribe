@@ -8,7 +8,6 @@ from core.models import Member
 
 
 class IsJWTAuthenticated(BasePermission):
-
     def has_permission(self, request, view):
         user, _ = AuthUser().authenticate(request)
         if not user:
@@ -16,8 +15,8 @@ class IsJWTAuthenticated(BasePermission):
         else:
             return True
 
-class IsJWTOwner(BasePermission):
 
+class IsJWTOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
         user, response = AuthUser().authenticate(request)
         if not user:
@@ -27,8 +26,8 @@ class IsJWTOwner(BasePermission):
         else:
             return False
 
-class IsJWTSelf(BasePermission):
 
+class IsJWTSelf(BasePermission):
     def has_permission(self, request, view):
         user, response = AuthUser().authenticate(request)
         data = request.DATA
@@ -38,6 +37,7 @@ class IsJWTSelf(BasePermission):
             return False
         else:
             return True
+
 
 # PERMISSIONS ON COMMUNITIES
 
@@ -59,10 +59,12 @@ class IsCommunityOwner(BasePermission):
         else:
             return False
 
+
 class IsCommunityModerator(BasePermission):
     """
     Moderator's rights on 'Community' objects
     """
+
     def has_object_permission(self, request, view, obj):
         user, response = AuthUser().authenticate(request)
         if not user:
@@ -77,26 +79,10 @@ class IsCommunityModerator(BasePermission):
         else:
             return False
 
-class IsCommunityMember(BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return False
-        elif Member.objects.filter(
-                user=user.id,
-                community=obj.id,
-                status="1"
-        ).exists():
-            return True
-        else:
-            return False
-
 
 # PERMISSIONS ON MEMBERS
 
 class IsOwnerAndNotBanned(BasePermission):
-
     def has_object_permission(self, request, view, obj):
         user, response = AuthUser().authenticate(request)
         data = request.DATA
@@ -107,8 +93,8 @@ class IsOwnerAndNotBanned(BasePermission):
         else:
             return False
 
-class IsMemberManager(BasePermission):
 
+class IsMemberManager(BasePermission):
     def has_object_permission(self, request, view, obj):
         user, response = AuthUser().authenticate(request)
         if not user:
@@ -137,18 +123,4 @@ class IsMemberManager(BasePermission):
         else:
             return False
 
-class IsModeratorManager(BasePermission):
 
-    def has_object_permission(self, request, view, obj):
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return False
-        elif Member.objects.filter(
-                user=user.id,
-                community=obj.community,
-                status="1",
-                role="0"
-        ).exists():
-            return True
-        else:
-            return False

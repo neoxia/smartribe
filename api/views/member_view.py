@@ -24,8 +24,8 @@ class MemberViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        An authenticated user can register itself as a new member of a community.
-        Only a community owner or moderator can list or modify member status.
+        An authenticated user can register itself as a new member of a community and list his memberships.
+        Only a community owner or moderator can modify member status.
         Only a community owner can modify a member role.
         """
         if self.request.method == 'POST':

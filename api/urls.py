@@ -9,8 +9,8 @@ from api.views import member_view
 
 router = routers.DefaultRouter()
 router.register(r'users', user_view.UserViewSet)
-router.register(r'groups', viewsOLD.GroupViewSet)
-router.register(r'permissions', viewsOLD.PermissionViewSet)
+#router.register(r'groups', viewsOLD.GroupViewSet)
+#router.register(r'permissions', viewsOLD.PermissionViewSet)
 router.register(r'profiles', profile_view.ProfileViewSet)
 router.register(r'communities', community_view.CommunityViewSet)
 router.register(r'members', member_view.MemberViewSet)
