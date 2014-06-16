@@ -2,8 +2,9 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.status import HTTP_200_OK
+from api.authenticate import AuthUser
 
-from api.permissions import IsJWTSelf, IsCommunityOwner, IsCommunityModerator
+from api.permissions import IsJWTSelf, IsMemberManager, IsOwnerAndNotBanned, IsJWTAuthenticated
 from core.models import Member
 from api.serializers.serializers import MemberSerializer, MemberCreateSerializer
 
@@ -30,9 +31,20 @@ class MemberViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST':
             return [IsJWTSelf()]
         elif self.request.method == 'GET':
-            return [IsCommunityModerator()]
+            return [IsJWTAuthenticated()]
+        elif self.request.method == 'DELETE':
+            return [IsOwnerAndNotBanned()]
         else:
-            return [IsCommunityOwner()]
+            return [IsMemberManager()]
+
+    def list(self, request):
+        """
+        Overrides standard 'list' method to return only members belonging to user
+        """
+        user, _ = AuthUser().authenticate(request)
+        queryset = Member.objects.filter(user=user.id)
+        data = MemberSerializer(queryset)
+        return Response(data.data, status=HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         """

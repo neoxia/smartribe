@@ -39,6 +39,8 @@ class IsJWTSelf(BasePermission):
         else:
             return True
 
+# PERMISSIONS ON COMMUNITIES
+
 class IsCommunityOwner(BasePermission):
     """
     Owner's rights on 'Community' objects
@@ -90,20 +92,20 @@ class IsCommunityMember(BasePermission):
         else:
             return False
 
-class IsNotBanned(BasePermission):
-    def has_permission(self, request, view):
+
+# PERMISSIONS ON MEMBERS
+
+class IsOwnerAndNotBanned(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
         user, response = AuthUser().authenticate(request)
         data = request.DATA
         if not user:
             return False
-        elif Member.objects.filter(
-                user=data['user'],
-                community=data['community'],
-                status="2"
-        ).exists():
-            return False
-        else:
+        elif obj.user.id == user.id and obj.status != "2":
             return True
+        else:
+            return False
 
 class IsMemberManager(BasePermission):
 
@@ -117,6 +119,20 @@ class IsMemberManager(BasePermission):
                 status="1",
                 role="1"
         ).exists() and obj.role == "2":
+            data = request.DATA
+            if 'role' in data:
+                if data['role'] == "2":
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        elif Member.objects.filter(
+                user=user.id,
+                community=obj.community,
+                status="1",
+                role="0"
+        ).exists():
             return True
         else:
             return False
