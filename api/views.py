@@ -7,9 +7,11 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf, IsCommunityOwner
-from core.models import Profile, Community
-from api.serializers import UserSerializer, ProfileCreateSerializer, CommunityCreateSerializer
+from rest_framework.status import HTTP_200_OK
+from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf, IsCommunityOwner, IsCommunityModerator
+from core.models import Profile, Community, Member
+from api.serializers import UserSerializer, ProfileCreateSerializer, CommunityCreateSerializer, MemberSerializer, \
+    MemberCreateSerializer
 from api.serializers import ProfileSerializer
 from api.serializers import UserCreateSerializer
 from api.serializers import GroupSerializer
@@ -131,14 +133,76 @@ class CommunityViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         """
         An authenticated user can create a new community or see existing communities.
-        Only owner can modify an existing community.
+        Only owner or moderator can modify an existing community.
         """
         if self.request.method == 'GET' or self.request.method == 'POST':
             return [IsJWTAuthenticated()]
+        elif self.request.method == 'PUT' or self.request.method == 'PATCH':
+            return [IsCommunityModerator()]
         else:
             return [IsCommunityOwner()]
 
-    @action('POST')
-    def create_owner(self, request):
-        pass
+    def create(self, request, *args, **kwargs):
+        """
+        Overrides standard 'create' method to simultaneously add an owner member
+        """
+        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
 
+        if serializer.is_valid():
+            self.pre_save(serializer.object)
+            self.object = serializer.save(force_insert=True)
+            self.post_save(self.object, created=True)
+            headers = self.get_success_headers(serializer.data)
+            user, _ = AuthUser().authenticate(request)
+            owner = Member(user=user, community=self.object, role="0", status="1")
+            owner.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED,
+                            headers=headers)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MemberViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows members to be viewed or edited.
+    """
+    model = Member
+    serializer_class = MemberSerializer
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.method == 'POST':
+            serializer_class = MemberCreateSerializer
+        return serializer_class
+
+    def get_permissions(self):
+        """
+        An authenticated user can register itself as a new member of a community.
+        Only a community owner or moderator can list or modify member status.
+        Only a community owner can modify a member role.
+        """
+        if self.request.method == 'POST':
+            return [IsJWTSelf()]
+        elif self.request.method == 'GET':
+            return [IsCommunityModerator()]
+        else:
+            return [IsCommunityOwner()]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Overrides standard 'create' method to avoid multiple identical members creation
+        """
+        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+
+        if serializer.is_valid():
+            data = request.DATA
+            if Member.objects.filter(user=data['user'], community=data['community']).exists():
+                member = Member.objects.get(user=data['user'], community=data['community'])
+                return Response(MemberSerializer(member).data, status=HTTP_200_OK)
+            self.pre_save(serializer.object)
+            self.object = serializer.save(force_insert=True)
+            self.post_save(self.object, created=True)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED,
+                            headers=headers)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

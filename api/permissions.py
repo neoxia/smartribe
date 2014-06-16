@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import BasePermission
@@ -39,22 +40,99 @@ class IsJWTSelf(BasePermission):
             return True
 
 class IsCommunityOwner(BasePermission):
+    """
+    Owner's rights on 'Community' objects
+    """
+    def has_object_permission(self, request, view, obj):
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return False
+        elif Member.objects.filter(
+                user=user.id,
+                community=obj.id,
+                status="1",
+                role="0"
+        ).exists():
+            return True
+        else:
+            return False
+
+class IsCommunityModerator(BasePermission):
+    """
+    Moderator's rights on 'Community' objects
+    """
+    def has_object_permission(self, request, view, obj):
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return False
+        elif Member.objects.filter(
+                Q(user=user.id),
+                Q(community=obj.id),
+                Q(status="1"),
+                Q(role="1") | Q(role="0")
+        ).exists():
+            return True
+        else:
+            return False
+
+class IsCommunityMember(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         user, response = AuthUser().authenticate(request)
         if not user:
             return False
+        elif Member.objects.filter(
+                user=user.id,
+                community=obj.id,
+                status="1"
+        ).exists():
+            return True
         else:
-            try:
-                Member.objects.get(user=user.id, community=obj.id, status="1", role="0")
-                return True
-            except:
-                return False
+            return False
 
+class IsNotBanned(BasePermission):
+    def has_permission(self, request, view):
+        user, response = AuthUser().authenticate(request)
+        data = request.DATA
+        if not user:
+            return False
+        elif Member.objects.filter(
+                user=data['user'],
+                community=data['community'],
+                status="2"
+        ).exists():
+            return False
+        else:
+            return True
 
+class IsMemberManager(BasePermission):
 
-class IsCommunityModerator(BasePermission):
-    pass
+    def has_object_permission(self, request, view, obj):
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return False
+        elif Member.objects.filter(
+                user=user.id,
+                community=obj.community,
+                status="1",
+                role="1"
+        ).exists() and obj.role == "2":
+            return True
+        else:
+            return False
 
-class IsCommunityMember(BasePermission):
-    pass
+class IsModeratorManager(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return False
+        elif Member.objects.filter(
+                user=user.id,
+                community=obj.community,
+                status="1",
+                role="0"
+        ).exists():
+            return True
+        else:
+            return False

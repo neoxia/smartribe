@@ -27,6 +27,11 @@ class Member(models.Model):
                               choices=STATUS_CHOICES,
                               default="0")
 
-    registration_date = models.DateField(auto_created=True)
+    registration_date = models.DateField(auto_now_add=True)
 
     last_modification_date = models.DateField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'member'
+        verbose_name_plural = 'members'
+        app_label = 'core'

@@ -7,15 +7,13 @@ class Community(models.Model):
 
     description = models.TextField()
 
-    creator = models.ForeignKey(User)
-
     banner = models.ImageField(blank=True,
                                null=True)
 
     logo = models.ImageField(blank=True,
                              null=True)
 
-    creation_date = models.DateField(auto_created=True)
+    creation_date = models.DateField(auto_now_add=True)
 
     auto_accept_member = models.BooleanField(default=False)
 

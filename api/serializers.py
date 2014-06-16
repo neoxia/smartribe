@@ -74,7 +74,7 @@ class SkillSerializer(serializers.HyperlinkedModelSerializer):
 class CommunityCreateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Community
-        fields = ('url', 'name', 'description', 'creation_date', 'auto_accept_member')
+        fields = ('url', 'name', 'description')
 
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -90,12 +90,13 @@ class MemberCreateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Member
-        fields = ('url', 'user', 'community', 'status', 'registration_date', 'last_modification_date')
+        fields = ('url', 'user', 'community')
+
 
 class MemberSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Member
-        fields = ('url', 'user', 'community', 'status', 'registration_date', 'last_modification_date')
+        fields = ('url', 'user', 'community', 'role', 'status', 'registration_date', 'last_modification_date')
         read_only_fields = ('user','community', 'registration_date')
 
 
