@@ -68,10 +68,7 @@ MIDDLEWARE_CLASSES = (
 
 SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
 
-CORS_ORIGIN_WHITELIST = (
-    'localhost:9000',
-    'localhost/',
-)
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'smartribe.urls'
 

@@ -6,7 +6,7 @@ app.controller('TribesNewCtrl', function($location, $rootScope, $scope, Tribe){
       $location.path('/');
     }
     $scope.page.title = 'New tribe';
-    $scope.tribeCreate = function(){
+    $scope.tribesCreate = function(){
       Tribe.push($scope.tribe).success(function(data){
         $scope.alertLaunch('success', 'Successfully created tribe');
         $location.path('/tribes/' + data.tribeId);

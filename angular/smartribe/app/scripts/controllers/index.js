@@ -15,9 +15,6 @@ app.controller('IndexCtrl', function($http, $location, $rootScope, $scope/*, Geo
       $scope.alert.message = null;
       $scope.alert.type = null;
     };
-    $scope.search = function(){
-      // TODO :: execute search
-    };
     $scope.logout = function(){
       $rootScope.logged = false;
       $http.defaults.headers.common.Authorization = null;

@@ -15,6 +15,9 @@ app.config(function($routeProvider){
   }).when('/signup', {
     controller: 'UsersNewCtrl',
     templateUrl: 'views/users_new.html'
+  }).when('/settings', {
+    controller: 'UsersEditCtrl',
+    templateUrl: 'views/users_edit.html'
   }).when('/tribes', {
     controller: 'TribesCtrl',
     templateUrl: 'views/tribes.html'

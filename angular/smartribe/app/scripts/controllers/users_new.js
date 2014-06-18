@@ -7,7 +7,7 @@ app.controller('UsersNewCtrl', function($location, $rootScope, $scope, User){
     }
     $scope.page.title = 'Signup';
     $scope.page.activeNav = 'signup';
-    $scope.signup = function(){
+    $scope.usersCreate = function(){
       $scope.errors = undefined;
       User.push($scope.user).success(function(){
         $scope.alertLaunch('success', 'Successfully signed up');

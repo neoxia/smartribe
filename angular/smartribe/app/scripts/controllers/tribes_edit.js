@@ -12,8 +12,8 @@ app.controller('TribesEditCtrl', function($location, $rootScope, $routeParams, $
       $scope.tribe = null;
       $scope.alertLaunch('error', data.detail);
     });
-    $scope.tribeEdit = function(){
-      Tribe.put($routeParams.id, $scope.tribe).success(function(data){
+    $scope.tribesEdit = function(){
+      Tribe.edit($routeParams.id, $scope.tribe).success(function(data){
         $scope.alertLaunch('success', 'Successfully edited tribe');
         $location.path('/tribes/' + data.tribeId);
       }).error(function(data){
