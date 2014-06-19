@@ -17,6 +17,9 @@ class Community(models.Model):
 
     auto_accept_member = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name = 'community'
         verbose_name_plural = 'communities'
