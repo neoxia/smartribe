@@ -11,6 +11,9 @@ class Skill(models.Model):
 
     # Skill level
 
+    def __str__(self):
+        return self.description
+
     class Meta:
         verbose_name = 'skill'
         verbose_name_plural = 'skills'

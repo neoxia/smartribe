@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from api.permissions import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
+from api.permissions.common import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
 from core.models import Profile
 from api.serializers.serializers import ProfileCreateSerializer
 from api.serializers.serializers import ProfileSerializer
