@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import status
 
-from api.permissions import IsJWTAuthenticated, IsCommunityOwner, IsCommunityModerator
+from api.permissions.common import IsJWTAuthenticated
+from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from core.models import Community, Member
 from api.serializers.serializers import CommunityCreateSerializer
 from api.serializers.serializers import CommunitySerializer
@@ -45,9 +46,11 @@ class CommunityViewSet(viewsets.ModelViewSet):
             self.object = serializer.save(force_insert=True)
             self.post_save(self.object, created=True)
             headers = self.get_success_headers(serializer.data)
+            # Retrieve request author and creates him a member as communnity owner
             user, _ = AuthUser().authenticate(request)
             owner = Member(user=user, community=self.object, role="0", status="1")
             owner.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED,
                             headers=headers)
 

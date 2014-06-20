@@ -7,6 +7,9 @@ class Tos(models.Model):
 
     terms = models.TextField()
 
+    def __str__(self):
+        return self.version
+
     class Meta:
         verbose_name = 'tos'
         verbose_name_plural = 'tos'

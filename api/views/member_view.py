@@ -4,8 +4,9 @@ from rest_framework import status
 from rest_framework.status import HTTP_200_OK
 from api.authenticate import AuthUser
 
-from api.permissions import IsJWTSelf, IsMemberManager, IsOwnerAndNotBanned, IsJWTAuthenticated
-from core.models import Member
+from api.permissions.common import IsJWTSelf, IsJWTAuthenticated
+from api.permissions.community import IsMemberManager, IsOwnerAndNotBanned
+from core.models import Member, Community
 from api.serializers.serializers import MemberSerializer, MemberCreateSerializer
 
 
@@ -39,7 +40,7 @@ class MemberViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         """
-        Overrides standard 'list' method to return only members belonging to user
+        Overrides standard 'list' method to return only members belonging to user.
         """
         user, _ = AuthUser().authenticate(request)
         queryset = Member.objects.filter(user=user.id)
@@ -48,15 +49,24 @@ class MemberViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        Overrides standard 'create' method to avoid multiple identical members creation
+        Overrides standard 'create' method to avoid multiple identical members creation.
+        Also manage automatic member acceptance.
         """
-        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+        data = request.DATA
 
+        # Check if member already exists
+        if Member.objects.filter(user=data['user'], community=data['community']).exists():
+            member = Member.objects.get(user=data['user'], community=data['community'])
+            return Response(MemberSerializer(member).data, status=HTTP_200_OK)
+
+        community = Community.objects.get(pk=data['community'])
+
+        # Defines the member status, depending on auto_accept_member property of the community
+        if community.auto_accept_member == True:
+            data['status'] = "1"
+
+        serializer = self.get_serializer(data=request.DATA, files=request.FILES)
         if serializer.is_valid():
-            data = request.DATA
-            if Member.objects.filter(user=data['user'], community=data['community']).exists():
-                member = Member.objects.get(user=data['user'], community=data['community'])
-                return Response(MemberSerializer(member).data, status=HTTP_200_OK)
             self.pre_save(serializer.object)
             self.object = serializer.save(force_insert=True)
             self.post_save(self.object, created=True)
