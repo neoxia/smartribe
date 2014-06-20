@@ -31,6 +31,9 @@ class Member(models.Model):
 
     last_modification_date = models.DateField(auto_now=True)
 
+    def __str__(self):
+        return self.user.username + ", " + self.community.name + ", " + self.role
+
     class Meta:
         verbose_name = 'member'
         verbose_name_plural = 'members'

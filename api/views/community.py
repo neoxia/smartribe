@@ -46,7 +46,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
             self.object = serializer.save(force_insert=True)
             self.post_save(self.object, created=True)
             headers = self.get_success_headers(serializer.data)
-            # Retrieve request author and creates him a member as communnity owner
+            # Retrieve request author and creates him a member as community owner
             user, _ = AuthUser().authenticate(request)
             owner = Member(user=user, community=self.object, role="0", status="1")
             owner.save()
