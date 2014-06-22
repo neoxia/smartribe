@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Skill(models.Model):
 
+class Skill(models.Model):
     user = models.ForeignKey(User)
 
     # Skill category
@@ -18,3 +18,7 @@ class Skill(models.Model):
         verbose_name = 'skill'
         verbose_name_plural = 'skills'
         app_label = 'core'
+
+
+class SkillCategory(models.Model):
+    pass
