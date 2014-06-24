@@ -20,7 +20,7 @@ class Community(models.Model):
     def __str__(self):
         return self.name
 
-     class Meta:
+    class Meta:
         verbose_name = 'community'
         verbose_name_plural = 'communities'
         app_label = 'core'
