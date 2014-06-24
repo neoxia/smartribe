@@ -71,15 +71,11 @@ class SkillSerializer(serializers.HyperlinkedModelSerializer):
 
 # COMMUNITY
 
-class CommunityCreateSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Community
-        fields = ('url', 'name', 'description')
-
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Community
         fields = ('url', 'name', 'description', 'creation_date', 'auto_accept_member')
+        read_only_fields = ('creation_date',)
 
 
 # MEMBER

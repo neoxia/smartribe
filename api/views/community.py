@@ -5,7 +5,6 @@ from rest_framework import status
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from core.models import Community, Member
-from api.serializers.serializers import CommunityCreateSerializer
 from api.serializers.serializers import CommunitySerializer
 from api.authenticate import AuthUser
 
@@ -16,13 +15,6 @@ class CommunityViewSet(viewsets.ModelViewSet):
     """
     model = Community
     serializer_class = CommunitySerializer
-
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == 'POST':
-            serializer_class = CommunityCreateSerializer
-        return serializer_class
-
     def get_permissions(self):
         """
         An authenticated user can create a new community or see existing communities.
@@ -36,8 +28,25 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return [IsCommunityOwner()]
 
     def create(self, request, *args, **kwargs):
-        """
-        Overrides standard 'create' method to simultaneously add an owner member
+        """ Create community:
+
+                | **permission**: authenticated
+                | **endpoint**: /communities/
+                | **method**: POST
+                | **attr**:
+                |       - name: string (required)
+                |       - description: string (required)
+                |       - auto_accept_member: boolean (true|false)
+                | **http return**:
+                |       - 201 Created on success
+                |       - 400 Bad request on error
+                | **data return**:
+                |       - url: ressource
+                |       - name: string
+                |       - description: string
+                |       - created_date : date
+                |       - auto_accept_member: boolean (true|false)
+
         """
         serializer = self.get_serializer(data=request.DATA, files=request.FILES)
 

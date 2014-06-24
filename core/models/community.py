@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Community(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-    description = models.TextField()
+    description = models.TextField(max_length=180)
 
     banner = models.ImageField(blank=True,
                                null=True)
@@ -20,7 +20,7 @@ class Community(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
+     class Meta:
         verbose_name = 'community'
         verbose_name_plural = 'communities'
         app_label = 'core'
