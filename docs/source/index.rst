@@ -20,6 +20,7 @@ API:
    :maxdepth: 3
 
    api_user
+   api_community
 
 Indices and tables
 ==================
