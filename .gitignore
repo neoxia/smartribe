@@ -2,3 +2,6 @@ db.sqlite3
 .ropeproject
 **/__pycache__
 angular/.svn
+
+docs/build/html/*
+docs/build/doctree/*
