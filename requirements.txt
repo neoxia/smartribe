@@ -9,3 +9,4 @@ django-cors-headers==0.12
 djangorestframework==2.3.13
 djangorestframework-jwt==0.1.5
 docutils==0.11
+sphinx-rtd-theme==0.1.6
