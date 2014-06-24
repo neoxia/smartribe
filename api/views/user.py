@@ -27,8 +27,8 @@ class UserViewSet(viewsets.ViewSet):
                 |       - email: string (required)
                 |       - groups: array
                 | **http return**:
-                |       - 201 Created on success
-                |       - 400 Created on error
+                |       - 201 Created successfully
+                |       - 400 Bad request
                 | **data return**:
                 |       - username: string
                 |       - email: string

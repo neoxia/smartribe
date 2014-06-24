@@ -38,10 +38,10 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - description: string (required)
                 |       - auto_accept_member: boolean (true|false)
                 | **http return**:
-                |       - 201 Created on success
-                |       - 400 Bad request on error
+                |       - 201 Created successfully
+                |       - 400 Bad request
                 | **data return**:
-                |       - url: ressource
+                |       - url: resource
                 |       - name: string
                 |       - description: string
                 |       - created_date : date
