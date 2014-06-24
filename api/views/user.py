@@ -11,11 +11,30 @@ from api.authenticate import AuthUser
 
 
 class UserViewSet(viewsets.ViewSet):
-
+    """ Default permission: Any """
     permission_classes = [permissions.AllowAny]
     model = User
 
     def create(self, request):
+        """ Create user:
+
+                | **permission**: any
+                | **endpoint**: /users/
+                | **method**: POST
+                | **attr**:
+                |       - username (required)
+                |       - password (required)
+                |       - email (required)
+                |       - groups
+                | **http return**:
+                |       - 201 Created on success
+                |       - 400 Created on error
+                | **data return**:
+                |       - username: string
+                |       - email: string
+                |       - groups: array
+
+        """
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
         serial_user = UserCreateSerializer(data=data)
