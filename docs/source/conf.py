@@ -3,7 +3,7 @@
 import os
 import sys
 import django
-
+import sphinx_rtd_theme
 
 from django.db.models.fields.files import FileDescriptor
 FileDescriptor.__get__ = lambda self, *args, **kwargs: self
@@ -46,7 +46,7 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['docstemplates']
+#templates_path = ['docstemplates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -111,9 +111,12 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output ----------------------------------------------
 
+html_theme = 'sphinx_rtd_theme'
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+#html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

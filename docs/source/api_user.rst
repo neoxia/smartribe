@@ -1,7 +1,7 @@
 User API
 =========
 
-Test
+User manipulation API
 
-.. autoclass:: api.views.user.UserViewSet
+.. automodule:: api.views.user
     :members:
