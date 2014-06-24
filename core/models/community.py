@@ -1,9 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class Community(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+
+    name = models.CharField(max_length=50,
+                            unique=True)
 
     description = models.TextField(max_length=180)
 
