@@ -22,10 +22,10 @@ class UserViewSet(viewsets.ViewSet):
                 | **endpoint**: /users/
                 | **method**: POST
                 | **attr**:
-                |       - username (required)
-                |       - password (required)
-                |       - email (required)
-                |       - groups
+                |       - username: string (required)
+                |       - password: string (required)
+                |       - email: string (required)
+                |       - groups: array
                 | **http return**:
                 |       - 201 Created on success
                 |       - 400 Created on error
@@ -44,6 +44,22 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
+        """ Get user:
+
+                | **permission**: authenticated, get self
+                | **endpoint**: /users/{id}/
+                | **method**: GET
+                | **http return**:
+                |       - 200 OK
+                |       - 403 Forbidden
+                | **data return**:
+                |       - url: ressource
+                |       - username: string
+                |       - email: string
+                |       - groups: array
+
+        """
+
         user, response = AuthUser().authenticate(request)
         forbidden = status.HTTP_403_FORBIDDEN
         if not user:
@@ -54,6 +70,21 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def update(self, request, pk=None):
+        """ Update user
+
+                | **permission**: authenticated, get self
+                | **endpoint**: /users/{id}/
+                | **method**: PUT, (PATCH?)
+                | **http return**:
+                |       - 201 Created
+                |       - 403 Forbidden
+                | **data return**:
+                |       - url: ressource
+                |       - username: string
+                |       - email: string
+                |       - groups: array
+
+        """
         user, response = AuthUser().authenticate(request)
         forbidden = status.HTTP_403_FORBIDDEN
         if not user:
@@ -70,6 +101,22 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
+        """ **NOT A LIST** Get current authenticated user:
+
+                | **permission**: authenticated, get self
+                | **endpoint**: /users/
+                | **method**: GET
+                | **http return**:
+                |       - 200 OK
+                |       - 403 Forbidden
+                | **data return**:
+                |       - url: ressource
+                |       - username: string
+                |       - email: string
+                |       - groups: array
+
+        """
+
         user, response = AuthUser().authenticate(request)
         if not user:
             return response

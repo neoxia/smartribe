@@ -4,5 +4,4 @@ db.sqlite3
 **/__pycache__
 angular/.svn
 
-docs/build/html/*
-docs/build/doctrees/*
+docs/build/
