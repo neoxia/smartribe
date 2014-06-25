@@ -8,7 +8,6 @@ from api.views import member
 
 router = routers.DefaultRouter()
 router.register(r'users', user.UserViewSet)
-
 router.register(r'profiles', profile.ProfileViewSet)
 router.register(r'communities', community.CommunityViewSet)
 router.register(r'members', member.MemberViewSet)
@@ -17,10 +16,13 @@ router.register(r'members', member.MemberViewSet)
 # Additionally, we include login URLs for the browseable API.
 urlpatterns = patterns('',
                        url(r'^v1/', include(router.urls)),
-                       url(r'^v1/auth/', include('rest_framework.urls',
-                                                 namespace='rest_framework')
-                           )
-                       )
+                       url(r'^v1/auth/', include('rest_framework.urls', namespace='rest_framework')))
+
 urlpatterns += patterns('',
-    url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token')
-)
+                        url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'))
+
+
+#urlpatterns += patterns('',
+#                        url(r'^v1/recovery/recover_password', user.UserViewSet.recover_password),
+#                        url(r'^v1/recovery/set_new_password', user.UserViewSet.set_new_password)
+#)

@@ -107,7 +107,7 @@ class RequestCreateSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('user', 'category', 'title', 'detail', 'creation_date', 'expected_end_date', 'end_date',
                   'auto_close', 'closed')
         read_only_fields = ('creation_date',)
-        
+
 
 class RequestSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.PrimaryKeyRelatedField()

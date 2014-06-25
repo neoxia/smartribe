@@ -5,3 +5,4 @@ from core.models.skill import Skill
 from core.models.offer import Offer
 from core.models.request import Request
 from core.models.member import Member
+from core.models.password_recovery import PasswordRecovery
