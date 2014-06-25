@@ -2,10 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class SkillCategory(models.Model):
+
+    name = models.CharField(max_length=50)
+
+    detail = models.TextField()
+
+    class Meta():
+        verbose_name = 'skill category'
+        verbose_name_plural = 'skill categories'
+        app_label = 'core'
+
+
 class Skill(models.Model):
     user = models.ForeignKey(User)
 
-    # Skill category
+    category = models.ForeignKey(SkillCategory)
 
     description = models.TextField()
 
@@ -18,7 +30,3 @@ class Skill(models.Model):
         verbose_name = 'skill'
         verbose_name_plural = 'skills'
         app_label = 'core'
-
-
-class SkillCategory(models.Model):
-    pass

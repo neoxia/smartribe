@@ -1,13 +1,17 @@
+from django.contrib.auth.models import User
 from django.db import models
 from core.models.request import Request
 
-__author__ = 'Renaud'
 
 class Offer(models.Model):
 
     request = models.ForeignKey(Request)
 
-    description = models.TextField()
+    user = models.ForeignKey(User)
+
+    detail = models.TextField()
+
+    creation_date = models.TextField()
 
     class Meta:
         verbose_name = 'offer'

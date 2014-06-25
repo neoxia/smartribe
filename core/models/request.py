@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from core.models.skill import SkillCategory
 
 __author__ = 'Renaud'
 
@@ -7,9 +8,23 @@ class Request(models.Model):
 
     user = models.ForeignKey(User)
 
-    title = models.CharField(max_length=50)
+    category = models.ForeignKey(SkillCategory)
 
-    description = models.TextField()
+    title = models.CharField(max_length=255)
+
+    detail = models.TextField()
+
+    creation_date = models.DateField(auto_now_add=True)
+
+    expected_end_date = models.DateField(blank=True,
+                                         null=True)
+
+    end_date = models.DateField(blank=True,
+                                null=True)
+
+    auto_close = models.BooleanField(default=False)
+
+    closed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'request'
