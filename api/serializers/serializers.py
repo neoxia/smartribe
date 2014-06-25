@@ -93,15 +93,31 @@ class MemberSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Member
         fields = ('url', 'user', 'community', 'role', 'status', 'registration_date', 'last_modification_date')
-        read_only_fields = ('user','community', 'registration_date')
+        read_only_fields = ('user', 'community', 'registration_date')
 
 
 # REQUEST
 
-class RequestSerializer(serializers.HyperlinkedModelSerializer):
+class RequestCreateSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
     class Meta:
         model = Request
-        fields = ('user', 'title', 'description')
+        fields = ('user', 'category', 'title', 'detail', 'creation_date', 'expected_end_date', 'end_date',
+                  'auto_close', 'closed')
+        read_only_fields = ('creation_date',)
+        
+
+class RequestSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
+    class Meta:
+        model = Request
+        fields = ('user', 'category', 'title', 'detail', 'creation_date', 'expected_end_date', 'end_date',
+                  'auto_close', 'closed')
+        read_only_fields = ('creation_date',)
 
 
 class OfferSerializer(serializers.HyperlinkedModelSerializer):
