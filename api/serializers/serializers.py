@@ -98,6 +98,17 @@ class MemberSerializer(serializers.HyperlinkedModelSerializer):
 
 # REQUEST
 
+class RequestCreateSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
+    class Meta:
+        model = Request
+        fields = ('user', 'category', 'title', 'detail', 'creation_date', 'expected_end_date', 'end_date',
+                  'auto_close', 'closed')
+        read_only_fields = ('creation_date',)
+        
+
 class RequestSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.PrimaryKeyRelatedField()
     category = serializers.PrimaryKeyRelatedField()
