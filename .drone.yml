@@ -1,0 +1,11 @@
+image: smartribe/pythontest:3.4
+
+script:
+  - pip3 install -r requirements.txt
+  - python3 manage.py migrate
+  - python3 manage.py test
+
+notify:
+  email:
+    recipients:
+      - eip@smartri.be
