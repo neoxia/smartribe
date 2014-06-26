@@ -6,6 +6,7 @@ from .models import Tos
 from .models import Skill
 from .models import Request
 from .models import Offer
+from .models import PasswordRecovery
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -34,3 +35,7 @@ class RequestAdmin(admin.ModelAdmin):
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
     list_display = ['request']
+
+@admin.register(PasswordRecovery)
+class PasswordRecoveryAdmin(admin.ModelAdmin):
+    list_display = ['user']
