@@ -8,7 +8,7 @@ script:
 notify:
   email:
     recipients:
-      - eip@smartri.be
+      - yann.coleu@neoxia.com
 
  
  
