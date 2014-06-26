@@ -1,4 +1,4 @@
-from django.contrib.gis.db import models
+from django.db import models
 from django.contrib.auth.models import User
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
@@ -13,10 +13,6 @@ class Profile(models.Model):
     gender = models.CharField(max_length=2,
                               choices=GENDER_CHOICES,
                               default='O')
-
-    address = models.OneToOneField(Address,
-                                   blank=True,
-                                   null=True)
 
     phone = models.CharField(max_length=15,
                              validators=[PhoneValidatorFR(), ],
@@ -40,6 +36,9 @@ class Profile(models.Model):
 
 class Address(models.Model):
 
+    profile = models.OneToOneField(Profile,
+                                   related_name='address')
+
     num = models.IntegerField()
 
     street = models.CharField(max_length=100)
@@ -51,7 +50,7 @@ class Address(models.Model):
 
     country = models.CharField(max_length=50)
 
-    objects = models.GeoManager()
+    #objects = models.GeoManager()
 
     class Meta:
         verbose_name = 'address'
