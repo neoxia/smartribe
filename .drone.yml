@@ -1,19 +1,11 @@
-image: smartribe/pythontest:3.4
+image: smartribe/test-python34:0.2
 
 script:
-  - pip3 install -r requirements.txt
+  - pip3 install -r requirements.txt -q
   - python3 manage.py migrate
   - python3 manage.py test
 
 notify:
   email:
     recipients:
-      - yann.coleu@neoxia.com
-
- 
- 
- 
- 
- 
- 
- 
+      - coleu_y@etna-alternance.net
