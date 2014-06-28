@@ -74,4 +74,4 @@ class CommunityTests(APITestCase):
         url = '/api/v1/communities/1/'
 
         response = self.client.delete(url, HTTP_AUTHORIZATION=auth)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
