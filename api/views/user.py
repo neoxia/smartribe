@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ViewSet):
                 |       - 200 OK
                 |       - 403 Forbidden
                 | **data return**:
-                |       - url: ressource
+                |       - url: resource
                 |       - username: string
                 |       - email: string
                 |       - groups: array
@@ -85,7 +85,7 @@ class UserViewSet(viewsets.ViewSet):
                 |       - 201 Created
                 |       - 403 Forbidden
                 | **data return**:
-                |       - url: ressource
+                |       - url: resource
                 |       - username: string
                 |       - email: string
                 |       - groups: array
@@ -116,7 +116,7 @@ class UserViewSet(viewsets.ViewSet):
                 |       - 200 OK
                 |       - 403 Forbidden
                 | **data return**:
-                |       - url: ressource
+                |       - url: resource
                 |       - username: string
                 |       - email: string
                 |       - groups: array
@@ -131,6 +131,23 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(methods=['POST', ])
     def recover_password(self, request, pk=None):
+        """ Recover password
+
+                | **permission**: any
+                | **endpoint**: /users/0/recover_password
+                | **method**: POST
+                | **attr**:
+                |       - email: string (required)
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                |       - 401 Unauthorized
+                | **data return**:
+                |       None
+                | **other actions**:
+                |       - Sends an email with a password recovery token
+
+        """
         data = JSONParser().parse(request)
         if 'email' in data:
             if User.objects.filter(email=data['email']).exists():
@@ -139,7 +156,7 @@ class UserViewSet(viewsets.ViewSet):
                 list = PasswordRecovery.objects.filter(user=user)
                 if list.count() >= 2:
                     last_pr = list.order_by('-pk')[1]
-                    fr = timezone(timedelta(hours=1),"Europe/Rome")
+                    fr = timezone(timedelta(hours=1), "Europe/Rome")
                     delta = datetime.now(tz=fr) - last_pr.request_datetime
                     if delta < timedelta(minutes=5):
                         return Response({"detail":"Try again after 5 min"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -155,6 +172,22 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(methods=['POST', ])
     def set_new_password(self, request, pk=None):
+        """ Set a new password, using password recovery token
+
+                | **permission**: any
+                | **endpoint**: /users/{token}/set_new_password
+                | **method**: POST
+                | **attr**:
+                |       - password: string (required)
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                | **data return**:
+                |       None
+                | **other actions**:
+                |       - Sends an email with a password recovery token
+
+        """
         token = pk
         data = JSONParser().parse(request)
         if token is not None:
