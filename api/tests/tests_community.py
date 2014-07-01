@@ -10,7 +10,11 @@ class CommunityTests(APITestCase):
         Make a user for authenticating and
         testing community actions
         """
-        user = User(username="testcommunity", password="test")
+        owner = User(username="community_owner", password="test")
+        owner.save()
+        moderator = User(username="moderator", password="test0")
+        moderator.save()
+        user = User(username="simple_user", password="test1")
         user.save()
 
     def test_create_community_without_auth(self):
@@ -30,8 +34,8 @@ class CommunityTests(APITestCase):
         """
         Ensure we can create community when we are authenticated
         """
-        # Generate token for testcommunity user
-        user = User.objects.get(username="testcommunity")
+        # Generate token for community_owner user
+        user = User.objects.get(username="community_owner")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
 
@@ -45,11 +49,24 @@ class CommunityTests(APITestCase):
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_modify_community_with_auth(self):
-        # Generate token for testcommunity user
-        user = User.objects.get(username="testcommunity")
+    def test_modify_community_with_owner(self):
+        """
+        Ensure a community moderator can modify a community                     /// TO BE MODIFIED
+        """
+        # Generate token for community_owner user
+        user = User.objects.get(username="community_owner")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/'
+        data = {
+            'name': 'com1',
+            'description': 'com1desc',
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth,
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['description'], 'com1desc')
 
         url = '/api/v1/communities/1/'
         data = {
@@ -59,15 +76,45 @@ class CommunityTests(APITestCase):
 
         response = self.client.put(url, data, HTTP_AUTHORIZATION=auth,
                                    format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
-    def test_delete_community_with_auth(self):
+    def test_partial_modify_community_with_owner(self):
         """
-        Ensure we can delete community when we are authenticated
+        Ensure a community moderator can modify a community                     /// TO BE MODIFIED
         """
-        # Generate token for testcommunity user
-        user = User.objects.get(username="testcommunity")
+        # Generate token for community_owner user
+        user = User.objects.get(username="community_owner")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/'
+        data = {
+            'name': 'com1',
+            'description': 'com1desc',
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth,
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['description'], 'com1desc')
+
+        url = '/api/v1/communities/1/'
+        data = {
+            'description': 'com1descmodify',
+        }
+
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth,
+                                   format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['description'], 'com1descmodify')
+
+
+    def test_delete_community_with_owner(self):
+        """
+        Ensure a community owner can delete its community                       /// TO BE MODIFIED
+        """
+        # Generate token for community_owner user
+        user = User.objects.get(username="community_owner")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
 

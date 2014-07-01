@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 
 from django.db import models, migrations
@@ -11,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('core', '0029_auto_20140624_2312'),
     ]
-
+"""
     operations = [
         migrations.CreateModel(
             name='PasswordRecovery',
@@ -44,4 +45,4 @@ class Migration(migrations.Migration):
             name='tos',
             options={'verbose_name_plural': 'tos', 'verbose_name': 'tos'},
         ),
-    ]
+    ]"""
