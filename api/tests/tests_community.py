@@ -236,7 +236,7 @@ class CommunityTests(APITestCase):
 
     def test_delete_community_with_owner(self):
         """
-        Ensure a community owner can delete its community                       /// TO BE MODIFIED
+        Ensure a community owner can delete its community
         """
         # Generate token for community_owner user
         user = User.objects.get(username="community_owner")
