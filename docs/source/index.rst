@@ -11,6 +11,8 @@ Models:
 .. toctree::
    :maxdepth: 3
 
+   user
+   profile
    community
    member
 
@@ -20,6 +22,7 @@ API:
    :maxdepth: 3
 
    api_user
+   api_profile
    api_community
 
 Indices and tables

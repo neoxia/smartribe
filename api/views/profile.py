@@ -7,7 +7,13 @@ from api.serializers.serializers import ProfileSerializer
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows profiles to be viewed or edited.
+    Inherits standard characteristics from ModelViewSet:
+            | **Endpoint**: /profiles/
+            | **Methods**: GET / POST / PUT / PATCH / DELETE / OPTIONS
+            | **Permissions**:
+            |       - Default : IsJWTOwner
+            |       - GET : IsJWTAuthenticated
+            |       - POST : IsJWTSelf
     """
     model = Profile
     serializer_class = ProfileSerializer
