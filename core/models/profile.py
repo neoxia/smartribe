@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
+def get_photo(self, filename):
+    url = "media/profiles/%s/%s" % (self.user.username, filename)
+    return url
 
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
@@ -25,8 +28,11 @@ class Profile(models.Model):
     bio = models.TextField(blank=True,
                            null=True)
 
-    photo = models.ImageField(blank=True,
+    photo = models.ImageField(upload_to=get_photo,
+                              blank=True,
                               null=True)
+
+
 
     class Meta:
         verbose_name = 'profile'

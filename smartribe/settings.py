@@ -128,3 +128,7 @@ JWT_AUTH = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+#MEDIA_ROOT = ''
+
+#MEDIA_URL = ""
