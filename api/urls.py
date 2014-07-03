@@ -4,6 +4,8 @@ from api.views import user
 from api.views import profile
 from api.views import community
 from api.views import member
+from api.views import media
+from smartribe.settings import MEDIA_ROOT
 
 
 router = routers.DefaultRouter()
@@ -20,7 +22,12 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('',
                         url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'))
+#urlpatterns += patterns('',
+                        #url(r'^v1/(?P<path>.*)$', 'django.views.static.serve',
+                            #{'document_root': ''}))
 
+urlpatterns += patterns('',
+                        url(r'^v1/media/(?P<path>.*)$', media.MediaViewSet.get_media, {'document_root': MEDIA_ROOT}))
 
 #urlpatterns += patterns('',
 #                        url(r'^v1/recovery/recover_password', user.UserViewSet.recover_password),

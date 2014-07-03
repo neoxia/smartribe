@@ -8,5 +8,11 @@ urlpatterns = patterns('',
 )
 
 if settings.DEBUG:
-    urlpatterns += url(r'(?P<path>.*)$', 'django.views.static.serve',
-             {'document_root': './angular/smartribe/app/'}),
+    # static files (images, css, javascript, etc.)
+    urlpatterns += patterns('',
+        (r'^(?P<path>.*)$', 'django.views.static.serve', {
+        'document_root': ''}))
+
+#if settings.DEBUG:
+    #urlpatterns += url(r'(?P<path>.*)$', 'django.views.static.serve',
+             #{'document_root': './angular/smartribe/app/'}),

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
 def get_photo(self, filename):
-    url = "media/profiles/%s/%s" % (self.user.username, filename)
+    url = "profiles/%s/%s" % (self.user.username, filename)
     return url
 
 class Profile(models.Model):
