@@ -137,3 +137,38 @@ class ProfileTests(APITestCase):
         }
         response = self.client.put(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_self_profile(self):
+        """
+        Ensure an authenticated user can modify his profile
+        """
+        url = '/api/v1/profiles/'
+        data = {
+            'user': 1,
+        }
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+
+        url = '/api/v1/profiles/1/'
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.token_line())
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_other_profile(self):
+        """
+        Ensure an authenticated user can modify his profile
+        """
+        # Create user profile
+        url = '/api/v1/profiles/'
+        data = {
+            'user': 1,
+        }
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        # Create other_user profile
+        url = '/api/v1/profiles/'
+        data = {
+            'user': 2,
+        }
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line_other(), format='json')
+
+        url = '/api/v1/profiles/2/'
+        response = self.client.put(url, HTTP_AUTHORIZATION=self.token_line())
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
