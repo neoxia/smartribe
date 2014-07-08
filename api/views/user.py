@@ -87,6 +87,7 @@ class UserViewSet(viewsets.ViewSet):
             return Response({"detail":"Activation error"}, status=status.HTTP_400_BAD_REQUEST)
         user.is_active = True
         user.save()
+        ActivationToken.objects.get(user=user, token=data['token']).delete()
         return Response(status=status.HTTP_200_OK)
 
 

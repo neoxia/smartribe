@@ -41,6 +41,7 @@ class AccountTests(APITestCase):
             'password': 'pass'
         }
         self.client.post(url, data, format='json')
+        self.assertEqual(True, ActivationToken.objects.filter(id=1).exists())
 
         token = ActivationToken.objects.get(id=1)
         data = {'token': token.token}
@@ -49,3 +50,4 @@ class AccountTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user = User.objects.get(username='test')
         self.assertEqual(True, user.is_active)
+        self.assertEqual(False, ActivationToken.objects.filter(id=1).exists())
