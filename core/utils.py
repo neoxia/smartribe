@@ -14,5 +14,5 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
-def gen_pwd_recovery_token(size=64, chars=string.ascii_lowercase + string.digits):
+def gen_temporary_token(size=64, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))

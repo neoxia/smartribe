@@ -8,6 +8,9 @@ class SkillCategory(models.Model):
 
     detail = models.TextField()
 
+    def __str__(self):
+        return self.name
+
     class Meta():
         verbose_name = 'skill category'
         verbose_name_plural = 'skill categories'

@@ -1,5 +1,7 @@
 from django.contrib import admin
 from core.models import Member
+from core.models.activation_token import ActivationToken
+from core.models.skill import SkillCategory
 from .models import Profile
 from .models import Community
 from .models import Tos
@@ -24,6 +26,10 @@ class MemberAdmin(admin.ModelAdmin):
 class TosAdmin(admin.ModelAdmin):
     list_display = ['version']
 
+@admin.register(SkillCategory)
+class SkillCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
 @admin.register(Skill)
 class SkillAdmin(admin.ModelAdmin):
     list_display = ['user']
@@ -38,4 +44,8 @@ class OfferAdmin(admin.ModelAdmin):
 
 @admin.register(PasswordRecovery)
 class PasswordRecoveryAdmin(admin.ModelAdmin):
+    list_display = ['user']
+
+@admin.register(ActivationToken)
+class ActivationTokenAdmin(admin.ModelAdmin):
     list_display = ['user']

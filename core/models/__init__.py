@@ -6,3 +6,4 @@ from core.models.offer import Offer
 from core.models.request import Request
 from core.models.member import Member
 from core.models.password_recovery import PasswordRecovery
+from core.models.activation_token import ActivationToken

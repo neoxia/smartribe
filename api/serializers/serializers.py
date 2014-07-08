@@ -9,7 +9,7 @@ from rest_framework import serializers
 class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'password', 'groups')
+        fields = ('url', 'username', 'email', 'password', 'groups', 'is_active')
         write_only_fields = ('password',)
 
 

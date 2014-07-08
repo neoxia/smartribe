@@ -12,6 +12,7 @@ from rest_framework import status
 from api.serializers.serializers import UserSerializer
 from api.serializers.serializers import UserCreateSerializer
 from api.authenticate import AuthUser
+from core.models.activation_token import ActivationToken
 import core.utils
 from core.models.password_recovery import PasswordRecovery
 
@@ -43,11 +44,53 @@ class UserViewSet(viewsets.ViewSet):
         """
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
+        data['is_active'] = False
         serial_user = UserCreateSerializer(data=data)
         if serial_user.is_valid():
             serial_user.save()
+            token = ActivationToken(user=User.objects.get(username=data['username']),
+                                    token=core.utils.gen_temporary_token())
+            token.save()
+            #send_mail(
+                #'SmarTribe registration',
+                #'TO BE COMPLETED',
+                #'noreply@smartri.be',
+                #data['email'],
+                #fail_silently=False
+            #)
             return Response(serial_user.data, status=status.HTTP_201_CREATED)
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['POST', ])
+    def confirm_registration(self, request, pk=None):
+        """ Confirm user registration:
+
+                | **permission**: any
+                | **endpoint**: /users/{id}/confirm_registration
+                | **method**: POST
+                | **attr**:
+                |       - token: string (required)
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                | **data return**:
+                |       - None
+
+        """
+        if not User.objects.filter(id=pk).exists():
+            return Response({"detail":"Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
+        data = JSONParser().parse(request)
+        if not 'token' in data:
+            return Response({"detail":"Missing token"}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.get(id=pk)
+        if not ActivationToken.objects.filter(user=user, token=data['token']):
+            return Response({"detail":"Activation error"}, status=status.HTTP_400_BAD_REQUEST)
+        user.is_active = True
+        user.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+
 
     def retrieve(self, request, pk=None):
         """ Get user:
@@ -160,7 +203,7 @@ class UserViewSet(viewsets.ViewSet):
                     delta = datetime.now(tz=fr) - last_pr.request_datetime
                     if delta < timedelta(minutes=5):
                         return Response({"detail":"Try again after 5 min"}, status=status.HTTP_401_UNAUTHORIZED)
-                token = core.utils.gen_pwd_recovery_token()
+                token = core.utils.gen_temporary_token()
                 pr = PasswordRecovery(user=user, token=token, ip_address=ip)
                 pr.save()
                 send_mail('SmarTribe password recovery', token, 'noreply@smartri.be', [user.email], fail_silently=False)
