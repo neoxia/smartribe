@@ -5,6 +5,7 @@ from core.models.activation_token import ActivationToken
 
 
 class AccountTests(APITestCase):
+
     def test_create_account(self):
         """
         Ensure we can create a new account object.
@@ -51,3 +52,26 @@ class AccountTests(APITestCase):
         user = User.objects.get(username='test')
         self.assertEqual(True, user.is_active)
         self.assertEqual(False, ActivationToken.objects.filter(id=1).exists())
+
+    def test_username_is_unique(self):
+        """
+        Ensure only one account can created with a single username.
+        """
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'pass'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = {
+            'username': 'test',
+            'email': 'test1@test.com',
+            'password': 'pass1'
+        }
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(1, User.objects.filter().count())

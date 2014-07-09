@@ -40,7 +40,8 @@ class UserViewSet(viewsets.ViewSet):
                 |       - username: string
                 |       - email: string
                 |       - groups: array
-
+                | **other actions**:
+                |       - Sends an email with a password recovery token
         """
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
@@ -51,13 +52,7 @@ class UserViewSet(viewsets.ViewSet):
             token = ActivationToken(user=User.objects.get(username=data['username']),
                                     token=core.utils.gen_temporary_token())
             token.save()
-            #send_mail(
-                #'SmarTribe registration',
-                #'TO BE COMPLETED',
-                #'noreply@smartri.be',
-                #data['email'],
-                #fail_silently=False
-            #)
+            send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [data['email']], fail_silently=False)
             return Response(serial_user.data, status=status.HTTP_201_CREATED)
         return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
 
