@@ -170,7 +170,7 @@ class UserViewSet(viewsets.ViewSet):
         """ Recover password
 
                 | **permission**: any
-                | **endpoint**: /users/0/recover_password
+                | **endpoint**: /users/0/recover_password/
                 | **method**: POST
                 | **attr**:
                 |       - email: string (required)
@@ -210,7 +210,7 @@ class UserViewSet(viewsets.ViewSet):
         """ Set a new password, using password recovery token
 
                 | **permission**: any
-                | **endpoint**: /users/{token}/set_new_password
+                | **endpoint**: /users/{token}/set_new_password/
                 | **method**: POST
                 | **attr**:
                 |       - password: string (required)
