@@ -1,6 +1,8 @@
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
+from core.models import PasswordRecovery
 from core.models.activation_token import ActivationToken
 
 
@@ -75,3 +77,31 @@ class AccountTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(1, User.objects.filter().count())
+
+    def test_recover_password(self):
+        """
+        Ensure a user can reset his password.
+        """
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'pass'
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = '/api/v1/users/0/recover_password/'
+        data = {'email': 'test@test.com'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        token = PasswordRecovery.objects.get(user=User.objects.get(email='test@test.com')).token
+        url = '/api/v1/users/'+token+'/set_new_password/'
+        data = {'password': 'gloup'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(0, PasswordRecovery.objects.filter().count())
+        user = User.objects.get(username='test')
+        self.assertEqual(True, check_password('gloup', user.password))
+
