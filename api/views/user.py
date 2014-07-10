@@ -41,7 +41,7 @@ class UserViewSet(viewsets.ViewSet):
                 |       - email: string
                 |       - groups: array
                 | **other actions**:
-                |       - Sends an email with a password recovery token
+                |       - Sends an email with account activation token
 
         """
         data = JSONParser().parse(request)
