@@ -80,7 +80,7 @@ class AccountTests(APITestCase):
 
     def test_recover_password(self):
         """
-        Ensure a user can reset his password.
+        Ensure a user can reset his password.toto
         """
         url = '/api/v1/users/'
         data = {
