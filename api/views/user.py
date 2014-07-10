@@ -41,20 +41,21 @@ class UserViewSet(viewsets.ViewSet):
                 |       - email: string
                 |       - groups: array
                 | **other actions**:
-                |       - Sends an email with a password recovery token
+                |       - Sends an email with account activation token
+
         """
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
         data['is_active'] = False
         serial_user = UserCreateSerializer(data=data)
-        if serial_user.is_valid():
-            serial_user.save()
-            token = ActivationToken(user=User.objects.get(username=data['username']),
-                                    token=core.utils.gen_temporary_token())
-            token.save()
-            send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [data['email']], fail_silently=False)
-            return Response(serial_user.data, status=status.HTTP_201_CREATED)
-        return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serial_user.is_valid():
+            return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
+        serial_user.save()
+        token = ActivationToken(user=User.objects.get(username=data['username']),
+                                token=core.utils.gen_temporary_token())
+        token.save()
+        send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [data['email']], fail_silently=False)
+        return Response(serial_user.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['POST', ])
     def confirm_registration(self, request, pk=None):
@@ -73,20 +74,17 @@ class UserViewSet(viewsets.ViewSet):
 
         """
         if not User.objects.filter(id=pk).exists():
-            return Response({"detail":"Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
         data = JSONParser().parse(request)
         if not 'token' in data:
-            return Response({"detail":"Missing token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Missing token"}, status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.get(id=pk)
-        if not ActivationToken.objects.filter(user=user, token=data['token']):
-            return Response({"detail":"Activation error"}, status=status.HTTP_400_BAD_REQUEST)
+        if not ActivationToken.objects.filter(user=user, token=data['token']).exists():
+            return Response({"detail": "Activation error"}, status=status.HTTP_400_BAD_REQUEST)
         user.is_active = True
         user.save()
         ActivationToken.objects.get(user=user, token=data['token']).delete()
         return Response(status=status.HTTP_200_OK)
-
-
-
 
     def retrieve(self, request, pk=None):
         """ Get user:
@@ -104,7 +102,6 @@ class UserViewSet(viewsets.ViewSet):
                 |       - groups: array
 
         """
-
         user, response = AuthUser().authenticate(request)
         forbidden = status.HTTP_403_FORBIDDEN
         if not user:
@@ -188,26 +185,25 @@ class UserViewSet(viewsets.ViewSet):
 
         """
         data = JSONParser().parse(request)
-        if 'email' in data:
-            if User.objects.filter(email=data['email']).exists():
-                user = User.objects.get(email=data['email'])
-                ip = core.utils.get_client_ip(request)
-                list = PasswordRecovery.objects.filter(user=user)
-                if list.count() >= 2:
-                    last_pr = list.order_by('-pk')[1]
-                    fr = timezone(timedelta(hours=1), "Europe/Rome")
-                    delta = datetime.now(tz=fr) - last_pr.request_datetime
-                    if delta < timedelta(minutes=5):
-                        return Response({"detail":"Try again after 5 min"}, status=status.HTTP_401_UNAUTHORIZED)
-                token = core.utils.gen_temporary_token()
-                pr = PasswordRecovery(user=user, token=token, ip_address=ip)
-                pr.save()
-                send_mail('SmarTribe password recovery', token, 'noreply@smartri.be', [user.email], fail_silently=False)
-                return Response(status=status.HTTP_200_OK)
-            else:
-                return Response({"detail":"Unknown email address"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({"detail":"Email address required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not 'email' in data:
+            return Response({"detail": "Email address required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not User.objects.filter(email=data['email']).exists():
+            return Response({"detail": "Unknown email address"}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.objects.get(email=data['email'])
+        ip = core.utils.get_client_ip(request)
+        user_list = PasswordRecovery.objects.filter(user=user)
+        if user_list.count() >= 2:
+            last_pr = user_list.order_by('-pk')[1]
+            fr = timezone(timedelta(hours=1), "Europe/Rome")
+            delta = datetime.now(tz=fr) - last_pr.request_datetime
+            if delta < timedelta(minutes=5):
+                return Response({"detail": "Try again after 5 min"}, status=status.HTTP_401_UNAUTHORIZED)
+        token = core.utils.gen_temporary_token()
+        pr = PasswordRecovery(user=user, token=token, ip_address=ip)
+        pr.save()
+        send_mail('SmarTribe password recovery', token, 'noreply@smartri.be', [user.email], fail_silently=False)
+        return Response(status=status.HTTP_200_OK)
+
 
     @action(methods=['POST', ])
     def set_new_password(self, request, pk=None):
@@ -229,17 +225,14 @@ class UserViewSet(viewsets.ViewSet):
         """
         token = pk
         data = JSONParser().parse(request)
-        if token is not None:
-            if 'password' in data:
-                if PasswordRecovery.objects.filter(token=token).exists():
-                    user = PasswordRecovery.objects.get(token=token).user
-                    user.password = make_password(data['password'])
-                    user.save()
-                    PasswordRecovery.objects.filter(user=user).delete()
-                    return Response(status=status.HTTP_200_OK)
-                else:
-                    return Response({"detail":"No password renewal request"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({"detail":"Password required"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({"detail":"Token required"}, status=status.HTTP_400_BAD_REQUEST)
+        if token is None:
+            return Response({"detail": "Token required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not 'password' in data:
+            return Response({"detail": "Password required"}, status=status.HTTP_400_BAD_REQUEST)
+        if not PasswordRecovery.objects.filter(token=token).exists():
+            return Response({"detail": "No password renewal request"}, status=status.HTTP_400_BAD_REQUEST)
+        user = PasswordRecovery.objects.get(token=token).user
+        user.password = make_password(data['password'])
+        user.save()
+        PasswordRecovery.objects.filter(user=user).delete()
+        return Response(status=status.HTTP_200_OK)
