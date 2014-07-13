@@ -4,14 +4,19 @@ from core.models.validator import ZipCodeValidatorFR
 
 class Address(models.Model):
 
-    num = models.IntegerField()
+    num = models.IntegerField(blank=True,
+                              null=True)
 
-    street = models.CharField(max_length=100)
+    street = models.CharField(max_length=100,
+                              blank=True,
+                              null=True)
 
     city = models.CharField(max_length=100)
 
     zip_code = models.CharField(max_length=10,
-                                validators=[ZipCodeValidatorFR(), ])
+                                validators=[ZipCodeValidatorFR(), ],
+                                blank=True,
+                                null=True)
 
     country = models.CharField(max_length=50)
 

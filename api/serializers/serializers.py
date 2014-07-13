@@ -5,6 +5,8 @@ from rest_framework import serializers
 
 
 # USER
+from core.models.address import Address
+
 
 class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -43,21 +45,31 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name', 'codename')
 
 
+#   ADDRESS
+
+class AddressSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Address
+        fields = ('num', 'street', 'city', 'zip_code', 'country')
+
+
 # PROFILE
 
 class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.PrimaryKeyRelatedField()
+    address = AddressSerializer(many=False, blank=True)
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'gender', 'birthdate', 'bio', 'photo')
+        fields = ('url', 'user', 'gender', 'address', 'phone', 'birthdate', 'bio', 'photo', 'favorite_contact')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    address = AddressSerializer(many=False, blank=True)
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'gender', 'birthdate', 'bio', 'photo')
+        fields = ('url', 'user', 'gender', 'address', 'phone', 'birthdate', 'bio', 'photo', 'favorite_contact')
         read_only_fields = ('user',)
 
 
