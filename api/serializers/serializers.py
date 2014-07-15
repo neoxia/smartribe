@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 # USER
 from core.models.address import Address
+from core.models.skill import SkillCategory
 
 
 class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
@@ -75,10 +76,29 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 # SKILL
 
-class SkillSerializer(serializers.HyperlinkedModelSerializer):
+class SkillCategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = SkillCategory
+        fields = ('url', 'name', 'detail')
+
+
+class SkillCreateSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
     class Meta:
         model = Skill
-        fields = ('user', 'description')
+        fields = ('url', 'user', 'category', 'description')
+
+
+class SkillSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
+    class Meta:
+        model = Skill
+        fields = ('url', 'user', 'category', 'description')
+        read_only_fields = ('user',)
 
 
 # COMMUNITY

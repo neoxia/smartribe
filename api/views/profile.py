@@ -47,17 +47,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 |       - 204 No Content
                 |       - 400 Bad request
                 | **data return**:
-                |       - url: resource
-                |       - name: string
-                |       - description: string
-                |       - created_date : date
-                |       - auto_accept_member: boolean (true|false)
+                |       None
         """
-        # TODO : Verify if profile exists
         obj = self.get_object()
         if Profile.objects.filter(id=pk).exists():
             address = Profile.objects.get(id=pk).address
-            address.delete()
+            if address is not None:
+                address.delete()
         self.pre_delete(obj)
         obj.delete()
         self.post_delete(obj)
