@@ -5,6 +5,7 @@ from api.views import profile
 from api.views import community
 from api.views import member
 from api.views import media
+from api.views import skill
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -13,6 +14,8 @@ router.register(r'users', user.UserViewSet)
 router.register(r'profiles', profile.ProfileViewSet)
 router.register(r'communities', community.CommunityViewSet)
 router.register(r'members', member.MemberViewSet)
+router.register(r'skills', skill.SkillCategoryViewSet)
+router.register(r'skill_categories', skill.SkillViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.
