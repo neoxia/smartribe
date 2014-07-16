@@ -29,6 +29,8 @@ RUN chown -R gunicorn: /srv
 USER gunicorn
 WORKDIR /srv/smartribe
 
+RUN rm db.sqlite3
+
 RUN python3 /srv/smartribe/manage.py migrate
 
 EXPOSE 7777
