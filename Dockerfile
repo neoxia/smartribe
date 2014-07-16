@@ -29,6 +29,8 @@ RUN chown -R gunicorn: /srv
 USER gunicorn
 WORKDIR /srv/smartribe
 
+RUN python3 /srv/smartribe/manage.py migrate
+
 EXPOSE 7777
 
 CMD ["-w", "2", "-b", "0.0.0.0:7777", "smartribe.wsgi:application"]
