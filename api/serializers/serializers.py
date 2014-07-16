@@ -5,6 +5,9 @@ from rest_framework import serializers
 
 
 # USER
+from core.models.address import Address
+from core.models.skill import SkillCategory
+
 
 class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -43,30 +46,59 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name', 'codename')
 
 
+#   ADDRESS
+
+class AddressSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Address
+        fields = ('num', 'street', 'city', 'zip_code', 'country')
+
+
 # PROFILE
 
 class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
     user = serializers.PrimaryKeyRelatedField()
+    address = AddressSerializer(many=False, blank=True)
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'gender', 'birthdate', 'bio', 'photo')
+        fields = ('url', 'user', 'gender', 'address', 'phone', 'birthdate', 'bio', 'photo', 'favorite_contact')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    address = AddressSerializer(many=False, blank=True)
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'gender', 'birthdate', 'bio', 'photo')
+        fields = ('url', 'user', 'gender', 'address', 'phone', 'birthdate', 'bio', 'photo', 'favorite_contact')
         read_only_fields = ('user',)
 
 
 # SKILL
 
-class SkillSerializer(serializers.HyperlinkedModelSerializer):
+class SkillCategorySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = SkillCategory
+        fields = ('url', 'name', 'detail')
+
+
+class SkillCreateSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
     class Meta:
         model = Skill
-        fields = ('user', 'description')
+        fields = ('url', 'user', 'category', 'description')
+
+
+class SkillSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.PrimaryKeyRelatedField()
+    category = serializers.PrimaryKeyRelatedField()
+
+    class Meta:
+        model = Skill
+        fields = ('url', 'user', 'category', 'description')
+        read_only_fields = ('user',)
 
 
 # COMMUNITY

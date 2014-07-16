@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from core.models.address import Address
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
 def get_photo(self, filename):
@@ -17,6 +18,11 @@ class Profile(models.Model):
                               choices=GENDER_CHOICES,
                               default='O')
 
+    address = models.OneToOneField(Address,
+                                   related_name='profile',
+                                   blank=True,
+                                   null=True)
+
     phone = models.CharField(max_length=15,
                              validators=[PhoneValidatorFR(), ],
                              blank=True,
@@ -32,7 +38,15 @@ class Profile(models.Model):
                               blank=True,
                               null=True)
 
-
+    CONTACT_CHOICES = (
+        ('E', 'Email'),
+        ('P', 'Phone'),
+        ('N', 'None'))
+    favorite_contact = models.CharField(max_length=2,
+                                        choices=CONTACT_CHOICES,
+                                        default='N')
+    def __str__(self):
+        return self.user.username
 
     class Meta:
         verbose_name = 'profile'
@@ -40,25 +54,3 @@ class Profile(models.Model):
         app_label = 'core'
 
 
-class Address(models.Model):
-
-    profile = models.OneToOneField(Profile,
-                                   related_name='address')
-
-    num = models.IntegerField()
-
-    street = models.CharField(max_length=100)
-
-    city = models.CharField(max_length=100)
-
-    zip_code = models.CharField(max_length=10,
-                                validators=[ZipCodeValidatorFR(), ])
-
-    country = models.CharField(max_length=50)
-
-    #objects = models.GeoManager()
-
-    class Meta:
-        verbose_name = 'address'
-        verbose_name_plural = 'addresses'
-        app_label = 'core'

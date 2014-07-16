@@ -103,11 +103,10 @@ class UserViewSet(viewsets.ViewSet):
 
         """
         user, response = AuthUser().authenticate(request)
-        forbidden = status.HTTP_403_FORBIDDEN
         if not user:
             return response
         elif str(user.id) != pk:
-            return Response({"detail": "Access denied"}, status=forbidden)
+            return Response({"detail": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
@@ -128,11 +127,10 @@ class UserViewSet(viewsets.ViewSet):
 
         """
         user, response = AuthUser().authenticate(request)
-        forbidden = status.HTTP_403_FORBIDDEN
         if not user:
             return response
         elif str(user.id) != pk:
-            return Response({"detail": "Access denied"}, status=forbidden)
+            return Response({"detail": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
         data = JSONParser().parse(request)
         if 'password' in data:
             data['password'] = make_password(data['password'])

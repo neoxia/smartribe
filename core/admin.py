@@ -1,6 +1,7 @@
 from django.contrib import admin
 from core.models import Member
 from core.models.activation_token import ActivationToken
+from core.models.address import Address
 from core.models.skill import SkillCategory
 from .models import Profile
 from .models import Community
@@ -49,3 +50,7 @@ class PasswordRecoveryAdmin(admin.ModelAdmin):
 @admin.register(ActivationToken)
 class ActivationTokenAdmin(admin.ModelAdmin):
     list_display = ['user']
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ['city']
