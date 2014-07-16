@@ -41,3 +41,5 @@ class ProfileViewSet(viewsets.ModelViewSet):
             address = Profile.objects.get(id=pk).address
             if address is not None:
                 address.delete()
+
+    # FIXME : Allow GET only for members sharing at least one community ?
