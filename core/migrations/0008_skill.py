@@ -8,16 +8,17 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('core', '0007_offer'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('core', '0007_auto_20140514_2120'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Skill',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True, serialize=False)),
+                ('id', models.AutoField(auto_created=True, verbose_name='ID', primary_key=True, serialize=False)),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, to_field='id')),
+                ('category', models.ForeignKey(to='core.SkillCategory', to_field='id')),
                 ('description', models.TextField()),
             ],
             options={

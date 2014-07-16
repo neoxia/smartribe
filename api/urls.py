@@ -14,8 +14,8 @@ router.register(r'users', user.UserViewSet)
 router.register(r'profiles', profile.ProfileViewSet)
 router.register(r'communities', community.CommunityViewSet)
 router.register(r'members', member.MemberViewSet)
-router.register(r'skills', skill.SkillCategoryViewSet)
-router.register(r'skill_categories', skill.SkillViewSet)
+router.register(r'skill_categories', skill.SkillCategoryViewSet)
+router.register(r'skills', skill.SkillViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.

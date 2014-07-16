@@ -16,7 +16,7 @@ class SkillCategoryViewSet(viewsets.ModelViewSet):
     """
     model = SkillCategory
     serializer_class = SkillCategorySerializer
-    permission_classes = IsJWTAuthenticated
+    permission_classes = [IsJWTAuthenticated, ]
 
 
 class SkillViewSet(viewsets.ModelViewSet):
