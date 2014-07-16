@@ -16,6 +16,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
             |       - Default : IsJWTOwner
             |       - GET : IsJWTAuthenticated
             |       - POST : IsJWTSelf
+    Overrides standard pre_delete() method to destroy address object simultaneously.
     """
     model = Profile
     serializer_class = ProfileSerializer
@@ -34,27 +35,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
         else:
             return [IsJWTOwner()]
 
-    def destroy(self, request, pk=None, *args, **kwargs):
-        """
-        Overrides standard "Destroy" method, to destroy address simultaneously
-
-                | **permission**: owner
-                | **endpoint**: /profiles/{id}/
-                | **method**: DELETE
-                | **attr**:
-                |       None
-                | **http return**:
-                |       - 204 No Content
-                |       - 400 Bad request
-                | **data return**:
-                |       None
-        """
-        obj = self.get_object()
+    def pre_delete(self, obj):
+        pk = self.kwargs['pk']
         if Profile.objects.filter(id=pk).exists():
             address = Profile.objects.get(id=pk).address
             if address is not None:
                 address.delete()
-        self.pre_delete(obj)
-        obj.delete()
-        self.post_delete(obj)
-        return Response(status=status.HTTP_204_NO_CONTENT)
