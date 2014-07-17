@@ -4,13 +4,18 @@ from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
 from api.serializers.serializers import SkillSerializer, SkillCategorySerializer, SkillCreateSerializer
 from core.models import Skill
 from core.models.skill import SkillCategory
+from rest_framework import mixins
 
 
-class SkillCategoryViewSet(viewsets.ModelViewSet):
+class SkillCategoryViewSet(viewsets.GenericViewSet,
+                           mixins.CreateModelMixin,
+                           mixins.RetrieveModelMixin,
+                           mixins.ListModelMixin):
     """
-    Inherits standard characteristics from ModelViewSet:
+    Inherits standard characteristics from GenericViewSet and additionally provides
+    'create', 'retrieve' and 'list' methods :
             | **Endpoint**: /skill_categories/
-            | **Methods**: GET / POST / PUT / PATCH / DELETE / OPTIONS
+            | **Methods**: GET / POST / OPTIONS
             | **Permissions**:
             |       - Default : IsJWTAuthenticated
     """
