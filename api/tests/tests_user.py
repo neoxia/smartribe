@@ -200,7 +200,7 @@ class AccountTests(APITestCase):
 
     def test_retrieve_other_user(self):
         """
-        Ensure an authenticated user can retrieve his own FULL user.
+        Ensure an authenticated user cannot retrieve a FULL user for other user.
         """
         root_url = 'http://testserver'
         self.create_two_users()
@@ -218,6 +218,58 @@ class AccountTests(APITestCase):
         except:
             error = True
         self.assertEquals(True, error)
+
+    def test_update_my_user(self):
+        """
+        Ensure an authenticated user can update his own user.
+        """
+        self.create_two_users()
+        url = '/api/v1/users/1/'
+        data = {
+            'password': 'password'
+        }
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        user = User.objects.get(username='test')
+        self.assertEqual(True, check_password('password', user.password))
+
+    def test_update_other_user(self):
+        """
+        Ensure an authenticated user cannot update another user.
+        """
+        self.create_two_users()
+        url = '/api/v1/users/2/'
+        data = {
+            'password': 'password'
+        }
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        user = User.objects.get(username='test0')
+        self.assertEqual(True, check_password('pass0', user.password))
+
+    def test_delete_my_user(self):
+        """
+        Ensure an authenticated user can delete his own user.
+        """
+        self.create_two_users()
+        url = '/api/v1/users/1/'
+
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        user = User.objects.filter(username='test').exists()
+        self.assertEqual(False, user)
+
+    def test_delete_other_user(self):
+        """
+        Ensure an authenticated user cannot delete another user.
+        """
+        self.create_two_users()
+        url = '/api/v1/users/2/'
+
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        user = User.objects.filter(username='test0').exists()
+        self.assertEqual(True, user)
 
 
 
