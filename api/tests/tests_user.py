@@ -1,12 +1,67 @@
+import json
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 from rest_framework.test import APITestCase
 from core.models import PasswordRecovery
 from core.models.activation_token import ActivationToken
+import core.utils
 
 
 class AccountTests(APITestCase):
+
+    def token_line(self):
+        user = User.objects.get(username="test")
+        token = core.utils.gen_auth_token(user)
+        return 'JWT {0}'.format(token)
+
+    def create_two_users(self):
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'pass'
+        }
+        self.client.post(url, data, format='json')
+        token = ActivationToken.objects.get(id=1)
+        data = {'token': token.token}
+        url = '/api/v1/users/1/confirm_registration/'
+        self.client.post(url, data, format='json')
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test0',
+            'email': 'test0@test.com',
+            'password': 'pass0'
+        }
+        self.client.post(url, data, format='json')
+
+    def create_three_users(self):
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'pass'
+        }
+        self.client.post(url, data, format='json')
+        token = ActivationToken.objects.get(id=1)
+        data = {'token': token.token}
+        url = '/api/v1/users/1/confirm_registration/'
+        self.client.post(url, data, format='json')
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test0',
+            'email': 'test0@test.com',
+            'password': 'pass0'
+        }
+        self.client.post(url, data, format='json')
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test1',
+            'email': 'test1@test.com',
+            'password': 'pass1'
+        }
+        self.client.post(url, data, format='json')
 
     def test_create_account(self):
         """
@@ -18,18 +73,14 @@ class AccountTests(APITestCase):
             'email': 'test@test.com',
             'password': 'pass'
         }
-        response_data = {
-            'url': url+'1/',
-            'username': 'test',
-            'email': 'test@test.com',
-            'groups': []
-        }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        #self.assertEqual(response.data, response_data)
+        self.assertEqual(True, User.objects.filter(username='test').exists())
         user = User.objects.get(username='test')
+        self.assertEqual('test@test.com', user.email)
         self.assertEqual(False, user.is_active)
+        self.assertEqual(True, check_password('pass', user.password))
         token = ActivationToken.objects.get(id=1)
         self.assertEqual(user, token.user)
 
@@ -104,4 +155,74 @@ class AccountTests(APITestCase):
         self.assertEqual(0, PasswordRecovery.objects.filter().count())
         user = User.objects.get(username='test')
         self.assertEqual(True, check_password('gloup', user.password))
+
+    def test_list_users_without_auth(self):
+        """
+        Ensure an unauthenticated user cannot list users.
+        """
+        self.create_two_users()
+        url = '/api/v1/users/'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_list_users_with_auth(self):
+        """
+        Ensure an authenticated user can list users.
+        """
+        self.create_three_users()
+        url = '/api/v1/users/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # TODO : Finalize test
+        data = response.data
+        self.assertEqual(3, data['count'])
+
+    def test_search_users(self):
+        # TODO : Test search users
+        pass
+
+    def test_retrieve_my_user(self):
+        """
+        Ensure an authenticated user can retrieve his own FULL user.
+        """
+        root_url = 'http://testserver'
+        self.create_two_users()
+        url = '/api/v1/users/1/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        data = response.data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(root_url+url, data['url'])
+        self.assertEqual('test', data['username'])
+        self.assertEqual('test@test.com', data['email'])
+        self.assertEqual([], data['groups'])
+
+    def test_retrieve_other_user(self):
+        """
+        Ensure an authenticated user can retrieve his own FULL user.
+        """
+        root_url = 'http://testserver'
+        self.create_two_users()
+        url = '/api/v1/users/2/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        data = response.data
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(root_url+url, data['url'])
+        self.assertEqual('test0', data['username'])
+        error = False
+        try:
+            tmp = data['email']
+            tmp = data['groups']
+        except:
+            error = True
+        self.assertEquals(True, error)
+
+
+
+
+
+
+
 

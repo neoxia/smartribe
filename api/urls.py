@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url, include
 from rest_framework import routers
 from api.views import user
+from api.views import user_bis
 from api.views import profile
 from api.views import community
 from api.views import member
@@ -10,7 +11,7 @@ from smartribe.settings import MEDIA_ROOT
 
 
 router = routers.DefaultRouter()
-router.register(r'users', user.UserViewSet)
+router.register(r'users', user_bis.UserBisViewSet)
 router.register(r'profiles', profile.ProfileViewSet)
 router.register(r'communities', community.CommunityViewSet)
 router.register(r'members', member.MemberViewSet)

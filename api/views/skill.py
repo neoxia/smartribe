@@ -45,7 +45,7 @@ class SkillViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         # TODO : Permissions must be different if pk or not
-        if self.request.method == 'GET' and not 'pk' in self.kwargs:
+        if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
         elif self.request.method == 'POST':
             return [IsJWTSelf()]

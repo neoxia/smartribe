@@ -46,3 +46,16 @@ class IsJWTSelf(BasePermission):
             return False
         else:
             return True
+
+class IsJWTMe(BasePermission):
+    """
+    Only for 'User' objects
+    """
+    def has_object_permission(self, request, view, obj):
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return False
+        if obj == user:
+            return True
+        else:
+            return False
