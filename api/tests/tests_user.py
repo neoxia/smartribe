@@ -167,16 +167,26 @@ class AccountTests(APITestCase):
 
     def test_list_users_with_auth(self):
         """
-        Ensure an authenticated user can list users.
+        Ensure an authenticated user can list users with public information only.
         """
         self.create_three_users()
         url = '/api/v1/users/'
 
         response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # TODO : Finalize test
         data = response.data
         self.assertEqual(3, data['count'])
+        self.assertEqual('test', data['results'][0]['username'])
+        self.assertEqual('test0', data['results'][1]['username'])
+        self.assertEqual('test1', data['results'][2]['username'])
+        error = False
+        try:
+            tmp = data['results'][0]['email']
+            tmp = data['results'][1]['email']
+            tmp = data['results'][2]['email']
+        except:
+            error = True
+        self.assertEquals(True, error)
 
     def test_search_users(self):
         # TODO : Test search users
