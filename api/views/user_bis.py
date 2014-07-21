@@ -16,6 +16,17 @@ from rest_framework import status
 import core.utils
 from datetime import timedelta, tzinfo, timezone, datetime
 from rest_framework import filters
+import django_filters
+from rest_framework import generics
+
+
+class UserFilter(django_filters.FilterSet):
+    username = django_filters.CharFilter(name='username', lookup_type='contains')
+
+    class Meta:
+        model = User
+        fields = ['username',]
+
 
 class UserBisViewSet(viewsets.ModelViewSet):
     """
@@ -30,7 +41,13 @@ class UserBisViewSet(viewsets.ModelViewSet):
     """
     model = User
     serializer_class = UserSerializer
+    queryset = User.objects.all()
     #filter_backends = (filters.DjangoFilterBackend,)
+    #filter_backends = (filters.SearchFilter,)
+    filter_class = UserFilter
+    #filter_fields = ('username',)
+    #search_fields = ('username',)
+
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
@@ -64,6 +81,16 @@ class UserBisViewSet(viewsets.ModelViewSet):
                                     token=core.utils.gen_temporary_token())
             token.save()
             send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [obj.email], fail_silently=False)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        user_name = self.request.QUERY_PARAMS.get('username', None)
+        if user_name is not None:
+            queryset = queryset.filter(username=user_name)
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     @action(methods=['POST', ])
     def confirm_registration(self, request, pk=None):

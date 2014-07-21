@@ -63,6 +63,38 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
 
+    def create_four_users(self):
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'pass'
+        }
+        self.client.post(url, data, format='json')
+        token = ActivationToken.objects.get(id=1)
+        data = {'token': token.token}
+        url = '/api/v1/users/1/confirm_registration/'
+        self.client.post(url, data, format='json')
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test0',
+            'email': 'test0@test.com',
+            'password': 'pass0'
+        }
+        self.client.post(url, data, format='json')
+        data = {
+            'username': 'test1',
+            'email': 'test1@test.com',
+            'password': 'pass1'
+        }
+        self.client.post(url, data, format='json')
+        data = {
+            'username': 'test2',
+            'email': 'test2@testi.com',
+            'password': 'pass2'
+        }
+        self.client.post(url, data, format='json')
+
     def test_create_account(self):
         """
         Ensure we can create a new account object.
@@ -189,8 +221,18 @@ class AccountTests(APITestCase):
         self.assertEquals(True, error)
 
     def test_search_users(self):
+        """
+        Ensure an authenticated user can search users.
+        """
         # TODO : Test search users
-        pass
+        self.create_four_users()
+        url = '/api/v1/users/search?username=test/'
+
+        self.assertEqual(4, User.objects.all().count())
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual(1, data['count'])
 
     def test_retrieve_my_user(self):
         """
