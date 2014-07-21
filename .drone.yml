@@ -5,6 +5,8 @@ script:
   # - python3 manage.py migrate
   # - python3 manage.py test
   - env
+  - ip a
+  - ping -c 2 10.76.146.144
   - docker.io build --tag="docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH" .
   - docker.io push docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH
 
