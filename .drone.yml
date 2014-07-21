@@ -1,12 +1,14 @@
-image: smartribe/test-python34:0.2
+image: smartribe/test-python34:0.3
 
 script:
   - pip3 install -r requirements.txt -q
   - python3 manage.py migrate
   - python3 manage.py test
+  - docker.io build . docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH
+  - docker.io push docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH
 
 notify:
   email:
     recipients:
       - coleu_y@etna-alternance.net
-      - bordie_r@etna-alternance.net
+      #- bordie_r@etna-alternance.net
