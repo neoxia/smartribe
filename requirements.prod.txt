@@ -3,5 +3,6 @@ Pillow==2.4.0
 django-cors-headers==0.12
 djangorestframework==2.3.13
 djangorestframework-jwt==0.1.5
+PyMySQL
 gunicorn
 django-filter==0.7

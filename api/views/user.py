@@ -15,6 +15,7 @@ from api.authenticate import AuthUser
 from core.models.activation_token import ActivationToken
 import core.utils
 from core.models.password_recovery import PasswordRecovery
+from smartribe import settings
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -46,15 +47,26 @@ class UserViewSet(viewsets.ViewSet):
         """
         data = JSONParser().parse(request)
         data['password'] = make_password(data['password'])
-        data['is_active'] = False
+        if settings.DEBUG:
+            data['is_active'] = True
+        else:
+            data['is_active'] = False
+
         serial_user = UserCreateSerializer(data=data)
         if not serial_user.is_valid():
-            return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial_user.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
         serial_user.save()
-        token = ActivationToken(user=User.objects.get(username=data['username']),
-                                token=core.utils.gen_temporary_token())
+        user = User.objects.get(username=data['username'])
+        token = core.utils.gen_temporary_token()
+        token = ActivationToken(user, tocker)
         token.save()
-        send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [data['email']], fail_silently=False)
+        send_mail('SmarTribe registration',
+                  token.token,
+                  'noreply@smartri.be',
+                  [data['email']],
+                  fail_silently=False
+                  )
         return Response(serial_user.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['POST', ])
@@ -75,12 +87,15 @@ class UserViewSet(viewsets.ViewSet):
         """
         if not User.objects.filter(id=pk).exists():
             return Response({"detail": "Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
+
         data = JSONParser().parse(request)
-        if not 'token' in data:
+        if 'token' not in data:
             return Response({"detail": "Missing token"}, status=status.HTTP_400_BAD_REQUEST)
+        
         user = User.objects.get(id=pk)
         if not ActivationToken.objects.filter(user=user, token=data['token']).exists():
             return Response({"detail": "Activation error"}, status=status.HTTP_400_BAD_REQUEST)
+        
         user.is_active = True
         user.save()
         ActivationToken.objects.get(user=user, token=data['token']).delete()
@@ -183,7 +198,7 @@ class UserViewSet(viewsets.ViewSet):
 
         """
         data = JSONParser().parse(request)
-        if not 'email' in data:
+        if 'email' not in data:
             return Response({"detail": "Email address required"}, status=status.HTTP_400_BAD_REQUEST)
         if not User.objects.filter(email=data['email']).exists():
             return Response({"detail": "Unknown email address"}, status=status.HTTP_400_BAD_REQUEST)
@@ -201,7 +216,6 @@ class UserViewSet(viewsets.ViewSet):
         pr.save()
         send_mail('SmarTribe password recovery', token, 'noreply@smartri.be', [user.email], fail_silently=False)
         return Response(status=status.HTTP_200_OK)
-
 
     @action(methods=['POST', ])
     def set_new_password(self, request, pk=None):
@@ -225,7 +239,7 @@ class UserViewSet(viewsets.ViewSet):
         data = JSONParser().parse(request)
         if token is None:
             return Response({"detail": "Token required"}, status=status.HTTP_400_BAD_REQUEST)
-        if not 'password' in data:
+        if 'password' not in data:
             return Response({"detail": "Password required"}, status=status.HTTP_400_BAD_REQUEST)
         if not PasswordRecovery.objects.filter(token=token).exists():
             return Response({"detail": "No password renewal request"}, status=status.HTTP_400_BAD_REQUEST)

@@ -22,6 +22,8 @@ SECRET_KEY = '^tb)yl#7-fk*vch+e5@cjbcsi6)otseo*ft4c6ze+-*(n$kiw0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+#DEBUG = False
+PROD = False
 
 TEMPLATE_DEBUG = True
 
@@ -71,7 +73,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-SESSION_SERIALIZER='django.contrib.sessions.serializers.PickleSerializer'
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -83,12 +85,23 @@ WSGI_APPLICATION = 'smartribe.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'NAME': 'smartribe',
+            'ENGINE': 'django.db.backends.mysql',
+            'USER': 'smartribe',
+            'PASSWORD': 'password',
+            'HOST': '10.129.235.136',
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
@@ -128,7 +141,12 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600*10)
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.gandi.net'
+EMAIL_PORT = 587
+MAIL_HOST_USER = 'noreply@smartri.be'
+EMAIL_HOST_PASSWORD = 'sjhqd6qsjhdsqjhgéééHJGqsljkdhsqkjdhqkjsqdhkqshdsq'
+EMAIL_USE_SSL = True
 
 MEDIA_ROOT = 'media/'
 
