@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.test import APITestCase
 from core.models import PasswordRecovery
 from core.models.activation_token import ActivationToken
+from django.core.urlresolvers import reverse
 import core.utils
 
 
@@ -89,8 +90,8 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         data = {
-            'username': 'test2',
-            'email': 'test2@testi.com',
+            'username': 'toto',
+            'email': 'toto@testi.com',
             'password': 'pass2'
         }
         self.client.post(url, data, format='json')
@@ -135,8 +136,8 @@ class AccountTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user = User.objects.get(username='test')
-        self.assertEqual(True, user.is_active)
-        self.assertEqual(False, ActivationToken.objects.filter(id=1).exists())
+        self.assertTrue(user.is_active)
+        self.assertFalse(ActivationToken.objects.filter(id=1).exists())
 
     def test_username_is_unique(self):
         """
@@ -224,15 +225,24 @@ class AccountTests(APITestCase):
         """
         Ensure an authenticated user can search users.
         """
-        # TODO : Test search users
         self.create_four_users()
-        url = '/api/v1/users/search?username=test/'
-
         self.assertEqual(4, User.objects.all().count())
+
+        # Search all user
+        url = '/api/v1/users/?username=test'
         response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
-        self.assertEqual(1, data['count'])
+        self.assertEqual(data['count'], 4)
+
+        # Search one user
+        url = '/api/v1/users/?username=test1'
+        print(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        print(data)
+        self.assertEqual(data['count'], 1)
 
     def test_retrieve_my_user(self):
         """
