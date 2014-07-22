@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -62,14 +61,15 @@ class LoginViewSet(viewsets.ViewSet):
 
 
 class UserBisViewSet(viewsets.ModelViewSet):
-    """
-    Inherits standard characteristics from ModelViewSet:
+    """ Inherits standard characteristics from ModelViewSet:
+
             | **Endpoint**: /profiles/
             | **Methods**: GET / POST / PUT / PATCH / DELETE / OPTIONS
             | **Permissions**:
             |       - Default : IsJWTOwner
             |       - GET : IsJWTAuthenticated
             |       - POST : IsJWTSelf
+
     Overrides standard pre_delete() method to destroy address object simultaneously.
     """
     model = User
@@ -107,7 +107,11 @@ class UserBisViewSet(viewsets.ModelViewSet):
             token = ActivationToken(user=User.objects.get(username=obj.username),
                                     token=core.utils.gen_temporary_token())
             token.save()
-            send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [obj.email], fail_silently=False)
+            send_mail('SmarTribe registration',
+                      token.token,
+                      'noreply@smartri.be',
+                      [obj.email],
+                      fail_silently=False)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -177,7 +181,11 @@ class UserBisViewSet(viewsets.ModelViewSet):
         token = core.utils.gen_temporary_token()
         pr = PasswordRecovery(user=user, token=token, ip_address=ip)
         pr.save()
-        send_mail('SmarTribe password recovery', token, 'noreply@smartri.be', [user.email], fail_silently=False)
+        send_mail('SmarTribe password recovery',
+                  'https://demo.smartri.be/password/:'+token+'/edit',
+                  'noreply@smartri.be',
+                  [user.email],
+                  fail_silently=False)
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['POST', ])
