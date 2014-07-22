@@ -1,23 +1,22 @@
-from django.contrib.auth.hashers import make_password
+from datetime import timedelta, timezone, datetime
 
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from api.authenticate import AuthUser
+from rest_framework import status
+import django_filters
 
+from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers.serializers import UserCreateSerializer, UserSerializer, UserPublicSerializer
 from core.models import ActivationToken, PasswordRecovery
-from rest_framework import status
 import core.utils
-from datetime import timedelta, tzinfo, timezone, datetime
-from rest_framework import filters
-import django_filters
-from rest_framework import generics
 
 
 class UserFilter(django_filters.FilterSet):
@@ -60,29 +59,6 @@ class LoginViewSet(viewsets.ViewSet):
             return response
         serializer = UserSerializer(user)
         return Response(serializer.data)
-
-
-class UserListView(generics.ListAPIView):
-    serializer_class = UserPublicSerializer
-    permission_classes = [AllowAny,]
-
-    def search(self):
-        return self.get_queryset()
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        #username = self.kwargs['username']
-        #return User.objects.filter(username=username)
-
-        queryset = User.objects.all()
-        username = self.request.QUERY_PARAMS.get('username', None)
-        if username is not None:
-            queryset = queryset.filter(username=username)
-        return queryset
-
 
 
 class UserBisViewSet(viewsets.ModelViewSet):

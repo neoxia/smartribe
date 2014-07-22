@@ -1,14 +1,13 @@
 from django.conf.urls import patterns, url, include
 from rest_framework import routers
 from rest_framework.routers import Route
-from api.views import user
+
 from api.views import user_bis
 from api.views import profile
 from api.views import community
 from api.views import member
 from api.views import media
 from api.views import skill
-from api.views.user_bis import UserListView
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -74,7 +73,6 @@ urlpatterns = patterns('',
                        url(r'^v1/', include(router.urls)),
                        url(r'^v1/auth/', include('rest_framework.urls', namespace='rest_framework')),
                        url(r'^v1/login/$', user_bis.LoginViewSet),
-                       url(r'^v1/search(.*)$', UserListView.search),
                        #url(r'^v1/test/(?P<username>.+)/$', user_bis.UserBisViewSet),
 )
 
