@@ -144,8 +144,8 @@ JWT_AUTH = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.gandi.net'
 EMAIL_PORT = 587
-MAIL_HOST_USER = 'noreply@smartri.be'
-EMAIL_HOST_PASSWORD = 'sjhqd6qsjhdsqjhgéééHJGqsljkdhsqkjdhqkjsqdhkqshdsq'
+EMAIL_HOST_USER = 'noreply@smartri.be'
+EMAIL_HOST_PASSWORD = 'sjhqd6qsjhdsqjhgHJGqsljkdhsqkjdhqkjsqdhkqshdsq'
 EMAIL_USE_TLS = True
 
 MEDIA_ROOT = 'media/'
