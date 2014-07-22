@@ -108,7 +108,7 @@ class UserBisViewSet(viewsets.ModelViewSet):
                                     token=core.utils.gen_temporary_token())
             token.save()
             send_mail('SmarTribe registration',
-                      token.token,
+                      'https://demo.smartri.be/'+token.token+'/confirm_registration/',
                       'noreply@smartri.be',
                       [obj.email],
                       fail_silently=False)
