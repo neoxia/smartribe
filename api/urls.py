@@ -8,6 +8,7 @@ from api.views import community
 from api.views import member
 from api.views import media
 from api.views import skill
+from api.views.user_bis import UserListView
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -72,6 +73,8 @@ router.register(r'skills', skill.SkillViewSet)
 urlpatterns = patterns('',
                        url(r'^v1/', include(router.urls)),
                        url(r'^v1/auth/', include('rest_framework.urls', namespace='rest_framework')),
+                       url(r'^v1/login/$', user_bis.LoginViewSet),
+                       url(r'^v1/search(.*)$', UserListView.search),
                        #url(r'^v1/test/(?P<username>.+)/$', user_bis.UserBisViewSet),
 )
 

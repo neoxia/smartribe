@@ -2,8 +2,9 @@ from django.contrib.auth.hashers import make_password
 
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.http import request
 from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, link
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -26,6 +27,60 @@ class UserFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = ['username',]
+
+
+class LoginViewSet(viewsets.ViewSet):
+    """
+    Login endpoint
+    """
+    permission_classes = [AllowAny]
+    model = User
+
+    def list(self, request):
+        """ **NOT A LIST** Get current authenticated user:
+
+                | **permission**: authenticated, get self
+                | **endpoint**: /users/
+                | **method**: GET
+                | **http return**:
+                |       - 200 OK
+                |       - 403 Forbidden
+                | **data return**:
+                |       - url: resource
+                |       - username: string
+                |       - email: string
+                |       - groups: array
+
+        """
+
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return response
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+
+class UserListView(generics.ListAPIView):
+    serializer_class = UserPublicSerializer
+    permission_classes = [AllowAny,]
+
+    def search(self):
+        return self.get_queryset()
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        #username = self.kwargs['username']
+        #return User.objects.filter(username=username)
+
+        queryset = User.objects.all()
+        username = self.request.QUERY_PARAMS.get('username', None)
+        if username is not None:
+            queryset = queryset.filter(username=username)
+        return queryset
+
 
 
 class UserBisViewSet(viewsets.ModelViewSet):
@@ -54,6 +109,8 @@ class UserBisViewSet(viewsets.ModelViewSet):
         user, _ = AuthUser().authenticate(self.request)
         if self.request.method == 'GET' and not 'pk' in self.kwargs:
             serializer_class = UserPublicSerializer
+        elif self.request.method == 'GET' and self.kwargs['pk'] == '0':
+            serializer_class = UserPublicSerializer
         elif self.request.method == 'GET' and not self.object == user:
             serializer_class = UserPublicSerializer
         elif self.request.method == 'POST':
@@ -62,6 +119,8 @@ class UserBisViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'GET':
+            #return [AllowAny()]
+            # FIXME : uncomment
             return [IsJWTAuthenticated()]
         elif self.request.method == 'POST':
             return [AllowAny()]
@@ -191,3 +250,7 @@ class UserBisViewSet(viewsets.ModelViewSet):
         user.save()
         PasswordRecovery.objects.filter(user=user).delete()
         return Response(status=status.HTTP_200_OK)
+
+    @link(serializer_class=UserPublicSerializer)
+    def search_users(self, request, pk=None):
+        return super().list(self, request)
