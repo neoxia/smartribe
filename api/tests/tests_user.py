@@ -89,8 +89,8 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         data = {
-            'username': 'test2',
-            'email': 'test2@testi.com',
+            'username': 'toto',
+            'email': 'toto@testi.com',
             'password': 'pass2'
         }
         self.client.post(url, data, format='json')
@@ -220,21 +220,28 @@ class AccountTests(APITestCase):
             error = True
         self.assertTrue(error)
 
-    """def test_search_users(self):
-
+    def test_search_users(self):
+        """
         Ensure an authenticated user can search users.
-
-        # TODO : Test search users
+        """
         self.create_four_users()
-        #url = '/api/v1/users/0/search_users/'
-        #url = '/api/v1/users/0/search_users&username=test0'
-        url = '/api/v1/search?username=test&email=ted'
+        self.assertEqual(4, User.objects.all().count())
 
-        self.assertEquals(4, User.objects.all().count())
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line())
-        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        # Search all user
+        url = '/api/v1/users/?username=test'
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
-        self.assertEquals(1, data['count'])"""
+        self.assertEqual(data['count'], 4)
+
+        # Search one user
+        url = '/api/v1/users/?username=test1'
+        print(url)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        print(data)
+        self.assertEqual(data['count'], 1)
 
     def test_retrieve_my_user(self):
         """

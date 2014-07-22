@@ -2,9 +2,8 @@ from django.contrib.auth.hashers import make_password
 
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.http import request
 from rest_framework import viewsets
-from rest_framework.decorators import action, link
+from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -22,11 +21,14 @@ from rest_framework import generics
 
 
 class UserFilter(django_filters.FilterSet):
+    """
+    Specific search filter for users
+    """
     username = django_filters.CharFilter(name='username', lookup_type='contains')
 
     class Meta:
         model = User
-        fields = ['username',]
+        fields = ['username', ]
 
 
 class LoginViewSet(viewsets.ViewSet):
@@ -96,20 +98,12 @@ class UserBisViewSet(viewsets.ModelViewSet):
     """
     model = User
     serializer_class = UserSerializer
-    queryset = User.objects.all()
-    #filter_backends = (filters.DjangoFilterBackend,)
-    #filter_backends = (filters.SearchFilter,)
     filter_class = UserFilter
-    #filter_fields = ('username',)
-    #search_fields = ('username',)
-
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         user, _ = AuthUser().authenticate(self.request)
-        if self.request.method == 'GET' and not 'pk' in self.kwargs:
-            serializer_class = UserPublicSerializer
-        elif self.request.method == 'GET' and self.kwargs['pk'] == '0':
+        if self.request.method == 'GET' and 'pk' not in self.kwargs:
             serializer_class = UserPublicSerializer
         elif self.request.method == 'GET' and not self.object == user:
             serializer_class = UserPublicSerializer
@@ -119,8 +113,6 @@ class UserBisViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            #return [AllowAny()]
-            # FIXME : uncomment
             return [IsJWTAuthenticated()]
         elif self.request.method == 'POST':
             return [AllowAny()]
@@ -140,13 +132,6 @@ class UserBisViewSet(viewsets.ModelViewSet):
                                     token=core.utils.gen_temporary_token())
             token.save()
             send_mail('SmarTribe registration', token.token, 'noreply@smartri.be', [obj.email], fail_silently=False)
-
-    def get_queryset(self):
-        queryset = self.queryset
-        user_name = self.request.QUERY_PARAMS.get('username', None)
-        if user_name is not None:
-            queryset = queryset.filter(username=user_name)
-        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -200,7 +185,7 @@ class UserBisViewSet(viewsets.ModelViewSet):
 
         """
         data = JSONParser().parse(request)
-        if not 'email' in data:
+        if 'email' not in data:
             return Response({"detail": "Email address required"}, status=status.HTTP_400_BAD_REQUEST)
         if not User.objects.filter(email=data['email']).exists():
             return Response({"detail": "Unknown email address"}, status=status.HTTP_400_BAD_REQUEST)
@@ -250,7 +235,3 @@ class UserBisViewSet(viewsets.ModelViewSet):
         user.save()
         PasswordRecovery.objects.filter(user=user).delete()
         return Response(status=status.HTTP_200_OK)
-
-    @link(serializer_class=UserPublicSerializer)
-    def search_users(self, request, pk=None):
-        return super().list(self, request)
