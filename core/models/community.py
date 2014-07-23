@@ -1,5 +1,5 @@
 from django.db import models
-from core.models.address import Address
+from core.models import Address
 
 
 class Community(models.Model):
