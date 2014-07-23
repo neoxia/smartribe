@@ -8,6 +8,9 @@ script:
   - sleep 5
   - docker.io build --tag="docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH" .
   - docker.io push docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH
+  - /etc/init.d/docker.io stop
+  - echo "Build Finished"
+  - sleep 5
 
 notify:
   email:
