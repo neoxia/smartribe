@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.contrib.auth.models import User
+from core.models import User
 from core.models import Member, Community
 import core.utils
 
@@ -11,11 +11,11 @@ class CommunityTests(APITestCase):
         Make a user for authenticating and
         testing community actions
         """
-        owner = User(username="community_owner", password="test")
+        owner = User(username="community_owner", password="test", email="z@s.d")
         owner.save()
-        moderator = User(username="moderator", password="test0")
+        moderator = User(username="moderator", password="test0", email="z@s.sd")
         moderator.save()
-        user = User(username="simple_user", password="test1")
+        user = User(username="simple_user", password="test1", email="zz@ssk.dk")
         user.save()
 
     def test_create_community_without_auth(self):

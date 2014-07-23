@@ -6,6 +6,9 @@ from core.models.activation_token import ActivationToken
 ## Profile
 from core.models.profile import Profile
 
+## User
+from core.models.user import User
+
 ## Skill
 from core.models.skill import SkillCategory
 from core.models.skill import Skill

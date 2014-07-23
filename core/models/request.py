@@ -1,5 +1,5 @@
+from core.models.user import User
 from django.db import models
-from django.contrib.auth.models import User
 from core.models.skill import SkillCategory
 
 __author__ = 'Renaud'

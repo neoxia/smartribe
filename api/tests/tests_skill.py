@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from core.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 import core.utils
@@ -11,9 +11,13 @@ class SkillTests(APITestCase):
         Make a user for authenticating and
         testing skill actions
         """
-        user = User(username="test_user", password="test")
+        user = User(username="test_user", password="test", email="te@st.fr")
         user.save()
-        other_user = User(username="other_user", password="test")
+        other_user = User(
+            username="other_user",
+            password="test",
+            email="te@tsdd.fr"
+        )
         other_user.save()
 
     def token_line(self):

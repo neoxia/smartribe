@@ -4,6 +4,7 @@ from core.models.activation_token import ActivationToken
 from core.models.address import Address
 from core.models.skill import SkillCategory
 from .models import Profile
+from .models import User
 from .models import Community
 from .models import TransportCommunity
 from .models import LocalCommunity
@@ -18,6 +19,11 @@ from .models import PasswordRecovery
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user']
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ['email']
 
 
 @admin.register(Community)

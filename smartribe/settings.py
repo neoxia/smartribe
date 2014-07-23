@@ -22,7 +22,6 @@ SECRET_KEY = '^tb)yl#7-fk*vch+e5@cjbcsi6)otseo*ft4c6ze+-*(n$kiw0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-#DEBUG = False
 PROD = False
 
 TEMPLATE_DEBUG = True
@@ -32,6 +31,10 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+# Django do spliting with '.' for determining app from class
+# so we can't set our User from core.models.User
+# see core/__init__.py to see the trick
+AUTH_USER_MODEL = 'core.User'
 INSTALLED_APPS = (
     'corsheaders',
     'rest_framework.authtoken',

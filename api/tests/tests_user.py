@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import User
+from core.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -39,7 +39,7 @@ class AccountTests(APITestCase):
         url = '/api/v1/users/'
         data = {
             'username': 'test',
-            'email': 'test@test.com',
+            'email': 'sqdtest@test.com',
             'password': 'pass'
         }
         self.client.post(url, data, format='json')
@@ -50,14 +50,14 @@ class AccountTests(APITestCase):
         url = '/api/v1/users/'
         data = {
             'username': 'test0',
-            'email': 'test0@test.com',
+            'email': 'tesqsdqsdsgdgt0@test.com',
             'password': 'pass0'
         }
         self.client.post(url, data, format='json')
         url = '/api/v1/users/'
         data = {
             'username': 'test1',
-            'email': 'test1@test.com',
+            'email': 'tessdgsdgdst1@test.com',
             'password': 'pass1'
         }
         self.client.post(url, data, format='json')
@@ -66,7 +66,7 @@ class AccountTests(APITestCase):
         url = '/api/v1/users/'
         data = {
             'username': 'test',
-            'email': 'test@test.com',
+            'email': 'tessdgsdgt@test.com',
             'password': 'pass'
         }
         self.client.post(url, data, format='json')
@@ -77,19 +77,19 @@ class AccountTests(APITestCase):
         url = '/api/v1/users/'
         data = {
             'username': 'test0',
-            'email': 'test0@test.com',
+            'email': 'tasgsdgbvcest0@test.com',
             'password': 'pass0'
         }
         self.client.post(url, data, format='json')
         data = {
             'username': 'test1',
-            'email': 'test1@test.com',
+            'email': 'tesqsdvqjnqt1@test.com',
             'password': 'pass1'
         }
         self.client.post(url, data, format='json')
         data = {
             'username': 'toto',
-            'email': 'toto@testi.com',
+            'email': 'totqsdfqdsfqo@testi.com',
             'password': 'toto'
         }
         self.client.post(url, data, format='json')

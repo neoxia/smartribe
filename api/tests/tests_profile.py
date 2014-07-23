@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from core.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 from core.models import Profile
@@ -12,9 +12,17 @@ class ProfileTests(APITestCase):
         Make a user for authenticating and
         testing profile actions
         """
-        user = User(username="test_user", password="test")
+        user = User(
+            username="test_user",
+            password="test",
+            email="sd@kjhsq@.ds"
+        )
         user.save()
-        other_user = User(username="other_user", password="test")
+        other_user = User(
+            username="other_user",
+            password="test",
+            email="s@s.id"
+        )
         other_user.save()
 
     def token_line(self):

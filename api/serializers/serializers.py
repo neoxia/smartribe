@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import Group, Permission
+from core.models import User
 from rest_framework.authtoken.models import Token
 from core.models import Profile, Skill, Community, Request, Offer, Member
 from rest_framework import serializers
@@ -10,6 +11,7 @@ from core.models.skill import SkillCategory
 
 
 class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
+   
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'password', 'groups', 'is_active')
@@ -17,6 +19,7 @@ class UserCreateSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserPublicSerializer(serializers.HyperlinkedModelSerializer):
+   
     class Meta:
         model = User
         fields = ('url', 'username', 'id')
@@ -24,6 +27,7 @@ class UserPublicSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
         fields = ('url', 'username', 'email', 'password', 'groups')
