@@ -238,7 +238,6 @@ class AccountTests(APITestCase):
         response = self.client.get(url, {'username':'to'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
-        print(data)
         self.assertEqual(1, data['count'])
 
     def test_retrieve_my_user(self):
