@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from api.serializers import AddressSerializer
-from core.models import LocalCommunity, TransportCommunity
+from core.models import LocalCommunity, TransportCommunity, Community
+
+
+class CommunityPublicSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Community
+        fields = ('url', 'name', 'description', 'creation_date')
+        read_only_fields = ('creation_date',)
 
 
 class LocalCommunitySerializer(serializers.HyperlinkedModelSerializer):

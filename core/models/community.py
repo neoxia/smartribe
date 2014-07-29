@@ -3,11 +3,20 @@ from core.models import Address
 
 
 class Community(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+
+    name = models.CharField(max_length=50,
+                            unique=True)
+
     description = models.TextField(max_length=180)
-    banner = models.ImageField(blank=True, null=True)
-    logo = models.ImageField(blank=True, null=True)
+
+    banner = models.ImageField(blank=True,
+                               null=True)
+
+    logo = models.ImageField(blank=True,
+                             null=True)
+
     creation_date = models.DateField(auto_now_add=True)
+
     auto_accept_member = models.BooleanField(default=False)
 
     def __str__(self):
@@ -20,8 +29,15 @@ class Community(models.Model):
 
 
 class TransportStop(models.Model):
+
     name = models.CharField(max_length=50)
-    detail = models.TextField(max_length=180, null=True, blank=True)
+
+    detail = models.TextField(max_length=180,
+                              null=True,
+                              blank=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = 'transport stop'
@@ -30,12 +46,18 @@ class TransportStop(models.Model):
 
 
 class TransportCommunity(Community):
+
     transport_stop_departure = models.ForeignKey(TransportStop,
                                                  related_name='departure')
     transport_stop_via = models.ForeignKey(TransportStop,
                                            related_name='via')
     transport_stop_arrival = models.ForeignKey(TransportStop,
                                                related_name='arrival')
+
+    def __str__(self):
+        return self.name+', de '+self.transport_stop_departure.name\
+               + 'à '+self.transport_stop_arrival.name\
+               + ', via '+self.transport_stop_via.name
 
     class Meta:
         verbose_name = 'transport community'
@@ -44,6 +66,7 @@ class TransportCommunity(Community):
 
 
 class LocalCommunity(Community):
+
     address = models.ForeignKey(Address)
 
     class Meta:

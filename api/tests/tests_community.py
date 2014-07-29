@@ -6,6 +6,7 @@ import core.utils
 
 
 class CommunityTests(APITestCase):
+
     def setUp(self):
         """
         Make a user for authenticating and
@@ -49,6 +50,14 @@ class CommunityTests(APITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth,
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(1, Member.objects.all().count())
+        self.assertEqual(1, Community.objects.all().count())
+        member = Member.objects.get(id=1)
+        community = Community.objects.get(id=1)
+        self.assertEqual(user, member.user)
+        self.assertEqual(community, member.community)
+        self.assertEqual("0", member.role)
+        self.assertEqual("1", member.status)
 
     def test_modify_community_with_owner(self):
         """
@@ -295,7 +304,6 @@ class CommunityTests(APITestCase):
 
         response = self.client.delete(url, HTTP_AUTHORIZATION=auth_user)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
 
     def test_delete_community_with_owner(self):
         """
