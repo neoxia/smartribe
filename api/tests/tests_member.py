@@ -5,7 +5,7 @@ from core.models import Member, Community
 import core.utils
 
 
-class CommunityTests(APITestCase):
+class MemberTests(APITestCase):
 
     def setUp(self):
         """

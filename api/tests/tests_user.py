@@ -228,14 +228,14 @@ class AccountTests(APITestCase):
 
         # Search all user
         url = '/api/v1/users/'
-        response = self.client.get(url, {'username':'test'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.get(url, {'username': 'test'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual(3, data['count'])
 
         # Search one user
         url = '/api/v1/users/'
-        response = self.client.get(url, {'username':'to'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.get(url, {'username': 'to'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual(1, data['count'])
@@ -329,10 +329,28 @@ class AccountTests(APITestCase):
         user = User.objects.filter(username='test0').exists()
         self.assertTrue(user)
 
+    def test_get_my_user_without_auth(self):
+        """
+        Ensure an unauthenticated user cannot retrieve user information
+        """
+        self.create_two_users()
+        url = '/api/v1/users/0/get_my_user/'
 
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_get_my_user_with_auth(self):
+        """
+        Ensure an authenticated user can retrieve his own information
+        """
+        self.create_two_users()
+        url = '/api/v1/users/0/get_my_user/'
+        user_url = '/api/v1/users/1/'
 
-
-
-
-
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual(user_url, data['url'])
+        self.assertEqual('test', data['username'])
+        self.assertEqual('test@test.com', data['email'])
+        self.assertEqual([], data['groups'])

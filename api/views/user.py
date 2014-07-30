@@ -1,73 +1,89 @@
-from datetime import timedelta, tzinfo, timezone
-from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from django.utils.datetime_safe import datetime
-from rest_framework.decorators import action
-from rest_framework.parsers import JSONParser
-from rest_framework import permissions
-from rest_framework.response import Response
-from rest_framework import viewsets
+from datetime import timedelta, timezone, datetime
+
 from django.contrib.auth.hashers import make_password
+from core.models import User
+from django.core.mail import send_mail
+from rest_framework import viewsets
+from rest_framework.decorators import action, link
+from rest_framework.parsers import JSONParser
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework import status
-from api.serializers.serializers import UserSerializer
-from api.serializers.serializers import UserCreateSerializer
+import django_filters
+
 from api.authenticate import AuthUser
-from core.models.activation_token import ActivationToken
+from api.permissions.common import IsJWTAuthenticated, IsJWTMe
+from api.serializers.serializers import UserCreateSerializer, UserSerializer, UserPublicSerializer
+from core.models import ActivationToken, PasswordRecovery
 import core.utils
-from core.models.password_recovery import PasswordRecovery
-from smartribe import settings
 
 
-class UserViewSet(viewsets.ViewSet):
-    """ Default permission: Any """
-    permission_classes = [permissions.AllowAny]
+class UserFilter(django_filters.FilterSet):
+    """
+    Specific search filter for users
+    """
+    username = django_filters.CharFilter(name='username', lookup_type='contains')
+
+    class Meta:
+        model = User
+        fields = ['username', ]
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    Inherits standard characteristics from ModelViewSet:
+
+            | **Endpoint**: /users/
+            | **Methods**: GET / POST / PUT / PATCH / DELETE / OPTIONS
+            | **Permissions**:
+            |       - Default : IsJWTMe
+            |       - GET : IsJWTAuthenticated
+            |       - POST : AllowAny
+
+    """
     model = User
+    serializer_class = UserSerializer
+    filter_class = UserFilter
 
-    def create(self, request):
-        """ Create user:
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        user, _ = AuthUser().authenticate(self.request)
+        if self.request.method == 'GET' and 'pk' not in self.kwargs:
+            serializer_class = UserPublicSerializer
+        elif self.request.method == 'GET' and not self.object == user:
+            serializer_class = UserPublicSerializer
+        elif self.request.method == 'POST':
+            serializer_class = UserCreateSerializer
+        return serializer_class
 
-                | **permission**: any
-                | **endpoint**: /users/
-                | **method**: POST
-                | **attr**:
-                |       - username: string (required)
-                |       - password: string (required)
-                |       - email: string (required)
-                |       - groups: array
-                | **http return**:
-                |       - 201 Created successfully
-                |       - 400 Bad request
-                | **data return**:
-                |       - username: string
-                |       - email: string
-                |       - groups: array
-                | **other actions**:
-                |       - Sends an email with account activation token
-
-        """
-        data = JSONParser().parse(request)
-        data['password'] = make_password(data['password'])
-        if settings.DEBUG:
-            data['is_active'] = True
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsJWTAuthenticated()]
+        elif self.request.method == 'POST':
+            return [AllowAny()]
         else:
-            data['is_active'] = False
+            return [IsJWTMe()]
 
-        serial_user = UserCreateSerializer(data=data)
-        if not serial_user.is_valid():
-            return Response(serial_user.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-        serial_user.save()
-        user = User.objects.get(username=data['username'])
-        token = core.utils.gen_temporary_token()
-        token = ActivationToken(user, tocker)
-        token.save()
-        send_mail('SmarTribe registration',
-                  token.token,
-                  'noreply@smartri.be',
-                  [data['email']],
-                  fail_silently=False
-                  )
-        return Response(serial_user.data, status=status.HTTP_201_CREATED)
+    def pre_save(self, obj):
+        super().pre_save(obj)
+        if obj.password:
+            obj.password = make_password(obj.password)
+        if self.request.method == 'POST':
+            obj.is_active = False
+
+    def post_save(self, obj, created=False):
+        if self.request.method == 'POST':
+            token = ActivationToken(user=User.objects.get(username=obj.username),
+                                    token=core.utils.gen_temporary_token())
+            token.save()
+            send_mail('SmarTribe registration',
+                      'https://demo.smartri.be/'+token.token+'/confirm_registration/',
+                      'noreply@smartri.be',
+                      [obj.email],
+                      fail_silently=False)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     @action(methods=['POST', ])
     def confirm_registration(self, request, pk=None):
@@ -87,96 +103,16 @@ class UserViewSet(viewsets.ViewSet):
         """
         if not User.objects.filter(id=pk).exists():
             return Response({"detail": "Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
-
         data = JSONParser().parse(request)
-        if 'token' not in data:
+        if not 'token' in data:
             return Response({"detail": "Missing token"}, status=status.HTTP_400_BAD_REQUEST)
-        
         user = User.objects.get(id=pk)
         if not ActivationToken.objects.filter(user=user, token=data['token']).exists():
             return Response({"detail": "Activation error"}, status=status.HTTP_400_BAD_REQUEST)
-        
         user.is_active = True
         user.save()
         ActivationToken.objects.get(user=user, token=data['token']).delete()
         return Response(status=status.HTTP_200_OK)
-
-    def retrieve(self, request, pk=None):
-        """ Get user:
-
-                | **permission**: authenticated, get self
-                | **endpoint**: /users/{id}/
-                | **method**: GET
-                | **http return**:
-                |       - 200 OK
-                |       - 403 Forbidden
-                | **data return**:
-                |       - url: resource
-                |       - username: string
-                |       - email: string
-                |       - groups: array
-
-        """
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return response
-        elif str(user.id) != pk:
-            return Response({"detail": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    def update(self, request, pk=None):
-        """ Update user
-
-                | **permission**: authenticated, get self
-                | **endpoint**: /users/{id}/
-                | **method**: PUT, (PATCH?)
-                | **http return**:
-                |       - 201 Created
-                |       - 403 Forbidden
-                | **data return**:
-                |       - url: resource
-                |       - username: string
-                |       - email: string
-                |       - groups: array
-
-        """
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return response
-        elif str(user.id) != pk:
-            return Response({"detail": "Access denied"}, status=status.HTTP_403_FORBIDDEN)
-        data = JSONParser().parse(request)
-        if 'password' in data:
-            data['password'] = make_password(data['password'])
-        serial_user = UserSerializer(user, data=data, partial=True)
-        if serial_user.is_valid():
-            serial_user.save()
-            return Response(serial_user.data, status=status.HTTP_201_CREATED)
-        return Response(serial_user.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request):
-        """ **NOT A LIST** Get current authenticated user:
-
-                | **permission**: authenticated, get self
-                | **endpoint**: /users/
-                | **method**: GET
-                | **http return**:
-                |       - 200 OK
-                |       - 403 Forbidden
-                | **data return**:
-                |       - url: resource
-                |       - username: string
-                |       - email: string
-                |       - groups: array
-
-        """
-
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return response
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
 
     @action(methods=['POST', ])
     def recover_password(self, request, pk=None):
@@ -214,7 +150,11 @@ class UserViewSet(viewsets.ViewSet):
         token = core.utils.gen_temporary_token()
         pr = PasswordRecovery(user=user, token=token, ip_address=ip)
         pr.save()
-        send_mail('SmarTribe password recovery', token, 'noreply@smartri.be', [user.email], fail_silently=False)
+        send_mail('SmarTribe password recovery',
+                  'https://demo.smartri.be/password/:'+token+'/edit',
+                  'noreply@smartri.be',
+                  [user.email],
+                  fail_silently=False)
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['POST', ])
@@ -239,7 +179,7 @@ class UserViewSet(viewsets.ViewSet):
         data = JSONParser().parse(request)
         if token is None:
             return Response({"detail": "Token required"}, status=status.HTTP_400_BAD_REQUEST)
-        if 'password' not in data:
+        if not 'password' in data:
             return Response({"detail": "Password required"}, status=status.HTTP_400_BAD_REQUEST)
         if not PasswordRecovery.objects.filter(token=token).exists():
             return Response({"detail": "No password renewal request"}, status=status.HTTP_400_BAD_REQUEST)
@@ -248,3 +188,27 @@ class UserViewSet(viewsets.ViewSet):
         user.save()
         PasswordRecovery.objects.filter(user=user).delete()
         return Response(status=status.HTTP_200_OK)
+
+    @link(permission_classes=[IsJWTAuthenticated])
+    def get_my_user(self, request, pk=None):
+        """
+        Get current authenticated user:
+
+                | **permission**: authenticated, get self
+                | **endpoint**: /users/0/get_my_user/
+                | **method**: GET
+                | **http return**:
+                |       - 200 OK
+                |       - 403 Forbidden
+                | **data return**:
+                |       - url: resource
+                |       - username: string
+                |       - email: string
+                |       - groups: array
+
+        """
+        user, response = AuthUser().authenticate(request)
+        if not user:
+            return response
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
