@@ -5,9 +5,7 @@ from api.authenticate import AuthUser
 from core.models import Member
 
 
-"""
-Include permissions for community and member objects
-"""
+# Includes permissions for community and member objects
 
 # PERMISSIONS ON COMMUNITIES
 

@@ -14,7 +14,16 @@ from api.authenticate import AuthUser
 
 class CommunityViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows communities to be viewed or edited.
+
+    Inherits standard characteristics from ModelViewSet:
+
+            | **Endpoint**: /communities/
+            | **Methods**: GET / POST / PUT / PATCH / DELETE / OPTIONS
+            | **Permissions**:
+            |       - Default : IsCommunityOwner
+            |       - GET or POST: IsJWTAuthenticated
+            |       - PUT or PATCH : IsCommunityModerator
+
     """
     model = Community
     serializer_class = CommunitySerializer
@@ -32,19 +41,20 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return [IsCommunityOwner()]
 
     def post_save(self, obj, created=False):
-        # Retrieve request author and creates him a member as community owner
+        # Retrieve request author and creates a member for him, as community owner
         user, _ = AuthUser().authenticate(self.request)
         owner = Member(user=user, community=obj, role="0", status="1")
         owner.save()
 
     # Simple user actions
-    @action(methods=['POST',], permission_classes=[IsJWTAuthenticated])
+
+    @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated])
     def join_community(self, request, pk=None):
         """
         Become a new member of a community.
 
                 | **permission**: JWTAuthenticated
-                | **endpoint**: /community/{id}/join_community/
+                | **endpoint**: /communities/{id}/join_community/
                 | **method**: POST
                 | **attr**:
                 |       None
@@ -60,7 +70,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
         user, _ = AuthUser().authenticate(request)
         if not Community.objects.filter(id=pk).exists():
-            return Response({'detail':'This community does not exist'},
+            return Response({'detail': 'This community does not exist'},
                             status=status.HTTP_400_BAD_REQUEST)
         community = Community.objects.get(id=pk)
         # Check if member already exists
@@ -69,7 +79,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response(MemberSerializer(member).data, status=status.HTTP_200_OK)
         # Defines the member, depending on auto_accept_member property of the community
         member = Member(user=user, community=community, role="2", status="0")
-        if community.auto_accept_member == True:
+        if community.auto_accept_member:
             member.status = "1"
         # Register user as new member
         member.save(force_insert=True)
@@ -81,7 +91,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         List the communities the authenticated user is member of.
 
                 | **permission**: JWTAuthenticated
-                | **endpoint**: /community/0/list_my_memberships/
+                | **endpoint**: /communities/0/list_my_memberships/
                 | **method**: GET
                 | **attr**:
                 |       None
@@ -105,7 +115,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         Leave a community.
 
                 | **permission**: JWTAuthenticated
-                | **endpoint**: /community/{id}/leave_community/
+                | **endpoint**: /communities/{id}/leave_community/
                 | **method**: POST
                 | **attr**:
                 |       None
@@ -119,15 +129,15 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
         user, _ = AuthUser().authenticate(request)
         if not Community.objects.filter(id=pk).exists():
-            return Response({'detail':'This community does not exist'},
+            return Response({'detail': 'This community does not exist'},
                             status=status.HTTP_400_BAD_REQUEST)
         community = Community.objects.get(id=pk)
         if not Member.objects.filter(user=user, community=community).exists():
-            return Response({'detail':'You are not a member of this community'},
+            return Response({'detail': 'You are not a member of this community'},
                             status=status.HTTP_400_BAD_REQUEST)
         member = Member.objects.get(user=user, community=community)
         if member.status == '2':
-            return Response({'detail':'You have been banned from this community. You cannot leave it.'},
+            return Response({'detail': 'You have been banned from this community. You cannot leave it.'},
                             status=status.HTTP_401_UNAUTHORIZED)
         member.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

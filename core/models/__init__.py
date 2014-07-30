@@ -41,3 +41,6 @@ from core.models.meeting import MeetingMessage
 
 ## General
 from core.models.tos import Tos
+from core.models.faq import FaqSection
+from core.models.faq import Faq
+from core.models.suggestion import Suggestion
