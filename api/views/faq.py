@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
+from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.serializers.faq import FaqSerializer
 from core.models import Faq
@@ -22,6 +23,7 @@ class FaqViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        if IsJWTAuthenticated():
+        user, _ = AuthUser().authenticate(self.request)
+        if user is not None:
             return Faq.objects.all()
         return Faq.objects.filter(private=False)

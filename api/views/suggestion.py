@@ -1,12 +1,10 @@
 from django.core.mail import send_mail
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
-from api.permissions.common import IsJWTAuthenticated
-from api.serializers.faq import FaqSerializer
+
+from api.permissions.common import IsJWTSelf
 from api.serializers.suggestion import SuggestionSerializer
-from core.models import Faq, Suggestion
+from core.models import Suggestion
 
 
 class SuggestionViewSet(CreateModelMixin, GenericViewSet):
@@ -17,13 +15,13 @@ class SuggestionViewSet(CreateModelMixin, GenericViewSet):
             | **Methods**: GET
             | **Permissions**:
             |       - AllowAny : Public questions
-            |       - IsJWTAuthenticated : All questions
+            |       - IsJWTSelf : All questions
 
 
     """
     model = Suggestion
     serializer_class = SuggestionSerializer
-    permission_classes = [IsJWTAuthenticated]
+    permission_classes = [IsJWTSelf]
 
     def post_save(self, obj, created=False):
 
@@ -35,4 +33,4 @@ class SuggestionViewSet(CreateModelMixin, GenericViewSet):
         send_mail('[SmarTribe] New suggestion',
                   message,
                   'noreply@smartribe.fr',
-                  ['admin@smartribe.fr'])
+                  ['contact@smartribe.fr'])

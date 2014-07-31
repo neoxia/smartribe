@@ -10,7 +10,8 @@ class Suggestion(models.Model):
         ('O', 'Others'),
     )
     category = models.CharField(max_length=1,
-                                choices=CATEGORY_CHOICES)
+                                choices=CATEGORY_CHOICES,
+                                default='O')
 
     user = models.ForeignKey(User)
 
