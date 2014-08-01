@@ -1,7 +1,7 @@
 from django.template.defaultfilters import length
 from rest_framework import status
 from rest_framework.test import APITestCase
-from core import User
+from django.contrib.auth.models import User
 import core.utils
 from core.models import FaqSection, Faq
 

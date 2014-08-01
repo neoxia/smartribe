@@ -1,7 +1,7 @@
 from datetime import timedelta, timezone, datetime
 
 from django.contrib.auth.hashers import make_password
-from core.models import User
+from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from rest_framework import viewsets
 from rest_framework.decorators import action, link

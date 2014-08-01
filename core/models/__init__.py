@@ -7,7 +7,7 @@ from core.models.activation_token import ActivationToken
 from core.models.profile import Profile
 
 ## User
-from core.models.user import User
+from django.contrib.auth.models import User
 
 ## Skill
 from core.models.skill import SkillCategory

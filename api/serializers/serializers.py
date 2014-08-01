@@ -1,5 +1,4 @@
-from django.contrib.auth.models import Group, Permission
-from core.models import User
+from django.contrib.auth.models import User, Group, Permission
 from rest_framework.authtoken.models import Token
 from core.models import Profile, Skill, Community, Request, Offer, Member
 from rest_framework import serializers
