@@ -19,7 +19,7 @@ class MemberTests(APITestCase):
         user = User(username="simple_user", password="test1", email="zz@ssk.dk")
         user.save()
 
-    def create_community(self):
+    def set_create_community(self):
         user = User.objects.get(username="community_owner")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -31,7 +31,7 @@ class MemberTests(APITestCase):
         }
         self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
 
-    def create_community_auto(self):
+    def set_create_community_auto(self):
         user = User.objects.get(username="community_owner")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -44,11 +44,29 @@ class MemberTests(APITestCase):
         }
         self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
 
+    def set_create_communities_auto(self):
+        user = User.objects.get(username="community_owner")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        for num in range(1, 10):
+            url = '/api/v1/communities/'
+            aam = 1
+            if num%2 == 0:
+                aam = 0
+
+            data = {
+                'name': 'com'+num.__str__(),
+                'description': 'com_desc'+num.__str__(),
+                'auto_accept_member': aam,
+            }
+            self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+
     def test_join_wrong_community(self):
         """
         Ensure an authenticated user cannot join a community that does not exists
         """
-        self.create_community()
+        self.set_create_community()
         user = User.objects.get(username="simple_user")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -63,7 +81,7 @@ class MemberTests(APITestCase):
         """
         Ensure an authenticated user can join a community
         """
-        self.create_community()
+        self.set_create_community()
         user = User.objects.get(username="simple_user")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -80,14 +98,14 @@ class MemberTests(APITestCase):
         self.assertEqual("0", member.status)
 
         response = self.client.post(url, HTTP_AUTHORIZATION=auth)
-        self.assertEquals(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, Member.objects.all().count())
 
     def test_join_community_auto_accept(self):
         """
         Ensure an authenticated user can join a community
         """
-        self.create_community_auto()
+        self.set_create_community_auto()
         user = User.objects.get(username="simple_user")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -107,7 +125,7 @@ class MemberTests(APITestCase):
         """
         Ensure a member can leave a community
         """
-        self.create_community()
+        self.set_create_community()
         user = User.objects.get(username="simple_user")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -125,7 +143,7 @@ class MemberTests(APITestCase):
         """
         Ensure a banned member cannot leave a community
         """
-        self.create_community()
+        self.set_create_community()
         user = User.objects.get(username="simple_user")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
@@ -142,3 +160,66 @@ class MemberTests(APITestCase):
         response = self.client.post(url, HTTP_AUTHORIZATION=auth)
         self.assertEquals(status.HTTP_401_UNAUTHORIZED, response.status_code)
         self.assertEqual(2, Member.objects.all().count())
+
+    def test_list_my_memberships_without_auth(self):
+        """
+        Ensure an unauthenticated user cannot list memberships
+        """
+        url = '/api/v1/communities/0/list_my_memberships/'
+
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_list_my_memberships(self):
+        """
+        Ensure a user can list all his memberships
+        """
+        self.set_create_communities_auto()
+        self.assertEqual(9, Community.objects.all().count())
+        s_user = User.objects.get(username="simple_user")
+        token = core.utils.gen_auth_token(s_user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/1/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        url = '/api/v1/communities/3/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        m = Member.objects.get(id=11)
+        m.role = '1'
+        m.save()
+        url = '/api/v1/communities/6/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        url = '/api/v1/communities/6/leave_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        url = '/api/v1/communities/8/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        url = '/api/v1/communities/9/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+
+        url = '/api/v1/communities/0/list_my_memberships/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(4, len(data))
+        self.assertEqual('/api/v1/communities/1/', data[0]['community']['url'])
+        self.assertEqual('/api/v1/communities/3/', data[1]['community']['url'])
+        self.assertEqual('/api/v1/communities/8/', data[2]['community']['url'])
+        self.assertEqual('/api/v1/communities/9/', data[3]['community']['url'])
+        self.assertEqual('1', data[0]['status'])
+        self.assertEqual('1', data[1]['status'])
+        self.assertEqual('0', data[2]['status'])
+        self.assertEqual('1', data[3]['status'])
+        self.assertEqual('2', data[0]['role'])
+        self.assertEqual('1', data[1]['role'])
+        self.assertEqual('2', data[2]['role'])
+        self.assertEqual('2', data[3]['role'])
+
+        owner = User.objects.get(username="community_owner")
+        token = core.utils.gen_auth_token(owner)
+        auth = 'JWT {0}'.format(token)
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(9, len(data))

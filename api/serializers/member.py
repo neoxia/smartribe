@@ -28,4 +28,3 @@ class MyMembersSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Member
         fields = ('community', 'role', 'status', 'registration_date', 'last_modification_date')
-        read_only_fields = ('community', 'registration_date')

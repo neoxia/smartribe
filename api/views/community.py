@@ -86,7 +86,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_201_CREATED)
 
     @link(permission_classes=[IsJWTAuthenticated])
-    def list_my_memberships(self):
+    def list_my_memberships(self, request, pk=None):
         """
         List the communities the authenticated user is member of.
 
@@ -99,12 +99,21 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - 200 OK
                 |       - 401 Unauthorized
                 | **data return**:
-                |       - List of members objects
+                |       - List of members objects :
+                |           - community
+                |               - url (string)
+                |               - name (string)
+                |               - description (text)
+                |               - creation date (datetime)
+                |           - status ('0', '1', '2')
+                |           - role ('0', '1', '2')
+                |           - registration_date (datetime)
+                |           - last_modification_date (datetime)
                 | **other actions**:
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(self.request)
+        user, _ = AuthUser().authenticate(request)
         my_members = Member.objects.filter(user=user)
         serializer = MyMembersSerializer(my_members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -123,7 +132,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - 200 OK
                 |       - 401 Unauthorized
                 | **data return**:
-                |       - List of members objects
+                |       None
                 | **other actions**:
                 |       None
         """
