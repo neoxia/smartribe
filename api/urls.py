@@ -9,6 +9,7 @@ from api.views import media
 from api.views import skill
 from api.views import faq
 from api.views import suggestion
+from api.views import inappropriate
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -21,6 +22,7 @@ router.register(r'skill_categories', skill.SkillCategoryViewSet)
 router.register(r'skills', skill.SkillViewSet)
 router.register(r'faq', faq.FaqViewSet)
 router.register(r'suggestions', suggestion.SuggestionViewSet)
+router.register(r'inappropriates', inappropriate.InappropriateViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.

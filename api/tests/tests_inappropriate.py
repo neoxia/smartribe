@@ -3,10 +3,10 @@ from rest_framework.test import APITestCase
 
 from django.contrib.auth.models import User
 import core.utils
-from core.models import Suggestion
+from core.models import Inappropriate
 
 
-class SuggestionTests(APITestCase):
+class InappropriateTests(APITestCase):
 
     def setUp(self):
         """
@@ -18,62 +18,58 @@ class SuggestionTests(APITestCase):
         user2 = User(username="other", password="other", email="other@test.com")
         user2.save()
 
-    def test_create_suggestion_without_auth(self):
+    def test_create_inappropriate_without_auth(self):
         """
-        Ensure an unauthenticated user cannot post suggestion
+        Ensure an unauthenticated user cannot report inappropriate content
         """
-        url = '/api/v1/suggestions/'
+        url = '/api/v1/inappropriates/'
         data = {
-            'category': 'B',
             'user': 1,
-            'title': 'test',
-            'description': 'the test'
+            'content_url': 'http://testserver.com/api/v1/communities/1/',
+            'detail': 'the test'
         }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
-    def test_create_suggestion_with_auth_for_self(self):
+    def test_create_inappropriate_with_auth_for_self(self):
         """
-        Ensure an authenticated user can post a suggestion
+        Ensure an authenticated user can report inappropriate content
         """
         user = User.objects.get(username="test")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
 
-        url = '/api/v1/suggestions/'
+        url = '/api/v1/inappropriates/'
         data = {
-            'category': 'B',
             'user': 1,
-            'title': 'test',
-            'description': 'the test'
+            'content_url': 'http://testserver.com/api/v1/communities/1/',
+            'detail': 'the test'
         }
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(1, Suggestion.objects.all().count())
-        s = Suggestion.objects.get(id=1)
-        self.assertEqual('B', s.category)
-        self.assertEqual(user, s.user)
-        self.assertEqual('test', s.title)
-        self.assertEqual('the test', s.description)
+        self.assertEqual(1, Inappropriate.objects.all().count())
+        i = Inappropriate.objects.get(id=1)
+        self.assertEqual(user, i.user)
+        self.assertEqual('http://testserver.com/api/v1/communities/1/', i.content_url)
+        self.assertEqual('the test', i.detail)
 
-    def test_create_suggestion_with_auth_for_other(self):
+    def test_create_inappropriate_with_auth_for_other(self):
         """
-        Ensure an authenticated user cannot post a suggestion for someone else
+        Ensure an authenticated user cannot report inappropriate content for someone else
         """
         user = User.objects.get(username="test")
         token = core.utils.gen_auth_token(user)
         auth = 'JWT {0}'.format(token)
 
-        url = '/api/v1/suggestions/'
+        url = '/api/v1/inappropriates/'
         data = {
-            'category': 'B',
             'user': 2,
-            'title': 'test',
-            'description': 'the test'
+            'content_url': 'http://testserver.com/api/v1/communities/1/',
+            'detail': 'the test'
         }
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
-        self.assertEqual(0, Suggestion.objects.all().count())
+        self.assertEqual(0, Inappropriate.objects.all().count())

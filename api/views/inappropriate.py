@@ -3,32 +3,31 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
 
 from api.permissions.common import IsJWTSelf
-from api.serializers.suggestion import SuggestionSerializer
-from core.models import Suggestion
+from api.serializers.inappropriate import InappropriateSerializer
+from core.models import Inappropriate
 
 
-class SuggestionViewSet(CreateModelMixin, GenericViewSet):
+class InappropriateViewSet(CreateModelMixin, GenericViewSet):
     """
     Inherits standard characteristics from CreateModelMixin and GenericViewSet:
 
-            | **Endpoint**: /suggestions/
+            | **Endpoint**: /inappropriate/
             | **Methods**: POST
             | **Permissions**:
             |       - IsJWTSelf
 
     """
-    model = Suggestion
-    serializer_class = SuggestionSerializer
+    model = Inappropriate
+    serializer_class = InappropriateSerializer
     permission_classes = [IsJWTSelf]
 
     def post_save(self, obj, created=False):
 
-        message = 'Category :\n' + obj.category \
-                  + '\n\nReported by :\n' + obj.user.username \
-                  + '\n\nTitle :\n' + obj.title \
-                  + '\n\nDescription :\n' + obj.description
+        message = 'Reported by :\n' + obj.user.username \
+                  + '\n\nContent URL :\n' + obj.content_url \
+                  + '\n\nDetail :\n' + obj.detail
 
-        send_mail('[SmarTribe] New suggestion',
+        send_mail('[SmarTribe] Inappropriate content report',
                   message,
                   'noreply@smartribe.fr',
                   ['contact@smartribe.fr'])
