@@ -356,6 +356,22 @@ class MemberTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
+    def test_accept_member_with_simple_member(self):
+        """
+        Ensure a simple member cannot accept members
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        user = User.objects.get(username="simple_user")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/accept_member/'
+        r_data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, r_data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
     def test_accept_member_with_owner(self):
         """
         Ensure an owner can accept members
