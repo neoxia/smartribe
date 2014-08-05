@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import action, link
@@ -6,7 +8,7 @@ from rest_framework.response import Response
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from api.serializers.community import CommunityPublicSerializer
-from api.serializers.member import MyMembersSerializer
+from api.serializers.member import MyMembersSerializer, ListCommunityMemberSerializer
 from core.models import Community, Member
 from api.serializers.serializers import CommunitySerializer, MemberSerializer
 from api.authenticate import AuthUser
@@ -48,7 +50,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
     # Simple user actions
 
-    @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated])
+    @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated()])
     def join_community(self, request, pk=None):
         """
         Become a new member of a community.
@@ -68,6 +70,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
+        if pk is None:
+            return Response({'detail': 'Missing community index.'},
+                            status=status.HTTP_400_BAD_REQUEST)
         user, _ = AuthUser().authenticate(request)
         if not Community.objects.filter(id=pk).exists():
             return Response({'detail': 'This community does not exist'},
@@ -85,7 +90,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         member.save(force_insert=True)
         return Response(status=status.HTTP_201_CREATED)
 
-    @link(permission_classes=[IsJWTAuthenticated])
+    @link(permission_classes=[IsJWTAuthenticated()])
     def list_my_memberships(self, request, pk=None):
         """
         List the communities the authenticated user is member of.
@@ -98,6 +103,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 | **http return**:
                 |       - 200 OK
                 |       - 401 Unauthorized
+                |       - 403 Forbidden
                 | **data return**:
                 |       - List of members objects :
                 |           - community
@@ -118,7 +124,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         serializer = MyMembersSerializer(my_members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated])
+    @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated()])
     def leave_community(self, request, pk=None):
         """
         Leave a community.
@@ -135,7 +141,11 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
                 | **other actions**:
                 |       None
+
         """
+        if pk is None:
+            return Response({'detail': 'Missing community index.'},
+                            status=status.HTTP_400_BAD_REQUEST)
         user, _ = AuthUser().authenticate(request)
         if not Community.objects.filter(id=pk).exists():
             return Response({'detail': 'This community does not exist'},
@@ -152,27 +162,225 @@ class CommunityViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Moderator actions
-    def list_members(self):
+    @link(permission_classes=[IsCommunityModerator])
+    def retrieve_members(self, request, pk=None):
         """
         List all members belonging to a community.
-        """
-        pass
 
-    def accept_member(self):
-        """
-        Accept a membership request.
-        """
-        pass
+                | **permission**: Community moderator
+                | **endpoint**: /communities/{id}/retrieve_members/
+                | **method**: GET
+                | **attr**:
+                |       None
+                | **http return**:
+                |       - 200 OK
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                | **data return**:
+                |       - List of members objects :
+                |           - id (integer)
+                |           - user
+                |               - url (string)
+                |               - username (string)
+                |               - id (integer)
+                |           - status ('0', '1', '2')
+                |           - role ('0', '1', '2')
+                |           - registration_date (datetime)
+                |           - last_modification_date (datetime)
+                | **other actions**:
+                |       None
 
-    def ban_member(self):
+        """
+        if pk is None:
+            return Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
+        user, _ = AuthUser().authenticate(request)
+        if not Community.objects.filter(id=pk).exists():
+            return Response({'detail': 'This community does not exist.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        community = Community.objects.get(id=pk)
+        # Check if user is a community moderator
+        if not self.check_moderator_permission(user, community):
+            return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        qs = Member.objects.filter(community=community)
+        serializer = ListCommunityMemberSerializer(qs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
+    def accept_member(self, request, pk=None):
+        """
+        Accept a membership request (can also be used to change member status from 'banned' back to 'accepted').
+
+                | **permission**: Community moderator
+                | **endpoint**: /communities/{id}/accept_member/
+                | **method**: POST
+                | **attr**:
+                |       - Member object information
+                |           - id (integer)
+                | **http return**:
+                |       - 200 OK
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                | **data return**:
+                |       - Modified member object
+                |           - id (integer)
+                |           - user
+                |               - url (string)
+                |               - username (string)
+                |               - id (integer)
+                |           - status ('0', '1', '2')
+                |           - role ('0', '1', '2')
+                |           - registration_date (datetime)
+                |           - last_modification_date (datetime)
+                | **other actions**:
+                |       None
+
+        """
+        data = request.DATA
+        if 'id' not in data:
+            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Member.objects.filter(id=data['id']).exists():
+            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
+        member = Member.objects.get(id=data['id'])
+        user, _ = AuthUser().authenticate(request)
+        if not self.check_moderator_permission(user, member.community):
+            return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        member.status = '1'
+        member.save()
+        serializer = ListCommunityMemberSerializer(member, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
+    def ban_member(self, request, pk=None):
         """
         Ban a member from community.
+
+                | **permission**: Community moderator
+                | **endpoint**: /communities/{id}/ban_member/
+                | **method**: POST
+                | **attr**:
+                |       - Member object information
+                |           - id (integer)
+                | **http return**:
+                |       - 200 OK
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                | **data return**:
+                |       - Modified member object
+                |           - id (integer)
+                |           - user
+                |               - url (string)
+                |               - username (string)
+                |               - id (integer)
+                |           - status ('0', '1', '2')
+                |           - role ('0', '1', '2')
+                |           - registration_date (datetime)
+                |           - last_modification_date (datetime)
+                | **other actions**:
+                |       None
+
         """
-        pass
+        data = request.DATA
+        if 'id' not in data:
+            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Member.objects.filter(id=data['id']).exists():
+            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
+        member = Member.objects.get(id=data['id'])
+        user, _ = AuthUser().authenticate(request)
+        if not self.check_upper_permission(user, member):
+            return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
+        member.status = '2'
+        member.save()
+        serializer = ListCommunityMemberSerializer(member, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # Owner actions
-    def promote_moderator(self):
+    @action(methods=['POST', ], permission_classes=[IsCommunityOwner])
+    def promote_moderator(self, request, pk=None):
         """
         Grant community moderator rights to a member.
+
+                | **permission**: Community owner
+                | **endpoint**: /communities/{id}/promote_moderator/
+                | **method**: POST
+                | **attr**:
+                |       - Member object information
+                |           - id (integer)
+                | **http return**:
+                |       - 200 OK
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                | **data return**:
+                |       - Modified member object
+                |           - id (integer)
+                |           - user
+                |               - url (string)
+                |               - username (string)
+                |               - id (integer)
+                |           - status ('0', '1', '2')
+                |           - role ('0', '1', '2')
+                |           - registration_date (datetime)
+                |           - last_modification_date (datetime)
+                | **other actions**:
+                |       None
+
         """
-        pass
+        data = request.DATA
+        if 'id' not in data:
+            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Member.objects.filter(id=data['id']).exists():
+            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
+        member = Member.objects.get(id=data['id'])
+        user, _ = AuthUser().authenticate(request)
+        if not self.check_owner_permission(user, member.community):
+            return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        member.role = '1'
+        member.save()
+        serializer = ListCommunityMemberSerializer(member, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # Community permissions
+    def check_moderator_permission(self, user, community):
+        """
+        Verifies that user has moderator's rights on the community
+        """
+        # user, response = AuthUser().authenticate(self.request)
+        if not user:
+            return False
+        elif Member.objects.filter(
+                Q(user=user),
+                Q(community=community),
+                Q(status="1"),
+                Q(role="1") | Q(role="0")
+        ).exists():
+            return True
+        else:
+            return False
+
+    def check_owner_permission(self, user, community):
+        """
+        Verifies that user has owner's rights on the community
+        """
+        if not user:
+            return False
+        elif Member.objects.filter(
+                user=user,
+                community=community,
+                status="1",
+                role="0"
+        ).exists():
+            return True
+        else:
+            return False
+
+    def check_upper_permission(self, user, member):
+        """
+        Verifies that user has upper rights on community than the member he wants to manage
+        """
+        if not user:
+            return False
+        if not Member.objects.filter(user=user, community=member.community).exists():
+            return False
+        m_user = Member.objects.get(user=user, community=member.community)
+        if int(m_user.role) < int(member.role):
+            return True
+        return False

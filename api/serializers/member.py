@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from api.serializers import UserPublicSerializer
 from api.serializers.community import CommunityPublicSerializer
 from core.models import Member
 
@@ -28,3 +29,11 @@ class MyMembersSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Member
         fields = ('community', 'role', 'status', 'registration_date', 'last_modification_date')
+
+class ListCommunityMemberSerializer(serializers.HyperlinkedModelSerializer):
+
+    user = UserPublicSerializer()
+
+    class Meta:
+        model = Member
+        fields = ('id', 'user', 'role', 'status', 'registration_date', 'last_modification_date')

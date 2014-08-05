@@ -52,7 +52,7 @@ class MemberTests(APITestCase):
         for num in range(1, 10):
             url = '/api/v1/communities/'
             aam = 1
-            if num%2 == 0:
+            if num % 2 == 0:
                 aam = 0
 
             data = {
@@ -61,6 +61,25 @@ class MemberTests(APITestCase):
                 'auto_accept_member': aam,
             }
             self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+
+    def set_create_community_with_member_and_moderator(self):
+        self.set_create_community()
+        # Set 1 simple user
+        user = User.objects.get(username="simple_user")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+
+        # Set 1 moderator
+        user = User.objects.get(username="moderator")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        m = Member.objects.get(user=user)
+        m.status = '1'
+        m.role = '1'
+        m.save()
+
 
     def test_join_wrong_community(self):
         """
@@ -223,3 +242,192 @@ class MemberTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(9, len(data))
+
+    def test_list_members_without_auth(self):
+        """
+        Ensure non authenticated user cannot list community members
+        """
+        self.set_create_communities_auto()
+
+        url = '/api/v1/communities/1/retrieve_members/'
+
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_list_members_without_member_rights(self):
+        """
+        Ensure a non-member authenticated user cannot list community members
+        """
+        self.set_create_communities_auto()
+        s_user = User.objects.get(username="simple_user")
+        token = core.utils.gen_auth_token(s_user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/1/retrieve_members/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+    def test_list_members_without_mod_rights(self):
+        """
+        Ensure a simple user cannot list community members
+        """
+        self.set_create_communities_auto()
+        s_user = User.objects.get(username="simple_user")
+        token = core.utils.gen_auth_token(s_user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/1/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+
+        url = '/api/v1/communities/1/retrieve_members/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+    def test_list_members_with_mod_rights(self):
+        """
+        Ensure a moderator can list community members
+        """
+        self.set_create_community()
+        m_user = User.objects.get(username="moderator")
+        token = core.utils.gen_auth_token(m_user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/1/join_community/'
+        self.client.post(url, HTTP_AUTHORIZATION=auth)
+        m = Member.objects.get(id=2)
+        m.role = '1'
+        m.save()
+
+        url = '/api/v1/communities/1/retrieve_members/'
+
+        # Test before acceptation
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+        m.status = '1'
+        m.save()
+        # Test after acceptation
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(2, len(data))
+        self.assertEqual(1, data[0]['id'])
+        self.assertEqual('community_owner', data[0]['user']['username'])
+        self.assertEqual('/api/v1/users/1/', data[0]['user']['url'])
+        self.assertEqual(1, data[0]['user']['id'])
+        self.assertEqual('0', data[0]['role'])
+        self.assertEqual('1', data[0]['status'])
+        self.assertEqual(2, data[1]['id'])
+        self.assertEqual('moderator', data[1]['user']['username'])
+        self.assertEqual('/api/v1/users/2/', data[1]['user']['url'])
+        self.assertEqual(2, data[1]['user']['id'])
+        self.assertEqual('1', data[1]['role'])
+        self.assertEqual('1', data[1]['status'])
+
+    def test_list_members_with_owner_rights(self):
+        """
+        Ensure an owner can list community members
+        """
+        self.set_create_community()
+        owner = User.objects.get(username="community_owner")
+        token = core.utils.gen_auth_token(owner)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/1/retrieve_members/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(1, len(data))
+
+    def test_accept_member_without_auth(self):
+        """
+        Ensure a non authenticated user can not accept members
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        url = '/api/v1/communities/1/accept_member/'
+        data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_accept_member_with_owner(self):
+        """
+        Ensure an owner can accept members
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        user = User.objects.get(username="community_owner")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/accept_member/'
+        r_data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, r_data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(2, data['id'])
+        self.assertEqual('1', data['status'])
+
+    def test_accept_member_with_owner_bad_request(self):
+        """
+        Ensure accept_member request data format
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        user = User.objects.get(username="community_owner")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/accept_member/'
+        r_data = {
+            'lol': 2
+        }
+
+        response = self.client.post(url, r_data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_accept_member_with_owner_not_found(self):
+        """
+        Ensure member exists
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        user = User.objects.get(username="community_owner")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/accept_member/'
+        r_data = {
+            'id': 14
+        }
+
+        response = self.client.post(url, r_data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_accept_member_with_moderator(self):
+        """
+        Ensure an owner can accept members
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        user = User.objects.get(username="moderator")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+        url = '/api/v1/communities/1/accept_member/'
+        r_data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, r_data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(2, data['id'])
+        self.assertEqual('1', data['status'])
+
+    def test_ban(self):
+        pass
+
+    def test_promote(self):
+        pass

@@ -19,6 +19,24 @@ class CommunityTests(APITestCase):
         user = User(username="simple_user", password="test1", email="zz@ssk.dk")
         user.save()
 
+    def set_create_communities_auto(self):
+        user = User.objects.get(username="community_owner")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        for num in range(1, 10):
+            url = '/api/v1/communities/'
+            aam = 1
+            if num % 2 == 0:
+                aam = 0
+
+            data = {
+                'name': 'com'+num.__str__(),
+                'description': 'com_desc'+num.__str__(),
+                'auto_accept_member': aam,
+            }
+            self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+
     def test_create_community_without_auth(self):
         """
         Ensure we cannot create community
@@ -58,6 +76,33 @@ class CommunityTests(APITestCase):
         self.assertEqual(community, member.community)
         self.assertEqual("0", member.role)
         self.assertEqual("1", member.status)
+
+    def test_list_communities_without_auth(self):
+        """
+        Ensure a non authenticated user cannot list communities
+        """
+        self.set_create_communities_auto()
+
+        url = '/api/v1/communities/'
+
+        response = self.client.get(url)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_list_communities_with_auth(self):
+        """
+        Ensure an authenticated user can list communities
+        """
+        self.set_create_communities_auto()
+        user = User.objects.get(username="simple_user")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(9, data['count'])
 
     def test_modify_community_with_owner(self):
         """
