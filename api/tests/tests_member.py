@@ -578,5 +578,67 @@ class MemberTests(APITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
-    def test_promote(self):
-        pass
+    def test_promote_user_without_auth(self):
+        """
+
+        """
+        self.set_create_community_with_member_and_moderator()
+
+        url = '/api/v1/communities/1/promote_moderator/'
+        data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_promote_user_with_user(self):
+        """
+
+        """
+        self.set_create_community_with_member_and_moderator()
+        user = User.objects.get(username="simple_user")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+
+        url = '/api/v1/communities/1/promote_moderator/'
+        data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+    def test_promote_user_with_moderator(self):
+        """
+
+        """
+        self.set_create_community_with_member_and_moderator()
+        user = User.objects.get(username="moderator")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+
+        url = '/api/v1/communities/1/promote_moderator/'
+        data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+    def test_promote_user_with_owner(self):
+        """
+
+        """
+        self.set_create_community_with_member_and_moderator()
+        user = User.objects.get(username="community_owner")
+        auth = 'JWT {0}'.format(core.utils.gen_auth_token(user))
+
+        url = '/api/v1/communities/1/promote_moderator/'
+        data = {
+            'id': 2
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(2, data['id'])
+        self.assertEqual('1', data['role'])
