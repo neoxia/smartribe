@@ -1,5 +1,5 @@
+from django.core.mail import send_mail
 from django.db.models import Q
-
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import action, link
@@ -7,10 +7,9 @@ from rest_framework.response import Response
 
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.community import IsCommunityOwner, IsCommunityModerator
-from api.serializers.community import CommunityPublicSerializer
-from api.serializers.member import MyMembersSerializer, ListCommunityMemberSerializer
+from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMemberSerializer
 from core.models import Community, Member
-from api.serializers.serializers import CommunitySerializer, MemberSerializer
+from api.serializers import CommunitySerializer
 from api.authenticate import AuthUser
 
 
@@ -162,6 +161,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Moderator actions
+
     @link(permission_classes=[IsCommunityModerator])
     def retrieve_members(self, request, pk=None):
         """
@@ -246,6 +246,11 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '1'
         member.save()
+        send_mail('[Smartribe] Membership accepted',
+                  'Congratulations!\n\n' +
+                  'You have been accepted as a new member of the community '+member.community.__str__(),
+                  'noreply@smartribe.fr',
+                  [member.user.email])
         serializer = ListCommunityMemberSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -290,10 +295,16 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '2'
         member.save()
+        send_mail('[Smartribe] Membership cancelled',
+                  'Sorry!\n\n' +
+                  'You have been banned from the community '+member.community.__str__(),
+                  'noreply@smartribe.fr',
+                  [member.user.email])
         serializer = ListCommunityMemberSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # Owner actions
+
     @action(methods=['POST', ], permission_classes=[IsCommunityOwner])
     def promote_moderator(self, request, pk=None):
         """
@@ -339,6 +350,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # Community permissions
+
     def check_moderator_permission(self, user, community):
         """
         Verifies that user has moderator's rights on the community

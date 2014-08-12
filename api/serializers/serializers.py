@@ -111,32 +111,6 @@ class SkillSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('user',)
 
 
-# COMMUNITY
-
-class CommunitySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Community
-        fields = ('url', 'name', 'description', 'creation_date', 'auto_accept_member')
-        read_only_fields = ('creation_date',)
-
-
-# MEMBER
-
-class MemberCreateSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.PrimaryKeyRelatedField()
-    community = serializers.PrimaryKeyRelatedField()
-
-    class Meta:
-        model = Member
-        fields = ('url', 'user', 'community')
-
-
-class MemberSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Member
-        fields = ('url', 'user', 'community', 'role', 'status', 'registration_date', 'last_modification_date')
-        read_only_fields = ('user', 'community', 'registration_date')
-
 
 # REQUEST
 

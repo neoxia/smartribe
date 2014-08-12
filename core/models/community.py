@@ -17,6 +17,8 @@ class Community(models.Model):
 
     creation_date = models.DateField(auto_now_add=True)
 
+    last_update = models.DateField(auto_now=True)
+
     auto_accept_member = models.BooleanField(default=False)
 
     def __str__(self):
@@ -36,6 +38,10 @@ class TransportStop(models.Model):
                               null=True,
                               blank=True)
 
+    #community = models.ForeignKey(TransportCommunity)
+
+    #is_valid = models.BooleanField(default=True)
+
     def __str__(self):
         return self.name
 
@@ -47,17 +53,22 @@ class TransportStop(models.Model):
 
 class TransportCommunity(Community):
 
-    transport_stop_departure = models.ForeignKey(TransportStop,
-                                                 related_name='departure')
-    transport_stop_via = models.ForeignKey(TransportStop,
-                                           related_name='via')
-    transport_stop_arrival = models.ForeignKey(TransportStop,
-                                               related_name='arrival')
+    departure = models.CharField(max_length=255)
+
+    via = models.CharField(max_length=255,
+                           null=True,
+                           blank=True)
+
+    arrival = models.CharField(max_length=255)
+
+    #transport_stop_departure = models.ForeignKey(TransportStop, related_name='departure')
+    #transport_stop_via = models.ForeignKey(TransportStop, related_name='via')
+    #transport_stop_arrival = models.ForeignKey(TransportStop, related_name='arrival')
 
     def __str__(self):
-        return self.name+', de '+self.transport_stop_departure.name\
-               + 'à '+self.transport_stop_arrival.name\
-               + ', via '+self.transport_stop_via.name
+        return self.name+', de '+self.departure \
+               + 'à '+self.arrival \
+               + ', via '+self.via
 
     class Meta:
         verbose_name = 'transport community'

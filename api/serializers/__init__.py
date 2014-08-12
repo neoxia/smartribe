@@ -24,14 +24,17 @@ from api.serializers.serializers import SkillCreateSerializer
 from api.serializers.serializers import SkillSerializer
 
 ## Community
-from api.serializers.serializers import CommunitySerializer
+from api.serializers.community import CommunitySerializer
+from api.serializers.community import CommunityPublicSerializer
 from api.serializers.community import LocalCommunitySerializer
-from api.serializers.community import TransportCommunitySerializer
 from api.serializers.community import TransportStopSerializer
+from api.serializers.community import TransportCommunitySerializer
 
 ## Member
-from api.serializers.serializers import MemberCreateSerializer
-from api.serializers.serializers import MemberSerializer
+from api.serializers.member import MemberCreateSerializer
+from api.serializers.member import MemberSerializer
+from api.serializers.member import MyMembersSerializer
+from api.serializers.member import ListCommunityMemberSerializer
 
 ## Request
 from api.serializers.serializers import RequestCreateSerializer

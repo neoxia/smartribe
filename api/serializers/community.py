@@ -1,14 +1,21 @@
 from rest_framework import serializers
 from api.serializers import AddressSerializer
-from core.models import LocalCommunity, TransportCommunity, Community
+from core.models import Community, TransportStop, LocalCommunity, TransportCommunity
+
+
+class CommunitySerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Community
+        fields = ('url', 'name', 'description', 'creation_date', 'last_update', 'auto_accept_member')
+        read_only_fields = ('creation_date', 'last_update')
 
 
 class CommunityPublicSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Community
-        fields = ('url', 'name', 'description', 'creation_date')
-        read_only_fields = ('creation_date',)
+        fields = ('url', 'name', 'description', 'creation_date', 'last_update')
+        read_only_fields = ('creation_date', 'last_update')
 
 
 class LocalCommunitySerializer(serializers.HyperlinkedModelSerializer):
@@ -18,28 +25,35 @@ class LocalCommunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = LocalCommunity
         fields = ('url', 'id',
-                  'name', 'description', 'creation_date', 'auto_accept_member',
+                  'name', 'description', 'creation_date', 'last_update', 'auto_accept_member',
                   'address')
-        read_only_fields = ('creation_date',)
-
-
-class TransportCommunitySerializer(serializers.HyperlinkedModelSerializer):
-
-    transport_stop_departure = serializers.PrimaryKeyRelatedField()
-    transport_stop_via = serializers.PrimaryKeyRelatedField()
-    transport_stop_arrival = serializers.PrimaryKeyRelatedField()
-
-    class Meta:
-        model = TransportCommunity
-        fields = ('url', 'id',
-                  'name', 'description', 'creation_date', 'auto_accept_member',
-                  'transport_stop_departure', 'transport_stop_via', 'transport_stop_arrival')
-        read_only_fields = ('creation_date',)
+        read_only_fields = ('creation_date', 'last_update')
 
 
 class TransportStopSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
+        model = TransportStop
+        fields = (#'url', 'id',
+                  'name', 'detail')
+
+
+
+class TransportCommunitySerializer(serializers.HyperlinkedModelSerializer):
+
+    #transport_stop_departure = serializers.PrimaryKeyRelatedField()
+    #transport_stop_via = serializers.PrimaryKeyRelatedField()
+    #transport_stop_arrival = serializers.PrimaryKeyRelatedField()
+
+    #transport_stop_departure = TransportStopSerializer(many=False)
+    #transport_stop_via = TransportStopSerializer(many=False)
+    #transport_stop_arrival = TransportStopSerializer(many=False)
+
+    class Meta:
         model = TransportCommunity
         fields = ('url', 'id',
-                  'name', 'detail')
+                  'name', 'description', 'creation_date', 'last_update', 'auto_accept_member',
+                  'departure', 'via', 'arrival')
+        read_only_fields = ('creation_date', 'last_update')
+
+

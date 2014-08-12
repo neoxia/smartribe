@@ -7,7 +7,7 @@ from api.authenticate import AuthUser
 from api.permissions.common import IsJWTSelf, IsJWTAuthenticated
 from api.permissions.community import IsMemberManager, IsOwnerAndNotBanned
 from core.models import Member, Community
-from api.serializers.serializers import MemberSerializer, MemberCreateSerializer
+from api.serializers import MemberSerializer, MemberCreateSerializer
 
 
 class MemberViewSet(viewsets.ModelViewSet):

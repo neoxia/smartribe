@@ -46,6 +46,12 @@ class IsCommunityModerator(BasePermission):
         else:
             return False
 
+class IsCommunityMember(BasePermission):
+    """
+
+    """
+    pass
+
 
 # PERMISSIONS ON MEMBERS
 
