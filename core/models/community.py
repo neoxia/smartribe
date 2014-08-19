@@ -21,6 +21,9 @@ class Community(models.Model):
 
     auto_accept_member = models.BooleanField(default=False)
 
+    def get_type(self):
+        pass
+
     def __str__(self):
         return self.name
 
@@ -67,7 +70,7 @@ class TransportCommunity(Community):
 
     def __str__(self):
         return self.name+', de '+self.departure \
-               + 'à '+self.arrival \
+               + ' à '+self.arrival \
                + ', via '+self.via
 
     class Meta:

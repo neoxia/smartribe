@@ -4,11 +4,13 @@ from core.models import Community
 
 class Location(models.Model):
 
-    communities = models.ManyToManyField(Community)
+    community = models.ForeignKey(Community)
 
     name = models.CharField(max_length=50)
 
     description = models.TextField()
+
+    index = models.IntegerField(null=True, blank=True)
 
     gps_x = models.FloatField()
 

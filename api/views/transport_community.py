@@ -19,14 +19,9 @@ class TransportCommunityViewSet(CommunityViewSet):
     """
     model = TransportCommunity
     serializer_class = TransportCommunitySerializer
+    search_fields = ('name', 'description', 'departure', 'via', 'arrival')
 
-    def add_departure_location(self):
-        pass
-
-    def add_arrival_location(self):
-        pass
-
-    def add_intermediate_location(self):
+    def insert_location(self, request, pk=None):
         pass
 
     @link(permission_classes=[IsCommunityModerator])

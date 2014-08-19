@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMemberSerializer
-from core.models import Community, Member
+from api.serializers.location import LocationSerializer, LocationCreateSerializer
+from core.models import Community, Member, Location
 from api.serializers import CommunitySerializer
 from api.authenticate import AuthUser
 
@@ -46,6 +47,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
         user, _ = AuthUser().authenticate(self.request)
         owner = Member(user=user, community=obj, role="0", status="1")
         owner.save()
+
+    ## Members management
 
     # Simple user actions
 
@@ -349,7 +352,162 @@ class CommunityViewSet(viewsets.ModelViewSet):
         serializer = ListCommunityMemberSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Community permissions
+    ## Location management
+
+    # Member actions
+
+    @action(methods=['POST'])
+    def add_location(self, request, pk=None):
+        """
+        Add a location to local community.
+
+                | **permission**: Community member
+                | **endpoint**: /local_communities/{id}/add_location/
+                | **method**: POST
+                | **attr**:
+                |       - name (char 50)
+                |       - description (text)
+                |       - gps_x (float)
+                |       - gps_y (float)
+                |       - community added automatically by server
+                | **http return**:
+                |       - 201 Created
+                |       - 400 Bad request
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                |       - 404 Not found
+                | **data return**:
+                |       Location data
+                | **other actions**:
+                |       None
+
+        """
+        user, _ = AuthUser().authenticate(request)
+        if pk is None:
+            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
+        if not self.model.objects.filter(id=pk).exists():
+            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
+        loc_community = self.model.objects.get(id=pk)
+        if not self.check_member_permission(user, loc_community):
+            return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        data = request.DATA
+        data['community'] = pk
+        location = LocationCreateSerializer(data=data)
+        if not location.is_valid():
+            return Response(location.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            self.pre_add_location(data)
+        except Exception:
+            return Response({'detail': 'Bad or missing index.'}, status=status.HTTP_400_BAD_REQUEST)
+        location.save(force_insert=True)
+        return Response(location.data, status=status.HTTP_201_CREATED)
+
+    def pre_add_location(self, data):
+        """
+        For indexes management.
+        Might be overwritten by child classes.
+        """
+        pass
+
+    @link()
+    def list_locations(self, request, pk=None):
+        """
+        List all locations associated with a local community.
+
+                | **permission**: Community member
+                | **endpoint**: /communities/{id}/list_locations/
+                | **method**: POST
+                | **attr**:
+                |       None
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                |       - 404 Not found
+                | **data return**:
+                |       - Location list :
+                |           - community (integer)
+                |           - name (char 50)
+                |           - description (text)
+                |           - gps_x (float)
+                |           - gps_y (float)
+                | **other actions**:
+                |       None
+
+        """
+        user, _ = AuthUser().authenticate(request)
+        if pk is None:
+            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
+        if not self.model.objects.filter(id=pk).exists():
+            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
+        loc_community = self.model.objects.get(id=pk)
+        if not self.check_member_permission(user, loc_community):
+            return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        locations = Location.objects.filter(community=pk)
+        serializer = LocationSerializer(locations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @link()
+    def search_locations(self, request, pk=None):
+        """
+        Search for locations associated with a local community.
+
+                | **permission**: Community member
+                | **endpoint**: /communities/{id}/search_locations/
+                | **method**: POST
+                | **attr**:
+                |       - search (char 255)
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                |       - 404 Not found
+                | **data return**:
+                |       - Location list :
+                |           - community (integer)
+                |           - name (char 50)
+                |           - description (text)
+                |           - gps_x (float)
+                |           - gps_y (float)
+                | **other actions**:
+                |       None
+
+        """
+        user, _ = AuthUser().authenticate(request)
+        if pk is None:
+            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
+        if not self.model.objects.filter(id=pk).exists():
+            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
+        loc_community = self.model.objects.get(id=pk)
+        if not self.check_member_permission(user, loc_community):
+            return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        data = request.QUERY_PARAMS
+        if 'search' not in data:
+            return Response({'detail': 'search parameter missing.'}, status=status.HTTP_400_BAD_REQUEST)
+        locations = Location.objects.filter(Q(community=pk),
+                                            Q(name__icontains=data['search']) |
+                                            Q(description__icontains=data['search']))
+        serializer = LocationSerializer(locations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    ## Community permissions
+
+    def check_member_permission(self, user, community):
+        """
+        Verifies that user has member's rights on the community
+        """
+        if not user:
+            return False
+        elif Member.objects.filter(
+                user=user,
+                community=community,
+                status="1"
+        ).exists():
+            return True
+        else:
+            return False
 
     def check_moderator_permission(self, user, community):
         """

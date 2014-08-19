@@ -25,9 +25,7 @@ from api.serializers.serializers import SkillSerializer
 
 ## Community
 from api.serializers.community import CommunitySerializer
-from api.serializers.community import CommunityPublicSerializer
 from api.serializers.community import LocalCommunitySerializer
-from api.serializers.community import TransportStopSerializer
 from api.serializers.community import TransportCommunitySerializer
 
 ## Member
