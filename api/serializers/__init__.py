@@ -35,8 +35,8 @@ from api.serializers.member import MyMembersSerializer
 from api.serializers.member import ListCommunityMemberSerializer
 
 ## Request
-from api.serializers.serializers import RequestCreateSerializer
-from api.serializers.serializers import RequestSerializer
+from api.serializers.request import RequestCreateSerializer
+from api.serializers.request import RequestSerializer
 
 ## Offer
 from api.serializers.serializers import OfferSerializer

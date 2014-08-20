@@ -20,6 +20,7 @@ Models:
    model/transport_community
    model/member
    model/location
+   model/request
    model/faq
    model/suggestion
    model/inappropriate
@@ -36,6 +37,7 @@ API:
    api/api_community
    api/api_local_community
    api/api_transport_community
+   api/api_request
    api/api_faq
    api/api_suggestion
    api/api_inappropriate
