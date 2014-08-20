@@ -49,6 +49,44 @@ class LocationLocalCommunityTests(APITestCase):
                        index=0)
         loc.save()
 
+    def set_locations(self):
+        community = TransportCommunity.objects.get(id=1)
+        loc = Location(community=community,
+                       name='Meudon',
+                       description='description meudon',
+                       gps_x=0.0,
+                       gps_y=1.0,
+                       index=0)
+        loc.save()
+        loc = Location(community=community,
+                       name='Javel',
+                       description='description javel',
+                       gps_x=0.1,
+                       gps_y=1.1,
+                       index=1)
+        loc.save()
+        loc = Location(community=community,
+                       name='Invalides',
+                       description='description invalides',
+                       gps_x=0.2,
+                       gps_y=1.2,
+                       index=2)
+        loc.save()
+        loc = Location(community=community,
+                       name='St Michel',
+                       description='description st michel',
+                       gps_x=0.3,
+                       gps_y=1.3,
+                       index=3)
+        loc.save()
+        loc = Location(community=community,
+                       name='Ivry',
+                       description='description ivry',
+                       gps_x=0.4,
+                       gps_y=1.4,
+                       index=4)
+        loc.save()
+
     def test_create_first_location_without_auth(self):
         """
 
@@ -270,3 +308,132 @@ class LocationLocalCommunityTests(APITestCase):
         self.assertEqual(0.2, loc.gps_x)
         self.assertEqual(1.2, loc.gps_y)
         self.assertEqual(1, loc.index)
+
+    def test_delete_location_with_member(self):
+        """
+
+        """
+        self.set_locations()
+
+        user = User.objects.get(username="member")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/transport_communities/1/delete_location/'
+        data = {
+            'id': 4
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+    def test_delete_location_bad_id(self):
+        """
+
+        """
+        self.set_locations()
+
+        user = User.objects.get(username="moderator")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/transport_communities/1/delete_location/'
+        data = {
+            'id': 13
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    def test_delete_location_first(self):
+        """
+
+        """
+        self.set_locations()
+
+        user = User.objects.get(username="moderator")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/transport_communities/1/delete_location/'
+        data = {
+            'id': 1
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertEqual(4, Location.objects.all().count())
+
+        loc = Location.objects.get(name='Javel')
+        self.assertEqual(0, loc.index)
+
+        loc = Location.objects.get(name='Invalides')
+        self.assertEqual(1, loc.index)
+
+        loc = Location.objects.get(name='St Michel')
+        self.assertEqual(2, loc.index)
+
+        loc = Location.objects.get(name='Ivry')
+        self.assertEqual(3, loc.index)
+
+    def test_delete_location_intermediate(self):
+        """
+
+        """
+        self.set_locations()
+
+        user = User.objects.get(username="moderator")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/transport_communities/1/delete_location/'
+        data = {
+            'id': 4
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertEqual(4, Location.objects.all().count())
+
+        loc = Location.objects.get(name='Meudon')
+        self.assertEqual(0, loc.index)
+
+        loc = Location.objects.get(name='Javel')
+        self.assertEqual(1, loc.index)
+
+        loc = Location.objects.get(name='Invalides')
+        self.assertEqual(2, loc.index)
+
+        loc = Location.objects.get(name='Ivry')
+        self.assertEqual(3, loc.index)
+
+    def test_delete_location_last(self):
+        """
+
+        """
+        self.set_locations()
+
+        user = User.objects.get(username="moderator")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/transport_communities/1/delete_location/'
+        data = {
+            'id': 5
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertEqual(4, Location.objects.all().count())
+
+        loc = Location.objects.get(name='Meudon')
+        self.assertEqual(0, loc.index)
+
+        loc = Location.objects.get(name='Javel')
+        self.assertEqual(1, loc.index)
+
+        loc = Location.objects.get(name='Invalides')
+        self.assertEqual(2, loc.index)
+
+        loc = Location.objects.get(name='St Michel')
+        self.assertEqual(3, loc.index)

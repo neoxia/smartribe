@@ -542,7 +542,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if 'id' not in data:
             return Response({'detail': 'No location id provided.'}, status=status.HTTP_400_BAD_REQUEST)
         if not Location.objects.filter(community=pk, id=data['id']).exists():
-            return Response({'detail': 'No such location.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'detail': 'No such location.'}, status=status.HTTP_404_NOT_FOUND)
         location = Location.objects.get(id=data['id'])
         try:
             self.pre_delete_location(location, community)
