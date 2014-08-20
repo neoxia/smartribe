@@ -1,6 +1,6 @@
 Member
 ======
-Desc memeber
+Desc member
 
 .. autoclass:: core.models.member.Member
     :members:

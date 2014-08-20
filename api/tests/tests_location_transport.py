@@ -6,7 +6,7 @@ from core.models import Member, TransportCommunity, Location
 import core.utils
 
 
-class LocationLocalCommunityTests(APITestCase):
+class LocationTransportCommunityTests(APITestCase):
 
     def setUp(self):
         """

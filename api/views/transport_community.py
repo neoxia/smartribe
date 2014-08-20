@@ -28,7 +28,7 @@ class TransportCommunityViewSet(CommunityViewSet):
             |           - ban_member (POST / Moderator)
             |           - promote_moderator (POST / Owner)
             |       - Locations management
-            |           - add_location (POST / Member)
+            |           - add_location (POST / Member) - WARNING : 'index' parameter mandatory
             |           - list_locations (GET / Member)
             |           - search_locations (GET / Member)
             |           - delete_location (POST / Moderator)

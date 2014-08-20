@@ -12,18 +12,33 @@ Models:
    :maxdepth: 3
 
    user
-   profile
-   community
-   member
+   model/profile
+   model/skill_category
+   model/skill
+   model/community
+   model/local_community
+   model/transport_community
+   model/member
+   model/location
+   model/faq
+   model/suggestion
+   model/inappropriate
+   model/tos
 
 API:
 
 .. toctree::
    :maxdepth: 3
 
-   api_user
-   api_profile
-   api_community
+   api/api_user
+   api/api_profile
+   api/api_skill
+   api/api_community
+   api/api_local_community
+   api/api_transport_community
+   api/api_faq
+   api/api_suggestion
+   api/api_inappropriate
 
 Indices and tables
 ==================
