@@ -25,6 +25,20 @@ class CommunityViewSet(viewsets.ModelViewSet):
             |       - Default : IsCommunityOwner
             |       - GET or POST: IsJWTAuthenticated
             |       - PUT or PATCH : IsCommunityModerator
+            | **Extra-methods:** (HTTP method / permission)
+            |       - Memberships management
+            |           - join_community (POST / Authenticated)
+            |           - list_my_memberships (GET / Authenticated)
+            |           - leave_community (POST / Authenticated)
+            |           - retrieve_members (GET / Moderator)
+            |           - accept_member (POST / Moderator)
+            |           - ban_member (POST / Moderator)
+            |           - promote_moderator (POST / Owner)
+            |       - Locations management
+            |           - add_location (POST / Member)
+            |           - list_locations (GET / Member)
+            |           - search_locations (GET / Member)
+            |           - delete_location (POST / Moderator)
 
     """
     model = Community
@@ -369,6 +383,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - description (text)
                 |       - gps_x (float)
                 |       - gps_y (float)
+                |       - index (integer) optional
                 |       - community added automatically by server
                 | **http return**:
                 |       - 201 Created
@@ -387,8 +402,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
         if not self.model.objects.filter(id=pk).exists():
             return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
-        loc_community = self.model.objects.get(id=pk)
-        if not self.check_member_permission(user, loc_community):
+        community = self.model.objects.get(id=pk)
+        if not self.check_member_permission(user, community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.DATA
         data['community'] = pk
@@ -396,16 +411,16 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not location.is_valid():
             return Response(location.errors, status=status.HTTP_400_BAD_REQUEST)
         try:
-            self.pre_add_location(data)
+            self.pre_add_location(data, community)
         except Exception:
             return Response({'detail': 'Bad or missing index.'}, status=status.HTTP_400_BAD_REQUEST)
         location.save(force_insert=True)
         return Response(location.data, status=status.HTTP_201_CREATED)
 
-    def pre_add_location(self, data):
+    def pre_add_location(self, data, community):
         """
         For indexes management.
-        Might be overwritten by child classes.
+        Might be overridden by child classes.
         """
         pass
 
@@ -491,6 +506,57 @@ class CommunityViewSet(viewsets.ModelViewSet):
                                             Q(description__icontains=data['search']))
         serializer = LocationSerializer(locations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # Moderator actions
+
+    @action(methods=['POST'])
+    def delete_location(self, request, pk=None):
+        """
+        Delete a location.
+
+                | **permission**: Community moderator
+                | **endpoint**: /local_communities/{id}/delete_location/
+                | **method**: POST
+                | **attr**:
+                |       - id (integer)
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                |       - 404 Not found
+                | **data return**:
+                |       None
+                | **other actions**:
+                |       None
+        """
+        user, _ = AuthUser().authenticate(request)
+        if pk is None:
+            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
+        if not self.model.objects.filter(id=pk).exists():
+            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
+        community = self.model.objects.get(id=pk)
+        if not self.check_moderator_permission(user, community):
+            return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        data = request.DATA
+        if 'id' not in data:
+            return Response({'detail': 'No location id provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Location.objects.filter(community=pk, id=data['id']).exists():
+            return Response({'detail': 'No such location.'}, status=status.HTTP_401_UNAUTHORIZED)
+        location = Location.objects.get(id=data['id'])
+        try:
+            self.pre_delete_location(location, community)
+        except Exception:
+            return Response({'detail': 'Bad operation.'}, status=status.HTTP_400_BAD_REQUEST)
+        location.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def pre_delete_location(self, location, community):
+        """
+        For indexes management.
+        Might be overridden by child classes.
+        """
+        pass
 
     ## Community permissions
 
