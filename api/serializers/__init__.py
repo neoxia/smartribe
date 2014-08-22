@@ -39,4 +39,5 @@ from api.serializers.request import RequestCreateSerializer
 from api.serializers.request import RequestSerializer
 
 ## Offer
-from api.serializers.serializers import OfferSerializer
+from api.serializers.offer import OfferCreateSerializer
+from api.serializers.offer import OfferSerializer

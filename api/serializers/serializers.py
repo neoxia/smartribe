@@ -112,10 +112,4 @@ class SkillSerializer(serializers.HyperlinkedModelSerializer):
 
 
 
-# REQUEST
 
-
-class OfferSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Offer
-        fields = ('request', 'description')

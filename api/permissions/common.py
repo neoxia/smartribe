@@ -3,9 +3,7 @@ from rest_framework.permissions import BasePermission
 from api.authenticate import AuthUser
 
 
-"""
-Include API common permissions
-"""
+# Include API common permissions
 
 class IsJWTAuthenticated(BasePermission):
     """
@@ -46,6 +44,7 @@ class IsJWTSelf(BasePermission):
             return False
         else:
             return True
+
 
 class IsJWTMe(BasePermission):
     """
