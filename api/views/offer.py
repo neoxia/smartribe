@@ -1,5 +1,6 @@
 from django.db.models import Q
 from rest_framework.viewsets import ModelViewSet
+
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.permissions.offer import IsJWTSelfAndConcerned
@@ -17,7 +18,7 @@ class OfferViewSet(ModelViewSet):
             | **Permissions**:
             |       - Default : IsJWTOwner
             |       - GET : IsJWTAuthenticated
-            |       - POST : IsJWTSelf
+            |       - POST : IsJWTSelfAndConcerned
 
     """
     model = Offer

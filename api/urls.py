@@ -12,6 +12,7 @@ from api.views import faq
 from api.views import suggestion
 from api.views import inappropriate
 from api.views import request
+from api.views import offer
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -28,6 +29,7 @@ router.register(r'suggestions', suggestion.SuggestionViewSet)
 router.register(r'inappropriates', inappropriate.InappropriateViewSet)
 
 router.register(r'requests', request.RequestViewSet)
+router.register(r'offers', offer.OfferViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.
