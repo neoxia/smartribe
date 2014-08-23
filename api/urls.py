@@ -6,6 +6,7 @@ from api.views import profile
 from api.views import community
 from api.views import local_community
 from api.views import transport_community
+from api.views import meeting_point
 from api.views import media
 from api.views import skill
 from api.views import faq
@@ -22,6 +23,7 @@ router.register(r'profiles', profile.ProfileViewSet)
 router.register(r'communities', community.CommunityViewSet)
 router.register(r'local_communities', local_community.LocalCommunityViewSet)
 router.register(r'transport_communities', transport_community.TransportCommunityViewSet)
+router.register(r'meeting_points', meeting_point.MeetingPointViewSet)
 router.register(r'skill_categories', skill.SkillCategoryViewSet)
 router.register(r'skills', skill.SkillViewSet)
 router.register(r'faq', faq.FaqViewSet)

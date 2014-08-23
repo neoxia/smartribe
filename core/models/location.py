@@ -24,11 +24,13 @@ class Location(models.Model):
 
 class MeetingPoint(models.Model):
 
+    location = models.ForeignKey(Location)
+
     name = models.CharField(max_length=50)
 
     description = models.TextField()
 
-    photo = models.ImageField()
+    photo = models.ImageField(blank=True, null=True)
 
     class Meta:
         verbose_name = 'meeting point'
