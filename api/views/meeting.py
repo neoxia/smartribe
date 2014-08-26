@@ -19,6 +19,8 @@ class MeetingViewSet(ModelViewSet):
             | **Permissions**:
             |       - Default : IsConcernedByMeeting
             |       - GET : IsJWTAuthenticated
+            | **Notes**:
+            |       - GET response restricted to 'Meeting' objects linked with user
 
     """
     model = Meeting

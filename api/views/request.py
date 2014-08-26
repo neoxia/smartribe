@@ -20,6 +20,8 @@ class RequestViewSet(viewsets.ModelViewSet):
             |       - Default : IsJWTOwner
             |       - GET : IsJWTAuthenticated
             |       - POST : IsJWTSelf
+            | **Notes**:
+            |       - GET response restricted to 'Requests' objects linked with user and not closed
 
     """
     model = Request
@@ -42,7 +44,7 @@ class RequestViewSet(viewsets.ModelViewSet):
         user, _ = AuthUser().authenticate(self.request)
         my_communities = Member.objects.filter(user=user).values('community')
         linked_users = Member.objects.filter(community__in=my_communities).values('user')
-        return self.model.objects.filter(user__in=linked_users)
+        return self.model.objects.filter(user__in=linked_users, closed=False)
 
     @link()
     def list_my_requests(self, request, pk=None):
