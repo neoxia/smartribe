@@ -13,9 +13,8 @@ class MeetingPointViewSet(ModelViewSet):
             | **Endpoint**: /meeting_points/
             | **Methods**: GET / POST / PUT / PATCH / DELETE / OPTIONS
             | **Permissions**:
-            |       - Default : IsJWTOwner
-            |       - GET : IsJWTAuthenticated
-            |       - POST : IsJWTSelfAndConcerned
+            |       - Default : IsCommunityModerator
+            |       - GET or POST : IsCommunityMember
 
     """
     model = MeetingPoint

@@ -19,19 +19,22 @@ from smartribe.settings import MEDIA_ROOT
 
 router = routers.DefaultRouter()
 router.register(r'users', user.UserViewSet)
+
 router.register(r'profiles', profile.ProfileViewSet)
+router.register(r'skill_categories', skill.SkillCategoryViewSet)
+router.register(r'skills', skill.SkillViewSet)
+
 router.register(r'communities', community.CommunityViewSet)
 router.register(r'local_communities', local_community.LocalCommunityViewSet)
 router.register(r'transport_communities', transport_community.TransportCommunityViewSet)
 router.register(r'meeting_points', meeting_point.MeetingPointViewSet)
-router.register(r'skill_categories', skill.SkillCategoryViewSet)
-router.register(r'skills', skill.SkillViewSet)
-router.register(r'faq', faq.FaqViewSet)
-router.register(r'suggestions', suggestion.SuggestionViewSet)
-router.register(r'inappropriates', inappropriate.InappropriateViewSet)
 
 router.register(r'requests', request.RequestViewSet)
 router.register(r'offers', offer.OfferViewSet)
+
+router.register(r'faq', faq.FaqViewSet)
+router.register(r'suggestions', suggestion.SuggestionViewSet)
+router.register(r'inappropriates', inappropriate.InappropriateViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.
