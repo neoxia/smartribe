@@ -12,6 +12,10 @@ class Meeting(models.Model):
 
     date_time = models.DateTimeField()
 
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    last_update = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name = 'meeting'
         verbose_name_plural = 'meetings'

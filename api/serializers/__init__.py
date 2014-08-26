@@ -42,6 +42,10 @@ from api.serializers.request import RequestSerializer
 from api.serializers.offer import OfferCreateSerializer
 from api.serializers.offer import OfferSerializer
 
-## Meeting
+## Meeting point
 from api.serializers.meeting_point import MeetingPointCreateSerializer
 from api.serializers.meeting_point import MeetingPointSerializer
+
+## Meeting point
+from api.serializers.meeting import MeetingCreateSerializer
+from api.serializers.meeting import MeetingSerializer

@@ -6,10 +6,10 @@ class MeetingPointCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MeetingPoint
-        read_only_fields = ('location', )
 
 
 class MeetingPointSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MeetingPoint
+        read_only_fields = ('location', )
