@@ -1,0 +1,727 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Community API &mdash; Smartribe 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Smartribe 0.0.1 documentation" href="../index.html"/>
+        <link rel="next" title="Local community API" href="api_local_community.html"/>
+        <link rel="prev" title="Skill API" href="api_skill.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> Smartribe</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user.html">User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/profile.html">Profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/skill_category.html">Skill category</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/skill.html">Skill</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/local_community.html">Local community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/transport_community.html">Transport community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/member.html">Member</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/location.html">Location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/meeting_point.html">Meeting Point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/request.html">Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/offer.html">Offer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/faq.html">Frequently asked question</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/suggestion.html">Suggestion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/inappropriate.html">Inappropriate content</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/tos.html">Terms of service</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api_user.html">User API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_profile.html">Profile API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_skill.html">Skill API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Community API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_local_community.html">Local community API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_transport_community.html">Transport community API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_meeting_point.html">Meeting Point API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_request.html">Request API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_offer.html">Offer API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_faq.html">FAQ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_suggestion.html">Suggestion API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_inappropriate.html">Inappropriate content API</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Smartribe</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Community API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/api/api_community.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="community-api">
+<h1>Community API<a class="headerlink" href="#community-api" title="Permalink to this headline">¶</a></h1>
+<p>Community manipulation API</p>
+<span class="target" id="module-api.views.community"></span><dl class="class">
+<dt id="api.views.community.CommunityViewSet">
+<em class="property">class </em><tt class="descclassname">api.views.community.</tt><tt class="descname">CommunityViewSet</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherits standard characteristics from ModelViewSet:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>Endpoint</strong>: /communities/</div>
+<div class="line"><strong>Methods</strong>: GET / POST / PUT / PATCH / DELETE / OPTIONS</div>
+<div class="line"><strong>Permissions</strong>:</div>
+<div class="line-block">
+<div class="line">- Default : IsCommunityOwner</div>
+<div class="line">- GET or POST: IsJWTAuthenticated</div>
+<div class="line">- PUT or PATCH : IsCommunityModerator</div>
+</div>
+<div class="line"><strong>Extra-methods:</strong> (HTTP method / permission)</div>
+<div class="line-block">
+<div class="line">- Memberships management</div>
+<div class="line-block">
+<div class="line">- join_community (POST / Authenticated)</div>
+<div class="line">- list_my_memberships (GET / Authenticated)</div>
+<div class="line">- leave_community (POST / Authenticated)</div>
+<div class="line">- retrieve_members (GET / Moderator)</div>
+<div class="line">- accept_member (POST / Moderator)</div>
+<div class="line">- ban_member (POST / Moderator)</div>
+<div class="line">- promote_moderator (POST / Owner)</div>
+</div>
+<div class="line">- Locations management</div>
+<div class="line-block">
+<div class="line">- add_location (POST / Member)</div>
+<div class="line">- list_locations (GET / Member)</div>
+<div class="line">- search_locations (GET / Member)</div>
+<div class="line">- delete_location (POST / Moderator)</div>
+</div>
+</div>
+</div>
+</div></blockquote>
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.accept_member">
+<tt class="descname">accept_member</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.accept_member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.accept_member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept a membership request (can also be used to change member status from &#8216;banned&#8217; back to &#8216;accepted&#8217;).</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community moderator</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/accept_member/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">- Member object information</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified member object</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+<div class="line">- user</div>
+<div class="line-block">
+<div class="line">- url (string)</div>
+<div class="line">- username (string)</div>
+<div class="line">- id (integer)</div>
+</div>
+<div class="line">- status (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- role (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- registration_date (datetime)</div>
+<div class="line">- last_modification_date (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.add_location">
+<tt class="descname">add_location</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.add_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.add_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a location to local community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community member</div>
+<div class="line"><strong>endpoint</strong>: /local_communities/{id}/add_location/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">- name (char 50)</div>
+<div class="line">- description (text)</div>
+<div class="line">- gps_x (float)</div>
+<div class="line">- gps_y (float)</div>
+<div class="line">- index (integer) optional</div>
+<div class="line">- community added automatically by server</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 201 Created</div>
+<div class="line">- 400 Bad request</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">Location data</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.ban_member">
+<tt class="descname">ban_member</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.ban_member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.ban_member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ban a member from community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community moderator</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/ban_member/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">- Member object information</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified member object</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+<div class="line">- user</div>
+<div class="line-block">
+<div class="line">- url (string)</div>
+<div class="line">- username (string)</div>
+<div class="line">- id (integer)</div>
+</div>
+<div class="line">- status (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- role (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- registration_date (datetime)</div>
+<div class="line">- last_modification_date (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.check_member_permission">
+<tt class="descname">check_member_permission</tt><big>(</big><em>user</em>, <em>community</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.check_member_permission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.check_member_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that user has member&#8217;s rights on the community</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.check_moderator_permission">
+<tt class="descname">check_moderator_permission</tt><big>(</big><em>user</em>, <em>community</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.check_moderator_permission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.check_moderator_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that user has moderator&#8217;s rights on the community</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.check_owner_permission">
+<tt class="descname">check_owner_permission</tt><big>(</big><em>user</em>, <em>community</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.check_owner_permission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.check_owner_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that user has owner&#8217;s rights on the community</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.check_upper_permission">
+<tt class="descname">check_upper_permission</tt><big>(</big><em>user</em>, <em>member</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.check_upper_permission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.check_upper_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that user has upper rights on community than the member he wants to manage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.delete_location">
+<tt class="descname">delete_location</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.delete_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.delete_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a location.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community moderator</div>
+<div class="line"><strong>endpoint</strong>: /local_communities/{id}/delete_location/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 400 Bad request</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.get_permissions">
+<tt class="descname">get_permissions</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.get_permissions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.get_permissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>An authenticated user can create a new community or see existing communities.
+Only owner or moderator can modify an existing community.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.join_community">
+<tt class="descname">join_community</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.join_community"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.join_community" title="Permalink to this definition">¶</a></dt>
+<dd><p>Become a new member of a community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: JWTAuthenticated</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/join_community/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 201 Created</div>
+<div class="line">- 401 Unauthorized</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.leave_community">
+<tt class="descname">leave_community</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.leave_community"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.leave_community" title="Permalink to this definition">¶</a></dt>
+<dd><p>Leave a community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: JWTAuthenticated</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/leave_community/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.list_locations">
+<tt class="descname">list_locations</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.list_locations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.list_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all locations associated with a local community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community member</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/list_locations/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 400 Bad request</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Location list :</div>
+<div class="line-block">
+<div class="line">- community (integer)</div>
+<div class="line">- name (char 50)</div>
+<div class="line">- description (text)</div>
+<div class="line">- gps_x (float)</div>
+<div class="line">- gps_y (float)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.list_my_memberships">
+<tt class="descname">list_my_memberships</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.list_my_memberships"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.list_my_memberships" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the communities the authenticated user is member of.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: JWTAuthenticated</div>
+<div class="line"><strong>endpoint</strong>: /communities/0/list_my_memberships/</div>
+<div class="line"><strong>method</strong>: GET</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- List of members objects :</div>
+<div class="line-block">
+<div class="line">- community</div>
+<div class="line-block">
+<div class="line">- url (string)</div>
+<div class="line">- name (string)</div>
+<div class="line">- description (text)</div>
+<div class="line">- creation date (datetime)</div>
+</div>
+<div class="line">- status (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- role (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- registration_date (datetime)</div>
+<div class="line">- last_modification_date (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="api.views.community.CommunityViewSet.model">
+<tt class="descname">model</tt><a class="headerlink" href="#api.views.community.CommunityViewSet.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">Community</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.pre_add_location">
+<tt class="descname">pre_add_location</tt><big>(</big><em>data</em>, <em>community</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.pre_add_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.pre_add_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>For indexes management.
+Might be overridden by child classes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.pre_delete_location">
+<tt class="descname">pre_delete_location</tt><big>(</big><em>location</em>, <em>community</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.pre_delete_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.pre_delete_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>For indexes management.
+Might be overridden by child classes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.promote_moderator">
+<tt class="descname">promote_moderator</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.promote_moderator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.promote_moderator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant community moderator rights to a member.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community owner</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/promote_moderator/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">- Member object information</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified member object</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+<div class="line">- user</div>
+<div class="line-block">
+<div class="line">- url (string)</div>
+<div class="line">- username (string)</div>
+<div class="line">- id (integer)</div>
+</div>
+<div class="line">- status (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- role (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- registration_date (datetime)</div>
+<div class="line">- last_modification_date (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.retrieve_members">
+<tt class="descname">retrieve_members</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.retrieve_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.retrieve_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all members belonging to a community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community moderator</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/retrieve_members/</div>
+<div class="line"><strong>method</strong>: GET</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- List of members objects :</div>
+<div class="line-block">
+<div class="line">- id (integer)</div>
+<div class="line">- user</div>
+<div class="line-block">
+<div class="line">- url (string)</div>
+<div class="line">- username (string)</div>
+<div class="line">- id (integer)</div>
+</div>
+<div class="line">- status (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- role (&#8216;0&#8217;, &#8216;1&#8217;, &#8216;2&#8217;)</div>
+<div class="line">- registration_date (datetime)</div>
+<div class="line">- last_modification_date (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.community.CommunityViewSet.search_locations">
+<tt class="descname">search_locations</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.search_locations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.search_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for locations associated with a local community.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: Community member</div>
+<div class="line"><strong>endpoint</strong>: /communities/{id}/search_locations/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">- search (char 255)</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 400 Bad request</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Location list :</div>
+<div class="line-block">
+<div class="line">- community (integer)</div>
+<div class="line">- name (char 50)</div>
+<div class="line">- description (text)</div>
+<div class="line">- gps_x (float)</div>
+<div class="line">- gps_y (float)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_local_community.html" class="btn btn-neutral float-right" title="Local community API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api_skill.html" class="btn btn-neutral" title="Skill API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Renaud Bordier &amp; Yann Coleu.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
