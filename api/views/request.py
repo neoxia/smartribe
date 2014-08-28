@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.decorators import link
+from rest_framework.decorators import link, action
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -30,7 +30,7 @@ class RequestViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
-        if self.request.method == 'POST':
+        if self.request.method == 'POST' and 'pk' not in self.kwargs:
             return [IsJWTSelf()]
         return [IsJWTOwner()]
 
@@ -44,7 +44,7 @@ class RequestViewSet(viewsets.ModelViewSet):
         user, _ = AuthUser().authenticate(self.request)
         my_communities = Member.objects.filter(user=user).values('community')
         linked_users = Member.objects.filter(community__in=my_communities).values('user')
-        return self.model.objects.filter(user__in=linked_users, closed=False)
+        return self.model.objects.filter(user__in=linked_users)
 
     @link()
     def list_my_requests(self, request, pk=None):
@@ -73,6 +73,7 @@ class RequestViewSet(viewsets.ModelViewSet):
                 |           - closed (boolean)
                 | **other actions**:
                 |       None
+
         """
         user, _ = AuthUser().authenticate(self.request)
         requests = self.model.objects.filter(user=user)
@@ -81,4 +82,37 @@ class RequestViewSet(viewsets.ModelViewSet):
             serializer = self.get_pagination_serializer(page)
         else:
             serializer = self.get_serializer(self.object_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(permission_classes=[IsJWTOwner])
+    def close_request(self, request, pk=None):
+        """
+        Close a request.
+
+                | **permission**: IsJWTOwner
+                | **endpoint**: /requests/{id}/close_request/
+                | **method**: POST
+                | **attr**:
+                |       None
+                | **http return**:
+                |       - 200 OK
+                |       - 401 Unauthorized
+                |       - 403 Forbidden
+                | **data return**:
+                |       - Modified request object
+                | **other actions**:
+                |       None
+
+        """
+        user, _ = AuthUser().authenticate(request)
+        if pk is None:
+            return Response({'detail': 'Id requested in URL.'}, status.HTTP_404_NOT_FOUND)
+        if not self.model.objects.filter(id=pk).exists():
+            return Response({'detail': 'No such object.'}, status.HTTP_404_NOT_FOUND)
+        req = self.model.objects.get(id=pk)
+        if req.user != user:
+            return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
+        req.closed = True
+        req.save()
+        serializer = RequestSerializer(req)
         return Response(serializer.data, status=status.HTTP_200_OK)

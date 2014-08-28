@@ -156,3 +156,31 @@ class RequestTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(0, data['count'])
+
+    def test_close_request(self):
+        """
+
+        """
+        user = User.objects.get(username="user1")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/requests/1/close_request/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertTrue(data['closed'])
+
+    def test_close_request_for_other(self):
+        """
+
+        """
+        user = User.objects.get(username="user2")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/requests/1/close_request/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
