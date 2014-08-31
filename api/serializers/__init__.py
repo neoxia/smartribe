@@ -1,4 +1,5 @@
 
+
 ## User
 from api.serializers.serializers import UserCreateSerializer
 from api.serializers.serializers import UserPublicSerializer
@@ -28,6 +29,14 @@ from api.serializers.community import CommunitySerializer
 from api.serializers.community import LocalCommunitySerializer
 from api.serializers.community import TransportCommunitySerializer
 
+## Location
+from api.serializers.location import LocationCreateSerializer
+from api.serializers.location import LocationSerializer
+
+## Meeting point
+from api.serializers.meeting_point import MeetingPointCreateSerializer
+from api.serializers.meeting_point import MeetingPointSerializer
+
 ## Member
 from api.serializers.member import MemberCreateSerializer
 from api.serializers.member import MemberSerializer
@@ -42,10 +51,6 @@ from api.serializers.request import RequestSerializer
 from api.serializers.offer import OfferCreateSerializer
 from api.serializers.offer import OfferSerializer
 
-## Meeting point
-from api.serializers.meeting_point import MeetingPointCreateSerializer
-from api.serializers.meeting_point import MeetingPointSerializer
-
-## Meeting point
+## Meeting
 from api.serializers.meeting import MeetingCreateSerializer
 from api.serializers.meeting import MeetingSerializer

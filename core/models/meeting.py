@@ -28,7 +28,7 @@ class MeetingMessage(models.Model):
 
     user = models.ForeignKey(User)
 
-    date_time = models.DateTimeField()
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     content = models.TextField()
 

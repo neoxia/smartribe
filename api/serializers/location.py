@@ -20,3 +20,13 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         read_only_fields = ('community', )
+
+
+class TransportLocationCreateSerializer(serializers.ModelSerializer):
+    """
+    Transport community location serializer
+    """
+    index = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = Location
