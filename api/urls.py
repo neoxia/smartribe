@@ -14,6 +14,7 @@ from api.views import suggestion
 from api.views import inappropriate
 from api.views import request
 from api.views import offer
+from api.views import meeting
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -31,6 +32,7 @@ router.register(r'meeting_points', meeting_point.MeetingPointViewSet)
 
 router.register(r'requests', request.RequestViewSet)
 router.register(r'offers', offer.OfferViewSet)
+router.register(r'meetings', meeting.MeetingViewSet)
 
 router.register(r'faq', faq.FaqViewSet)
 router.register(r'suggestions', suggestion.SuggestionViewSet)
