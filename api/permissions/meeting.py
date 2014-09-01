@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 from api.authenticate import AuthUser
-from core.models import Offer, MeetingPoint, Member
+from core.models import Offer, MeetingPoint, Member, Meeting
 
 
 class IsConcernedByMeeting(BasePermission):
@@ -11,6 +11,9 @@ class IsConcernedByMeeting(BasePermission):
     def has_permission(self, request, view):
         user, response = AuthUser().authenticate(request)
         data = request.DATA
+        if 'pk' in view.kwargs:
+            if Meeting.objects.filter(id=view.kwargs['pk']).exists():
+                return self.has_object_permission(request, view, Meeting.objects.get(id=view.kwargs['pk']))
         if not user:
             return False
         if 'offer' not in data:

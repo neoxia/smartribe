@@ -38,6 +38,7 @@ from core.models.offer import Offer
 # Meeting
 from core.models.meeting import Meeting
 from core.models.meeting import MeetingMessage
+from core.models.evaluation import Evaluation
 
 ## General
 from core.models.tos import Tos

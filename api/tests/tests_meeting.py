@@ -198,4 +198,45 @@ class RequestTests(APITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(3, Meeting.objects.all().count())
 
+    def test_validate_meeting_requester(self):
+        """
 
+        """
+        user = User.objects.get(username="user1")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/meetings/1/validate_meeting/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        #self.assertEqual('', response.content)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertTrue(Meeting.objects.get(id=1).is_validated)
+
+    def test_validate_meeting_helper(self):
+        """
+
+        """
+        user = User.objects.get(username="user3")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/meetings/1/validate_meeting/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertTrue(Meeting.objects.get(id=1).is_validated)
+
+    def test_validate_meeting_other(self):
+        """
+
+        """
+        user = User.objects.get(username="user2")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/meetings/1/validate_meeting/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertFalse(Meeting.objects.get(id=1).is_validated)

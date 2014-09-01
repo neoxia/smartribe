@@ -12,6 +12,8 @@ class Meeting(models.Model):
 
     date_time = models.DateTimeField()
 
+    is_validated = models.BooleanField(default=False)
+
     creation_date = models.DateTimeField(auto_now_add=True)
 
     last_update = models.DateTimeField(auto_now=True)
