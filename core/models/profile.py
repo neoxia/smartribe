@@ -3,9 +3,11 @@ from django.db import models
 from core.models.address import Address
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
-def get_photo(self, filename):
+
+def get_photo_path(self, filename):
     url = "profiles/%s/%s" % (self.user.username, filename)
     return url
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
@@ -34,7 +36,7 @@ class Profile(models.Model):
     bio = models.TextField(blank=True,
                            null=True)
 
-    photo = models.ImageField(upload_to=get_photo,
+    photo = models.ImageField(upload_to=get_photo_path,
                               blank=True,
                               null=True)
 

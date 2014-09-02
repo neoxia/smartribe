@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from api.serializers import AddressSerializer
-from core.models import Community, TransportStop, LocalCommunity, TransportCommunity
+from core.models import Community, LocalCommunity, TransportCommunity
 
 
 class CommunitySerializer(serializers.HyperlinkedModelSerializer):

@@ -7,7 +7,6 @@ from .models import Profile
 from .models import Community
 from .models import TransportCommunity
 from .models import LocalCommunity
-from .models import TransportStop
 from .models import Tos
 from .models import Skill
 from .models import Request
@@ -32,11 +31,6 @@ class TransportCommunityAdmin(admin.ModelAdmin):
 
 @admin.register(LocalCommunity)
 class LocalCommunityAdmin(admin.ModelAdmin):
-    list_display = ['name']
-
-
-@admin.register(TransportStop)
-class TransportStopAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
