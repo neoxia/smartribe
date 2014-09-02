@@ -2,8 +2,8 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.authenticate import AuthUser
 from api.permissions.location import IsCommunityMember, IsCommunityModerator
-from api.serializers.location import LocationSerializer, LocationCreateSerializer
-from core.models import Member, Location
+from api.serializers.location import LocationSerializer, LocationCreateSerializer, TransportLocationCreateSerializer
+from core.models import Member, Location, Community, TransportCommunity
 
 
 class LocationViewSet(ModelViewSet):
@@ -29,7 +29,17 @@ class LocationViewSet(ModelViewSet):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == 'POST':
-            serializer_class = LocationCreateSerializer
+            data = self.request.data
+            if 'community' in data and Community.objects.filter(id=data['community']).exists():
+                c = Community.objects.get(id=data['community'])
+                try:
+                    c.transportCommunity
+                except TransportCommunity.DoesNotExist:
+                    serializer_class = LocationCreateSerializer
+                else:
+                    serializer_class = TransportLocationCreateSerializer
+            else:
+                serializer_class = LocationCreateSerializer
         return serializer_class
 
     def get_queryset(self):

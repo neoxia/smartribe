@@ -63,9 +63,9 @@ class RequestTests(APITestCase):
         offer4= Offer(request=request3, user=user2, detail='det off4')
         offer4.save()
 
-        meeting1 = Meeting(offer=offer1, meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
+        meeting1 = Meeting(offer=offer1, user=user1, status='A', meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
         meeting1.save()
-        meeting2 = Meeting(offer=offer2, meeting_point=mp2, date_time='2014-01-01 12:12:12+01')
+        meeting2 = Meeting(offer=offer2, user=user2, meeting_point=mp2, date_time='2014-01-01 12:12:12+01')
         meeting2.save()
 
     def test_valid_setup(self):
@@ -209,7 +209,6 @@ class RequestTests(APITestCase):
         url = '/api/v1/meetings/1/validate_meeting/'
 
         response = self.client.post(url, HTTP_AUTHORIZATION=auth)
-        #self.assertEqual('', response.content)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertTrue(Meeting.objects.get(id=1).is_validated)
 
@@ -240,3 +239,31 @@ class RequestTests(APITestCase):
         response = self.client.post(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         self.assertFalse(Meeting.objects.get(id=1).is_validated)
+
+    def test_accept_meeting_creator(self):
+        """
+
+        """
+        user = User.objects.get(username="user2")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/meetings/2/accept_meeting/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual('P', Meeting.objects.get(id=2).status)
+
+    def test_accept_meeting_non_creator(self):
+        """
+
+        """
+        user = User.objects.get(username="user3")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/meetings/2/accept_meeting/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('A', Meeting.objects.get(id=2).status)
