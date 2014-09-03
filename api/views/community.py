@@ -121,7 +121,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - 401 Unauthorized
                 |       - 403 Forbidden
                 | **data return**:
-                |       - List of members objects :
+                |       - count (integer)
+                |       - results (members)
                 |           - community
                 |               - url (string)
                 |               - name (string)
@@ -131,13 +132,19 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |           - role ('0', '1', '2')
                 |           - registration_date (datetime)
                 |           - last_modification_date (datetime)
+                |       - previous (string)
+                |       - next (string))
                 | **other actions**:
                 |       None
 
         """
         user, _ = AuthUser().authenticate(request)
         my_members = Member.objects.filter(user=user)
-        serializer = MyMembersSerializer(my_members, many=True)
+        page = self.paginate_queryset(my_members)
+        if page is not None:
+            serializer = self.get_custom_pagination_serializer(page, MyMembersSerializer)
+        else:
+            serializer = MyMembersSerializer(self.object_list, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated()])
@@ -194,7 +201,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - 401 Unauthorized
                 |       - 403 Forbidden
                 | **data return**:
-                |       - List of members objects :
+                |       - count (integer)
+                |       - results (members)
                 |           - id (integer)
                 |           - user
                 |               - url (string)
@@ -204,6 +212,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |           - role ('0', '1', '2')
                 |           - registration_date (datetime)
                 |           - last_modification_date (datetime)
+                |       - previous (string)
+                |       - next (string)
                 | **other actions**:
                 |       None
 
@@ -219,7 +229,13 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not self.check_moderator_permission(user, community):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         qs = Member.objects.filter(community=community)
-        serializer = ListCommunityMemberSerializer(qs, many=True)
+
+        page = self.paginate_queryset(qs)
+        if page is not None:
+            serializer = self.get_custom_pagination_serializer(page, ListCommunityMemberSerializer)
+        else:
+            serializer = ListCommunityMemberSerializer(self.object_list, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
@@ -441,12 +457,15 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       - 403 Forbidden
                 |       - 404 Not found
                 | **data return**:
-                |       - Location list :
+                |       - count (integer)
+                |       - results (locations)
                 |           - community (integer)
                 |           - name (char 50)
                 |           - description (text)
                 |           - gps_x (float)
                 |           - gps_y (float)
+                |       - previous (string)
+                |       - next (string)
                 | **other actions**:
                 |       None
 
@@ -460,7 +479,13 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not self.check_member_permission(user, loc_community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         locations = Location.objects.filter(community=pk)
-        serializer = LocationSerializer(locations, many=True)
+
+        page = self.paginate_queryset(locations)
+        if page is not None:
+            serializer = self.get_custom_pagination_serializer(page, LocationSerializer)
+        else:
+            serializer = LocationSerializer(self.object_list, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link()
@@ -504,7 +529,13 @@ class CommunityViewSet(viewsets.ModelViewSet):
         locations = Location.objects.filter(Q(community=pk),
                                             Q(name__icontains=data['search']) |
                                             Q(description__icontains=data['search']))
-        serializer = LocationSerializer(locations, many=True)
+
+        page = self.paginate_queryset(locations)
+        if page is not None:
+            serializer = self.get_custom_pagination_serializer(page, LocationSerializer)
+        else:
+            serializer = LocationSerializer(self.object_list, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # Moderator actions
@@ -620,3 +651,17 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if int(m_user.role) < int(member.role):
             return True
         return False
+
+    # TOOLS
+
+    def get_custom_pagination_serializer(self, page, serializer_class):
+        """
+        Return a serializer instance to use with paginated data.
+        """
+        class SerializerClass(self.pagination_serializer_class):
+            class Meta:
+                object_serializer_class = serializer_class
+
+        pagination_serializer_class = SerializerClass
+        context = self.get_serializer_context()
+        return pagination_serializer_class(instance=page, context=context)
