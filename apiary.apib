@@ -2,29 +2,38 @@ FORMAT: 1A
 HOST: http://www.google.com
 
 # smartribe
-Notes API is a *short texts saving* service similar to its physical paper presence on your table.
+Official documentation API v1.
+url: https://api.smatri.be/api/v1/
 
-# Group Notes
-Notes related resources of the **Notes API**
+# Group Users
+User actions
 
-## Notes Collection [/notes]
-### List all Notes [GET]
-+ Response 200 (application/json)
+## Users Unauthenticated actions [/users]
+### Create user [POST]
 
-        [{
-          "id": 1, "title": "Jogging in park"
-        }, {
-          "id": 2, "title": "Pick-up posters from post-office"
-        }]
+Once the user is succesfully created, an email is
+sent back to validate the authenticity of the
+email address. The email contains a link to the website
+address with a token in the url.
 
-### Create a Note [POST]
 + Request (application/json)
 
-        { "title": "Buy cheese and bread for breakfast." }
+        { 
+            "username": "toto",
+            "email": "toto@test.com",
+            "password": "strongpassword"
+        }
 
 + Response 201 (application/json)
 
-        { "id": 3, "title": "Buy cheese and bread for breakfast." }
+        {
+            "id": "1",
+            "username": "toto",
+            "email": "toto@test.com",
+            "groups": [],
+            "is_active": false
+        }
+
 
 ## Note [/notes/{id}]
 A single Note object with all its details
