@@ -50,8 +50,8 @@ urlpatterns = patterns('',
                        )
 
 urlpatterns += patterns('',
-                        url(r'^v1/server_actions/auto_close_requests',
-                            server_action.ServerActionViewSet.auto_close_requests
+                        url(r'^v1/server_actions/auto_close_requests/',
+                            server_action.auto_close_requests
                         )
 )
 
