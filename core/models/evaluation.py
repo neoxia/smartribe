@@ -7,16 +7,21 @@ class Evaluation(models.Model):
 
     meeting = models.ForeignKey(Meeting)
 
+    DANGEROUS = 0
+    BAD = 1
+    NEUTRAL = 2
+    GOOD = 3
+    EXCELLENT = 4
+    PERFECT = 5
     EVALUATION_CHOICES = {
-        ('0', 'Dangerous'),
-        ('1', 'Bad'),
-        ('2', 'Neutral'),
-        ('3', 'Good'),
-        ('4', 'Excellent'),
-        ('5', 'Perfect'),
+        (DANGEROUS, 'Dangerous'),
+        (BAD, 'Bad'),
+        (NEUTRAL, 'Neutral'),
+        (GOOD, 'Good'),
+        (EXCELLENT, 'Excellent'),
+        (PERFECT, 'Perfect'),
     }
-    mark = models.CharField(max_length=1,
-                            choices=EVALUATION_CHOICES)
+    mark = models.IntegerField(choices=EVALUATION_CHOICES)
 
     comment = models.TextField()
 

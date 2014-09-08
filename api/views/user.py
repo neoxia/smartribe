@@ -3,6 +3,7 @@ from datetime import timedelta, timezone, datetime
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.db.models import Avg, Min, Max
 from rest_framework import viewsets
 from rest_framework.decorators import action, link
 from rest_framework.parsers import JSONParser
@@ -14,7 +15,7 @@ import django_filters
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers.serializers import UserCreateSerializer, UserSerializer, UserPublicSerializer
-from core.models import ActivationToken, PasswordRecovery
+from core.models import ActivationToken, PasswordRecovery, Evaluation
 import core.utils
 
 
@@ -212,3 +213,34 @@ class UserViewSet(viewsets.ModelViewSet):
             return response
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+    @link(permission_classes=[IsJWTAuthenticated])
+    def get_user_evaluation(self, request, pk=None):
+        """
+        Get evaluation information for a specific user:
+
+                | **permission**: authenticated
+                | **endpoint**: /users/{id}/get_user_evaluation/
+                | **method**: GET
+                | **http return**:
+                |       - 200 OK
+                |       - 403 Forbidden
+                |       - 404 Not found
+                | **data return**:
+                |       - average_eval (float)
+                |       - min_eval(integer)
+                |       - max_eval(integer)
+
+        """
+        if pk is None:
+            return Response({'detail': 'Id requested in URL.'}, status.HTTP_404_NOT_FOUND)
+        if not self.model.objects.filter(id=pk).exists():
+            return Response({'detail': 'No such object.'}, status.HTTP_404_NOT_FOUND)
+        obj = self.model.objects.get(id=pk)
+        if not Evaluation.objects.filter(meeting__offer__user=obj).exists():
+            eval = {}
+        else:
+            eval = Evaluation.objects.filter(meeting__offer__user=obj).aggregate(average_eval=Avg('mark'),
+                                                                                 min_eval=Min('mark'),
+                                                                                 max_eval=Max('mark'))
+        return Response(eval, status=status.HTTP_200_OK)
