@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/inappropriate.html">Inappropriate content</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_inappropriate.html">Inappropriate content API</a></li>
@@ -129,6 +131,7 @@
 <span class="kn">from</span> <span class="nn">django.contrib.auth.hashers</span> <span class="kn">import</span> <span class="n">make_password</span>
 <span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
 <span class="kn">from</span> <span class="nn">django.core.mail</span> <span class="kn">import</span> <span class="n">send_mail</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Avg</span><span class="p">,</span> <span class="n">Min</span><span class="p">,</span> <span class="n">Max</span>
 <span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">viewsets</span>
 <span class="kn">from</span> <span class="nn">rest_framework.decorators</span> <span class="kn">import</span> <span class="n">action</span><span class="p">,</span> <span class="n">link</span>
 <span class="kn">from</span> <span class="nn">rest_framework.parsers</span> <span class="kn">import</span> <span class="n">JSONParser</span>
@@ -140,7 +143,7 @@
 <span class="kn">from</span> <span class="nn">api.authenticate</span> <span class="kn">import</span> <span class="n">AuthUser</span>
 <span class="kn">from</span> <span class="nn">api.permissions.common</span> <span class="kn">import</span> <span class="n">IsJWTAuthenticated</span><span class="p">,</span> <span class="n">IsJWTMe</span>
 <span class="kn">from</span> <span class="nn">api.serializers.serializers</span> <span class="kn">import</span> <span class="n">UserCreateSerializer</span><span class="p">,</span> <span class="n">UserSerializer</span><span class="p">,</span> <span class="n">UserPublicSerializer</span>
-<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">ActivationToken</span><span class="p">,</span> <span class="n">PasswordRecovery</span>
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">ActivationToken</span><span class="p">,</span> <span class="n">PasswordRecovery</span><span class="p">,</span> <span class="n">Evaluation</span>
 <span class="kn">import</span> <span class="nn">core.utils</span>
 
 
@@ -337,7 +340,38 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">response</span>
         <span class="n">serializer</span> <span class="o">=</span> <span class="n">UserSerializer</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</div>
+    <span class="nd">@link</span><span class="p">(</span><span class="n">permission_classes</span><span class="o">=</span><span class="p">[</span><span class="n">IsJWTAuthenticated</span><span class="p">])</span>
+<div class="viewcode-block" id="UserViewSet.get_user_evaluation"><a class="viewcode-back" href="../../../api/api_user.html#api.views.user.UserViewSet.get_user_evaluation">[docs]</a>    <span class="k">def</span> <span class="nf">get_user_evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get evaluation information for a specific user:</span>
+
+<span class="sd">                | **permission**: authenticated</span>
+<span class="sd">                | **endpoint**: /users/{id}/get_user_evaluation/</span>
+<span class="sd">                | **method**: GET</span>
+<span class="sd">                | **http return**:</span>
+<span class="sd">                |       - 200 OK</span>
+<span class="sd">                |       - 403 Forbidden</span>
+<span class="sd">                |       - 404 Not found</span>
+<span class="sd">                | **data return**:</span>
+<span class="sd">                |       - average_eval (float)</span>
+<span class="sd">                |       - min_eval(integer)</span>
+<span class="sd">                |       - max_eval(integer)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pk</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Id requested in URL.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;No such object.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Evaluation</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">meeting__offer__user</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="nb">eval</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">eval</span> <span class="o">=</span> <span class="n">Evaluation</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">meeting__offer__user</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">average_eval</span><span class="o">=</span><span class="n">Avg</span><span class="p">(</span><span class="s">&#39;mark&#39;</span><span class="p">),</span>
+                                                                                 <span class="n">min_eval</span><span class="o">=</span><span class="n">Min</span><span class="p">(</span><span class="s">&#39;mark&#39;</span><span class="p">),</span>
+                                                                                 <span class="n">max_eval</span><span class="o">=</span><span class="n">Max</span><span class="p">(</span><span class="s">&#39;mark&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="nb">eval</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

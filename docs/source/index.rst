@@ -24,6 +24,7 @@ Models:
    model/request
    model/offer
    model/meeting
+   model/evaluation
    model/faq
    model/suggestion
    model/inappropriate
@@ -44,6 +45,7 @@ API:
    api/api_request
    api/api_offer
    api/api_meeting
+   api/api_evaluation
    api/api_faq
    api/api_suggestion
    api/api_inappropriate

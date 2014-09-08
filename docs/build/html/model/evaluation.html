@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Offer &mdash; Smartribe 0.0.1 documentation</title>
+  <title>Evaluation &mdash; Smartribe 0.0.1 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
 
   
     <link rel="top" title="Smartribe 0.0.1 documentation" href="../index.html"/>
-        <link rel="next" title="Meeting" href="meeting.html"/>
-        <link rel="prev" title="Request" href="request.html"/> 
+        <link rel="next" title="Frequently asked question" href="faq.html"/>
+        <link rel="prev" title="Meeting" href="meeting.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -69,9 +69,9 @@
 <li class="toctree-l1"><a class="reference internal" href="location.html">Location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meeting_point.html">Meeting Point</a></li>
 <li class="toctree-l1"><a class="reference internal" href="request.html">Request</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Offer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="meeting.html">Meeting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inappropriate.html">Inappropriate content</a></li>
@@ -115,10 +115,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Offer</li>
+    <li>Evaluation</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/model/offer.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/model/evaluation.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -126,61 +126,91 @@
 </div>
           <div role="main">
             
-  <div class="section" id="offer">
-<h1>Offer<a class="headerlink" href="#offer" title="Permalink to this headline">¶</a></h1>
-<p>Ici la description de la offre</p>
+  <div class="section" id="evaluation">
+<h1>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h1>
+<p>Ici la description de l&#8217;évaluation</p>
 <dl class="class">
-<dt id="core.models.offer.Offer">
-<em class="property">class </em><tt class="descclassname">core.models.offer.</tt><tt class="descname">Offer</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/core/models/offer.html#Offer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.models.offer.Offer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Offer(id, request_id, user_id, detail, creation_date, last_update)</p>
+<dt id="core.models.evaluation.Evaluation">
+<em class="property">class </em><tt class="descclassname">core.models.evaluation.</tt><tt class="descname">Evaluation</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/core/models/evaluation.html#Evaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.models.evaluation.Evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluation(id, meeting_id, mark, comment, creation_date, last_update)</p>
+<dl class="attribute">
+<dt id="core.models.evaluation.Evaluation.BAD">
+<tt class="descname">BAD</tt><em class="property"> = 1</em><a class="headerlink" href="#core.models.evaluation.Evaluation.BAD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.evaluation.Evaluation.DANGEROUS">
+<tt class="descname">DANGEROUS</tt><em class="property"> = 0</em><a class="headerlink" href="#core.models.evaluation.Evaluation.DANGEROUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="exception">
-<dt id="core.models.offer.Offer.DoesNotExist">
-<em class="property">exception </em><tt class="descname">DoesNotExist</tt><a class="headerlink" href="#core.models.offer.Offer.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dt id="core.models.evaluation.Evaluation.DoesNotExist">
+<em class="property">exception </em><tt class="descname">DoesNotExist</tt><a class="headerlink" href="#core.models.evaluation.Evaluation.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.evaluation.Evaluation.EVALUATION_CHOICES">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">EVALUATION_CHOICES</tt><em class="property"> = {(2, 'Neutral'), (4, 'Excellent'), (3, 'Good'), (5, 'Perfect'), (0, 'Dangerous'), (1, 'Bad')}</em><a class="headerlink" href="#core.models.evaluation.Evaluation.EVALUATION_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.evaluation.Evaluation.EXCELLENT">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">EXCELLENT</tt><em class="property"> = 4</em><a class="headerlink" href="#core.models.evaluation.Evaluation.EXCELLENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.evaluation.Evaluation.GOOD">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">GOOD</tt><em class="property"> = 3</em><a class="headerlink" href="#core.models.evaluation.Evaluation.GOOD" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="exception">
-<dt id="core.models.offer.Offer.MultipleObjectsReturned">
-<em class="property">exception </em><tt class="descclassname">Offer.</tt><tt class="descname">MultipleObjectsReturned</tt><a class="headerlink" href="#core.models.offer.Offer.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="core.models.offer.Offer.get_next_by_creation_date">
-<tt class="descclassname">Offer.</tt><tt class="descname">get_next_by_creation_date</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.offer.Offer.get_next_by_creation_date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="core.models.offer.Offer.get_next_by_last_update">
-<tt class="descclassname">Offer.</tt><tt class="descname">get_next_by_last_update</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.offer.Offer.get_next_by_last_update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="core.models.offer.Offer.get_previous_by_creation_date">
-<tt class="descclassname">Offer.</tt><tt class="descname">get_previous_by_creation_date</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.offer.Offer.get_previous_by_creation_date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="core.models.offer.Offer.get_previous_by_last_update">
-<tt class="descclassname">Offer.</tt><tt class="descname">get_previous_by_last_update</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.offer.Offer.get_previous_by_last_update" title="Permalink to this definition">¶</a></dt>
+<dt id="core.models.evaluation.Evaluation.MultipleObjectsReturned">
+<em class="property">exception </em><tt class="descclassname">Evaluation.</tt><tt class="descname">MultipleObjectsReturned</tt><a class="headerlink" href="#core.models.evaluation.Evaluation.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="core.models.offer.Offer.meeting_set">
-<tt class="descclassname">Offer.</tt><tt class="descname">meeting_set</tt><a class="headerlink" href="#core.models.offer.Offer.meeting_set" title="Permalink to this definition">¶</a></dt>
+<dt id="core.models.evaluation.Evaluation.NEUTRAL">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">NEUTRAL</tt><em class="property"> = 2</em><a class="headerlink" href="#core.models.evaluation.Evaluation.NEUTRAL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="core.models.offer.Offer.objects">
-<tt class="descclassname">Offer.</tt><tt class="descname">objects</tt><em class="property"> = &lt;django.db.models.manager.Manager object at 0x104686ef0&gt;</em><a class="headerlink" href="#core.models.offer.Offer.objects" title="Permalink to this definition">¶</a></dt>
+<dt id="core.models.evaluation.Evaluation.PERFECT">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">PERFECT</tt><em class="property"> = 5</em><a class="headerlink" href="#core.models.evaluation.Evaluation.PERFECT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.models.evaluation.Evaluation.get_mark_display">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">get_mark_display</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.evaluation.Evaluation.get_mark_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.models.evaluation.Evaluation.get_next_by_creation_date">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">get_next_by_creation_date</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.evaluation.Evaluation.get_next_by_creation_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.models.evaluation.Evaluation.get_next_by_last_update">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">get_next_by_last_update</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.evaluation.Evaluation.get_next_by_last_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.models.evaluation.Evaluation.get_previous_by_creation_date">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">get_previous_by_creation_date</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.evaluation.Evaluation.get_previous_by_creation_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.models.evaluation.Evaluation.get_previous_by_last_update">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">get_previous_by_last_update</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.evaluation.Evaluation.get_previous_by_last_update" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="core.models.offer.Offer.request">
-<tt class="descclassname">Offer.</tt><tt class="descname">request</tt><a class="headerlink" href="#core.models.offer.Offer.request" title="Permalink to this definition">¶</a></dt>
+<dt id="core.models.evaluation.Evaluation.meeting">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">meeting</tt><a class="headerlink" href="#core.models.evaluation.Evaluation.meeting" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="core.models.offer.Offer.user">
-<tt class="descclassname">Offer.</tt><tt class="descname">user</tt><a class="headerlink" href="#core.models.offer.Offer.user" title="Permalink to this definition">¶</a></dt>
+<dt id="core.models.evaluation.Evaluation.objects">
+<tt class="descclassname">Evaluation.</tt><tt class="descname">objects</tt><em class="property"> = &lt;django.db.models.manager.Manager object at 0x104696160&gt;</em><a class="headerlink" href="#core.models.evaluation.Evaluation.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -193,10 +223,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="meeting.html" class="btn btn-neutral float-right" title="Meeting"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="Frequently asked question"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="request.html" class="btn btn-neutral" title="Request"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="meeting.html" class="btn btn-neutral" title="Meeting"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

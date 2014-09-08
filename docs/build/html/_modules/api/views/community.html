@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/inappropriate.html">Inappropriate content</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_inappropriate.html">Inappropriate content API</a></li>
@@ -247,7 +249,8 @@
 <span class="sd">                |       - 401 Unauthorized</span>
 <span class="sd">                |       - 403 Forbidden</span>
 <span class="sd">                | **data return**:</span>
-<span class="sd">                |       - List of members objects :</span>
+<span class="sd">                |       - count (integer)</span>
+<span class="sd">                |       - results (members)</span>
 <span class="sd">                |           - community</span>
 <span class="sd">                |               - url (string)</span>
 <span class="sd">                |               - name (string)</span>
@@ -257,13 +260,19 @@
 <span class="sd">                |           - role (&#39;0&#39;, &#39;1&#39;, &#39;2&#39;)</span>
 <span class="sd">                |           - registration_date (datetime)</span>
 <span class="sd">                |           - last_modification_date (datetime)</span>
+<span class="sd">                |       - previous (string)</span>
+<span class="sd">                |       - next (string))</span>
 <span class="sd">                | **other actions**:</span>
 <span class="sd">                |       None</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">user</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">AuthUser</span><span class="p">()</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="n">my_members</span> <span class="o">=</span> <span class="n">Member</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
-        <span class="n">serializer</span> <span class="o">=</span> <span class="n">MyMembersSerializer</span><span class="p">(</span><span class="n">my_members</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_queryset</span><span class="p">(</span><span class="n">my_members</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_custom_pagination_serializer</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">MyMembersSerializer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="n">MyMembersSerializer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
 </div>
     <span class="nd">@action</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="p">],</span> <span class="n">permission_classes</span><span class="o">=</span><span class="p">[</span><span class="n">IsJWTAuthenticated</span><span class="p">()])</span>
@@ -320,7 +329,8 @@
 <span class="sd">                |       - 401 Unauthorized</span>
 <span class="sd">                |       - 403 Forbidden</span>
 <span class="sd">                | **data return**:</span>
-<span class="sd">                |       - List of members objects :</span>
+<span class="sd">                |       - count (integer)</span>
+<span class="sd">                |       - results (members)</span>
 <span class="sd">                |           - id (integer)</span>
 <span class="sd">                |           - user</span>
 <span class="sd">                |               - url (string)</span>
@@ -330,6 +340,8 @@
 <span class="sd">                |           - role (&#39;0&#39;, &#39;1&#39;, &#39;2&#39;)</span>
 <span class="sd">                |           - registration_date (datetime)</span>
 <span class="sd">                |           - last_modification_date (datetime)</span>
+<span class="sd">                |       - previous (string)</span>
+<span class="sd">                |       - next (string)</span>
 <span class="sd">                | **other actions**:</span>
 <span class="sd">                |       None</span>
 
@@ -345,7 +357,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_moderator_permission</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">community</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Community moderator</span><span class="se">\&#39;</span><span class="s"> rights required.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">)</span>
         <span class="n">qs</span> <span class="o">=</span> <span class="n">Member</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">community</span><span class="o">=</span><span class="n">community</span><span class="p">)</span>
-        <span class="n">serializer</span> <span class="o">=</span> <span class="n">ListCommunityMemberSerializer</span><span class="p">(</span><span class="n">qs</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_queryset</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_custom_pagination_serializer</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">ListCommunityMemberSerializer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="n">ListCommunityMemberSerializer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
 </div>
     <span class="nd">@action</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="p">],</span> <span class="n">permission_classes</span><span class="o">=</span><span class="p">[</span><span class="n">IsCommunityModerator</span><span class="p">])</span>
@@ -567,12 +585,15 @@
 <span class="sd">                |       - 403 Forbidden</span>
 <span class="sd">                |       - 404 Not found</span>
 <span class="sd">                | **data return**:</span>
-<span class="sd">                |       - Location list :</span>
+<span class="sd">                |       - count (integer)</span>
+<span class="sd">                |       - results (locations)</span>
 <span class="sd">                |           - community (integer)</span>
 <span class="sd">                |           - name (char 50)</span>
 <span class="sd">                |           - description (text)</span>
 <span class="sd">                |           - gps_x (float)</span>
 <span class="sd">                |           - gps_y (float)</span>
+<span class="sd">                |       - previous (string)</span>
+<span class="sd">                |       - next (string)</span>
 <span class="sd">                | **other actions**:</span>
 <span class="sd">                |       None</span>
 
@@ -586,7 +607,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_member_permission</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">loc_community</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Community member rights required.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">)</span>
         <span class="n">locations</span> <span class="o">=</span> <span class="n">Location</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">community</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
-        <span class="n">serializer</span> <span class="o">=</span> <span class="n">LocationSerializer</span><span class="p">(</span><span class="n">locations</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_queryset</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_custom_pagination_serializer</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">LocationSerializer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="n">LocationSerializer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
 </div>
     <span class="nd">@link</span><span class="p">()</span>
@@ -630,7 +657,13 @@
         <span class="n">locations</span> <span class="o">=</span> <span class="n">Location</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">community</span><span class="o">=</span><span class="n">pk</span><span class="p">),</span>
                                             <span class="n">Q</span><span class="p">(</span><span class="n">name__icontains</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;search&#39;</span><span class="p">])</span> <span class="o">|</span>
                                             <span class="n">Q</span><span class="p">(</span><span class="n">description__icontains</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;search&#39;</span><span class="p">]))</span>
-        <span class="n">serializer</span> <span class="o">=</span> <span class="n">LocationSerializer</span><span class="p">(</span><span class="n">locations</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_queryset</span><span class="p">(</span><span class="n">locations</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_custom_pagination_serializer</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">LocationSerializer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="n">LocationSerializer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object_list</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
 
     <span class="c"># Moderator actions</span>
@@ -745,7 +778,21 @@
         <span class="n">m_user</span> <span class="o">=</span> <span class="n">Member</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">community</span><span class="o">=</span><span class="n">member</span><span class="o">.</span><span class="n">community</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">m_user</span><span class="o">.</span><span class="n">role</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">member</span><span class="o">.</span><span class="n">role</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">True</span>
-        <span class="k">return</span> <span class="bp">False</span></div></div>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="c"># TOOLS</span>
+</div>
+<div class="viewcode-block" id="CommunityViewSet.get_custom_pagination_serializer"><a class="viewcode-back" href="../../../api/api_community.html#api.views.community.CommunityViewSet.get_custom_pagination_serializer">[docs]</a>    <span class="k">def</span> <span class="nf">get_custom_pagination_serializer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page</span><span class="p">,</span> <span class="n">serializer_class</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a serializer instance to use with paginated data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">class</span> <span class="nc">SerializerClass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pagination_serializer_class</span><span class="p">):</span>
+            <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+                <span class="n">object_serializer_class</span> <span class="o">=</span> <span class="n">serializer_class</span>
+
+        <span class="n">pagination_serializer_class</span> <span class="o">=</span> <span class="n">SerializerClass</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer_context</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pagination_serializer_class</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">page</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

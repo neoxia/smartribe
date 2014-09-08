@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/inappropriate.html">Inappropriate content</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_inappropriate.html">Inappropriate content API</a></li>
@@ -125,14 +127,16 @@
             
   <h1>Source code for api.views.meeting</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
-
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.decorators</span> <span class="kn">import</span> <span class="n">action</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
 <span class="kn">from</span> <span class="nn">rest_framework.viewsets</span> <span class="kn">import</span> <span class="n">ModelViewSet</span>
 
 <span class="kn">from</span> <span class="nn">api.authenticate</span> <span class="kn">import</span> <span class="n">AuthUser</span>
 <span class="kn">from</span> <span class="nn">api.permissions.common</span> <span class="kn">import</span> <span class="n">IsJWTAuthenticated</span>
 <span class="kn">from</span> <span class="nn">api.permissions.meeting</span> <span class="kn">import</span> <span class="n">IsConcernedByMeeting</span>
 <span class="kn">from</span> <span class="nn">api.serializers</span> <span class="kn">import</span> <span class="n">MeetingSerializer</span><span class="p">,</span> <span class="n">MeetingCreateSerializer</span>
-<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">Member</span><span class="p">,</span> <span class="n">Meeting</span>
+<span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">Meeting</span>
 
 
 <div class="viewcode-block" id="MeetingViewSet"><a class="viewcode-back" href="../../../api/api_meeting.html#api.views.meeting.MeetingViewSet">[docs]</a><span class="k">class</span> <span class="nc">MeetingViewSet</span><span class="p">(</span><span class="n">ModelViewSet</span><span class="p">):</span>
@@ -165,7 +169,113 @@
 
     <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">user</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">AuthUser</span><span class="p">()</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">offer__user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span> <span class="o">|</span> <span class="n">Q</span><span class="p">(</span><span class="n">offer__request__user</span><span class="o">=</span><span class="n">user</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">offer__user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span> <span class="o">|</span> <span class="n">Q</span><span class="p">(</span><span class="n">offer__request__user</span><span class="o">=</span><span class="n">user</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">pre_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">user</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">AuthUser</span><span class="p">()</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span><span class="s">&#39;POST&#39;</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+
+    <span class="nd">@action</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="MeetingViewSet.accept_meeting"><a class="viewcode-back" href="../../../api/api_meeting.html#api.views.meeting.MeetingViewSet.accept_meeting">[docs]</a>    <span class="k">def</span> <span class="nf">accept_meeting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accept a meeting</span>
+
+<span class="sd">                | **permission**: IsConcernedByMeeting and Not meeting creator</span>
+<span class="sd">                | **endpoint**: /meetings/{id}/accept_meeting/</span>
+<span class="sd">                | **method**: POST</span>
+<span class="sd">                | **attr**:</span>
+<span class="sd">                |       None</span>
+<span class="sd">                | **http return**:</span>
+<span class="sd">                |       - 200 OK</span>
+<span class="sd">                |       - 401 Unauthorized</span>
+<span class="sd">                |       - 403 Forbidden</span>
+<span class="sd">                |       - 404 Not Found</span>
+<span class="sd">                | **data return**:</span>
+<span class="sd">                |       - Modified meeting object</span>
+<span class="sd">                | **other actions**:</span>
+<span class="sd">                |       None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">AuthUser</span><span class="p">()</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pk</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Id requested in URL.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;No such object.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">obj</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Operation not allowed.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s">&#39;A&#39;</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">MeetingSerializer</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+</div>
+    <span class="nd">@action</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="MeetingViewSet.refuse_meeting"><a class="viewcode-back" href="../../../api/api_meeting.html#api.views.meeting.MeetingViewSet.refuse_meeting">[docs]</a>    <span class="k">def</span> <span class="nf">refuse_meeting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate a meeting</span>
+
+<span class="sd">                | **permission**: IsConcernedByMeeting and Not meeting creator</span>
+<span class="sd">                | **endpoint**: /meetings/{id}/refuse_meeting/</span>
+<span class="sd">                | **method**: POST</span>
+<span class="sd">                | **attr**:</span>
+<span class="sd">                |       None</span>
+<span class="sd">                | **http return**:</span>
+<span class="sd">                |       - 200 OK</span>
+<span class="sd">                |       - 401 Unauthorized</span>
+<span class="sd">                |       - 403 Forbidden</span>
+<span class="sd">                |       - 404 Not Found</span>
+<span class="sd">                | **data return**:</span>
+<span class="sd">                |       - Modified meeting object</span>
+<span class="sd">                | **other actions**:</span>
+<span class="sd">                |       None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">AuthUser</span><span class="p">()</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pk</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Id requested in URL.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;No such object.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="o">==</span> <span class="n">obj</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Operation not allowed.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s">&#39;R&#39;</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">MeetingSerializer</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+</div>
+    <span class="nd">@action</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="MeetingViewSet.validate_meeting"><a class="viewcode-back" href="../../../api/api_meeting.html#api.views.meeting.MeetingViewSet.validate_meeting">[docs]</a>    <span class="k">def</span> <span class="nf">validate_meeting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate a meeting</span>
+
+<span class="sd">                | **permission**: IsConcernedByMeeting</span>
+<span class="sd">                | **endpoint**: /meetings/{id}/validate_meeting/</span>
+<span class="sd">                | **method**: POST</span>
+<span class="sd">                | **attr**:</span>
+<span class="sd">                |       None</span>
+<span class="sd">                | **http return**:</span>
+<span class="sd">                |       - 200 OK</span>
+<span class="sd">                |       - 401 Unauthorized</span>
+<span class="sd">                |       - 403 Forbidden</span>
+<span class="sd">                |       - 404 Not Found</span>
+<span class="sd">                | **data return**:</span>
+<span class="sd">                |       - Modified meeting object</span>
+<span class="sd">                | **other actions**:</span>
+<span class="sd">                |       None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">AuthUser</span><span class="p">()</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pk</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Id requested in URL.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;No such object.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span> <span class="o">!=</span> <span class="n">obj</span><span class="o">.</span><span class="n">offer</span><span class="o">.</span><span class="n">user</span> <span class="ow">and</span> <span class="n">user</span> <span class="o">!=</span> <span class="n">obj</span><span class="o">.</span><span class="n">offer</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Operation not allowed.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="s">&#39;A&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&#39;detail&#39;</span><span class="p">:</span> <span class="s">&#39;Status must be </span><span class="se">\&#39;</span><span class="s">Accepted</span><span class="se">\&#39;</span><span class="s"> to validate.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_403_FORBIDDEN</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">is_validated</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">MeetingSerializer</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
