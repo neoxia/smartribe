@@ -77,29 +77,23 @@ The return can change you are the object owner or not.
 Non Object Owner    
     + Body
 
-        {
-            "id": "1",
-            "username": "toto",
-        }
+            {
+              "id": "1",
+               "username": "toto",
+            }
 
-+ Response 200 (application/json)
-Object owner    
-    + Body
-
-        {
-            "id": "1",
-            "username": "toto",
-            "email": "toto@test.com",
-            "groups": [],
-            "is_active": true
-        }
+            {
+                "id": "1",
+                "username": "toto",
+                "email": "toto@test.com",
+                "groups": [],
+                "is_active": true
+            }
 
 ## Users confirm registration [/users/{id}/confirm_registration]
 ### Confirm registration [POST]
 
 Confirm registration by posting token sent by email
-
-+ Request (application/json)
 
 + Parameters
     + id (required, number, `1`) ... Numeric `id` of the User to perform action 
@@ -119,8 +113,6 @@ Sends an email with a password recovery token
 
 + Request (application/json)
 
-+ Request (application/json)
-
         {
             "email": "toto@test.com",
         }
@@ -129,15 +121,6 @@ Sends an email with a password recovery token
 
 
 
-## Users [/users]
-## Group [/users]
-## Users [/users]
-## Users [/users]
-## Users [/users]
-## Users [/users]
-## Users [/users]
-## Users [/users]
-## Users [/users]
 
 ### Remove a Note [DELETE]
 + Response 204
