@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/inappropriate.html">Inappropriate content</a></li>
@@ -87,6 +88,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_inappropriate.html">Inappropriate content API</a></li>
@@ -147,6 +149,37 @@
 </div>
 </div>
 </div></blockquote>
+<dl class="method">
+<dt id="api.views.request.RequestViewSet.close_request">
+<tt class="descname">close_request</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/request.html#RequestViewSet.close_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.request.RequestViewSet.close_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close a request.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: IsJWTOwner</div>
+<div class="line"><strong>endpoint</strong>: /requests/{id}/close_request/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified request object</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
 <dl class="method">
 <dt id="api.views.request.RequestViewSet.list_my_requests">
 <tt class="descname">list_my_requests</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/request.html#RequestViewSet.list_my_requests"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.request.RequestViewSet.list_my_requests" title="Permalink to this definition">¶</a></dt>

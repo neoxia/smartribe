@@ -62,6 +62,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
     'PAGINATE_BY': 10,
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '1/day'
+    }
 }
 
 MIDDLEWARE_CLASSES = (

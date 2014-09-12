@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/inappropriate.html">Inappropriate content</a></li>
@@ -87,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_inappropriate.html">Inappropriate content API</a></li>
@@ -199,6 +201,31 @@
 <div class="line">- username: string</div>
 <div class="line">- email: string</div>
 <div class="line">- groups: array</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.user.UserViewSet.get_user_evaluation">
+<tt class="descname">get_user_evaluation</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/user.html#UserViewSet.get_user_evaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.user.UserViewSet.get_user_evaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get evaluation information for a specific user:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: authenticated</div>
+<div class="line"><strong>endpoint</strong>: /users/{id}/get_user_evaluation/</div>
+<div class="line"><strong>method</strong>: GET</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- average_eval (float)</div>
+<div class="line">- min_eval(integer)</div>
+<div class="line">- max_eval(integer)</div>
 </div>
 </div>
 </div></blockquote>

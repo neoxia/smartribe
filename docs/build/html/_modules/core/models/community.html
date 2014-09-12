@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../model/inappropriate.html">Inappropriate content</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/api_inappropriate.html">Inappropriate content API</a></li>
@@ -127,6 +129,14 @@
 <span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
 <span class="kn">from</span> <span class="nn">core.models</span> <span class="kn">import</span> <span class="n">Address</span>
 
+<span class="k">def</span> <span class="nf">get_banner_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;communities/</span><span class="si">%s</span><span class="s">/banner/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">url</span>
+
+<span class="k">def</span> <span class="nf">get_logo_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">&quot;communities/</span><span class="si">%s</span><span class="s">/logo/</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">url</span>
+
 
 <div class="viewcode-block" id="Community"><a class="viewcode-back" href="../../../model/community.html#core.models.community.Community">[docs]</a><span class="k">class</span> <span class="nc">Community</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
@@ -135,10 +145,12 @@
 
     <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
 
-    <span class="n">banner</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">banner</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="n">get_banner_path</span><span class="p">,</span>
+                               <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="n">logo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">logo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="n">get_logo_path</span><span class="p">,</span>
+                             <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                              <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">creation_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -159,27 +171,6 @@
         <span class="n">app_label</span> <span class="o">=</span> <span class="s">&#39;core&#39;</span>
 
 </div>
-<span class="k">class</span> <span class="nc">TransportStop</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-
-    <span class="n">detail</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span>
-                              <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                              <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-    <span class="c">#community = models.ForeignKey(TransportCommunity)</span>
-
-    <span class="c">#is_valid = models.BooleanField(default=True)</span>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s">&#39;transport stop&#39;</span>
-        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="s">&#39;transport stops&#39;</span>
-        <span class="n">app_label</span> <span class="o">=</span> <span class="s">&#39;core&#39;</span>
-
-
 <div class="viewcode-block" id="TransportCommunity"><a class="viewcode-back" href="../../../model/transport_community.html#core.models.community.TransportCommunity">[docs]</a><span class="k">class</span> <span class="nc">TransportCommunity</span><span class="p">(</span><span class="n">Community</span><span class="p">):</span>
 
     <span class="n">departure</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
@@ -189,10 +180,6 @@
                            <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="n">arrival</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
-
-    <span class="c">#transport_stop_departure = models.ForeignKey(TransportStop, related_name=&#39;departure&#39;)</span>
-    <span class="c">#transport_stop_via = models.ForeignKey(TransportStop, related_name=&#39;via&#39;)</span>
-    <span class="c">#transport_stop_arrival = models.ForeignKey(TransportStop, related_name=&#39;arrival&#39;)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s">&#39;, de &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">departure</span> \

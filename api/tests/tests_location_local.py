@@ -181,7 +181,7 @@ class LocationLocalCommunityTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(5, len(data))
+        self.assertEqual(5, data['count'])
 
     def test_search_locations_with_member_1(self):
         """
@@ -200,7 +200,7 @@ class LocationLocalCommunityTests(APITestCase):
         response = self.client.get(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(3, len(data))
+        self.assertEqual(3, data['count'])
 
     def test_search_locations_with_member_2(self):
         """
@@ -219,7 +219,7 @@ class LocationLocalCommunityTests(APITestCase):
         response = self.client.get(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(1, len(data))
+        self.assertEqual(1, data['count'])
 
     def test_search_locations_with_member_3(self):
         """
@@ -238,7 +238,7 @@ class LocationLocalCommunityTests(APITestCase):
         response = self.client.get(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(2, len(data))
+        self.assertEqual(2, data['count'])
 
     def test_delete_location_with_member(self):
         """

@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/inappropriate.html">Inappropriate content</a></li>
@@ -87,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_inappropriate.html">Inappropriate content API</a></li>
@@ -353,6 +355,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="api.views.community.CommunityViewSet.get_custom_pagination_serializer">
+<tt class="descname">get_custom_pagination_serializer</tt><big>(</big><em>page</em>, <em>serializer_class</em><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.get_custom_pagination_serializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.get_custom_pagination_serializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a serializer instance to use with paginated data.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="api.views.community.CommunityViewSet.get_permissions">
 <tt class="descname">get_permissions</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/api/views/community.html#CommunityViewSet.get_permissions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.community.CommunityViewSet.get_permissions" title="Permalink to this definition">¶</a></dt>
 <dd><p>An authenticated user can create a new community or see existing communities.
@@ -443,7 +451,8 @@ Only owner or moderator can modify an existing community.</p>
 </div>
 <div class="line"><strong>data return</strong>:</div>
 <div class="line-block">
-<div class="line">- Location list :</div>
+<div class="line">- count (integer)</div>
+<div class="line">- results (locations)</div>
 <div class="line-block">
 <div class="line">- community (integer)</div>
 <div class="line">- name (char 50)</div>
@@ -451,6 +460,8 @@ Only owner or moderator can modify an existing community.</p>
 <div class="line">- gps_x (float)</div>
 <div class="line">- gps_y (float)</div>
 </div>
+<div class="line">- previous (string)</div>
+<div class="line">- next (string)</div>
 </div>
 <div class="line"><strong>other actions</strong>:</div>
 <div class="line-block">
@@ -481,7 +492,8 @@ Only owner or moderator can modify an existing community.</p>
 </div>
 <div class="line"><strong>data return</strong>:</div>
 <div class="line-block">
-<div class="line">- List of members objects :</div>
+<div class="line">- count (integer)</div>
+<div class="line">- results (members)</div>
 <div class="line-block">
 <div class="line">- community</div>
 <div class="line-block">
@@ -495,6 +507,8 @@ Only owner or moderator can modify an existing community.</p>
 <div class="line">- registration_date (datetime)</div>
 <div class="line">- last_modification_date (datetime)</div>
 </div>
+<div class="line">- previous (string)</div>
+<div class="line">- next (string))</div>
 </div>
 <div class="line"><strong>other actions</strong>:</div>
 <div class="line-block">
@@ -592,7 +606,8 @@ Might be overridden by child classes.</p>
 </div>
 <div class="line"><strong>data return</strong>:</div>
 <div class="line-block">
-<div class="line">- List of members objects :</div>
+<div class="line">- count (integer)</div>
+<div class="line">- results (members)</div>
 <div class="line-block">
 <div class="line">- id (integer)</div>
 <div class="line">- user</div>
@@ -606,6 +621,8 @@ Might be overridden by child classes.</p>
 <div class="line">- registration_date (datetime)</div>
 <div class="line">- last_modification_date (datetime)</div>
 </div>
+<div class="line">- previous (string)</div>
+<div class="line">- next (string)</div>
 </div>
 <div class="line"><strong>other actions</strong>:</div>
 <div class="line-block">

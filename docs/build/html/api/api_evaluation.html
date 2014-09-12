@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Evaluation API &mdash; Smartribe 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Smartribe 0.0.1 documentation" href="../index.html"/>
+        <link rel="next" title="FAQ API" href="api_faq.html"/>
+        <link rel="prev" title="Meeting API" href="api_meeting.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> Smartribe</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../user.html">User</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/profile.html">Profile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/skill_category.html">Skill category</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/skill.html">Skill</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/community.html">Community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/local_community.html">Local community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/transport_community.html">Transport community</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/member.html">Member</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/location.html">Location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/meeting_point.html">Meeting Point</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/request.html">Request</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/offer.html">Offer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/evaluation.html">Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/faq.html">Frequently asked question</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/suggestion.html">Suggestion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/inappropriate.html">Inappropriate content</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/tos.html">Terms of service</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api_user.html">User API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_profile.html">Profile API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_skill.html">Skill API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_community.html">Community API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_local_community.html">Local community API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_transport_community.html">Transport community API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_meeting_point.html">Meeting Point API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_request.html">Request API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_offer.html">Offer API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Evaluation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_faq.html">FAQ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_suggestion.html">Suggestion API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_inappropriate.html">Inappropriate content API</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Smartribe</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Evaluation API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/api/api_evaluation.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="evaluation-api">
+<h1>Evaluation API<a class="headerlink" href="#evaluation-api" title="Permalink to this headline">¶</a></h1>
+<p>Evaluation manipulation API</p>
+<span class="target" id="module-api.views.evaluation"></span><dl class="class">
+<dt id="api.views.evaluation.EvaluationViewSet">
+<em class="property">class </em><tt class="descclassname">api.views.evaluation.</tt><tt class="descname">EvaluationViewSet</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/api/views/evaluation.html#EvaluationViewSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.evaluation.EvaluationViewSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inherits standard characteristics from ModelViewSet:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>Endpoint</strong>: /evaluations/</div>
+<div class="line"><strong>Methods</strong>: GET / POST / PUT / PATCH / DELETE / OPTIONS</div>
+<div class="line"><strong>Permissions</strong>:</div>
+<div class="line-block">
+<div class="line">- Default : IsEvaluator</div>
+<div class="line">- GET : IsJWTAuthenticated</div>
+</div>
+<div class="line"><strong>Notes</strong>:</div>
+<div class="line-block">
+<div class="line">- GET response restricted to &#8216;Evaluation&#8217; objects linked with user</div>
+</div>
+</div>
+</div></blockquote>
+<dl class="method">
+<dt id="api.views.evaluation.EvaluationViewSet.list_evaluations_about_me">
+<tt class="descname">list_evaluations_about_me</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/evaluation.html#EvaluationViewSet.list_evaluations_about_me"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.evaluation.EvaluationViewSet.list_evaluations_about_me" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the evaluations created by other users about the authenticated user.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: JWTAuthenticated</div>
+<div class="line"><strong>endpoint</strong>: /evaluations/0/list_evaluations_about_me/</div>
+<div class="line"><strong>method</strong>: GET</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Count</div>
+<div class="line">- List of &#8220;Evaluation&#8221; objects :</div>
+<div class="line-block">
+<div class="line">- meeting (integer)</div>
+<div class="line">- mark (&#8216;0&#8217;|&#8216;1&#8217;|&#8216;2&#8217;|&#8216;3&#8217;|&#8216;4&#8217;|&#8216;5&#8217;)</div>
+<div class="line">- comment (text)</div>
+<div class="line">- creation_date (datetime)</div>
+<div class="line">- last_update (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.evaluation.EvaluationViewSet.list_evaluations_created_by_me">
+<tt class="descname">list_evaluations_created_by_me</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/evaluation.html#EvaluationViewSet.list_evaluations_created_by_me"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.evaluation.EvaluationViewSet.list_evaluations_created_by_me" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the evaluations created by the user.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: JWTAuthenticated</div>
+<div class="line"><strong>endpoint</strong>: /evaluations/0/list_evaluations_created_by_me/</div>
+<div class="line"><strong>method</strong>: GET</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Count</div>
+<div class="line">- List of &#8220;Evaluation&#8221; objects :</div>
+<div class="line-block">
+<div class="line">- meeting (integer)</div>
+<div class="line">- mark (&#8216;0&#8217;|&#8216;1&#8217;|&#8216;2&#8217;|&#8216;3&#8217;|&#8216;4&#8217;|&#8216;5&#8217;)</div>
+<div class="line">- comment (text)</div>
+<div class="line">- creation_date (datetime)</div>
+<div class="line">- last_update (datetime)</div>
+</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="api.views.evaluation.EvaluationViewSet.model">
+<tt class="descname">model</tt><a class="headerlink" href="#api.views.evaluation.EvaluationViewSet.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">Evaluation</span></tt></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_faq.html" class="btn btn-neutral float-right" title="FAQ API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api_meeting.html" class="btn btn-neutral" title="Meeting API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Renaud Bordier &amp; Yann Coleu.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

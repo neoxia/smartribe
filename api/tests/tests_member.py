@@ -240,19 +240,20 @@ class MemberTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(4, len(data))
-        self.assertEqual('/api/v1/communities/1/', data[0]['community']['url'])
-        self.assertEqual('/api/v1/communities/3/', data[1]['community']['url'])
-        self.assertEqual('/api/v1/communities/8/', data[2]['community']['url'])
-        self.assertEqual('/api/v1/communities/9/', data[3]['community']['url'])
-        self.assertEqual('1', data[0]['status'])
-        self.assertEqual('1', data[1]['status'])
-        self.assertEqual('0', data[2]['status'])
-        self.assertEqual('1', data[3]['status'])
-        self.assertEqual('2', data[0]['role'])
-        self.assertEqual('1', data[1]['role'])
-        self.assertEqual('2', data[2]['role'])
-        self.assertEqual('2', data[3]['role'])
+        self.assertEqual(4, data['count'])
+        root_url = 'http://testserver'
+        self.assertEqual(root_url+'/api/v1/communities/1/', data['results'][0]['community']['url'])
+        self.assertEqual(root_url+'/api/v1/communities/3/', data['results'][1]['community']['url'])
+        self.assertEqual(root_url+'/api/v1/communities/8/', data['results'][2]['community']['url'])
+        self.assertEqual(root_url+'/api/v1/communities/9/', data['results'][3]['community']['url'])
+        self.assertEqual('1', data['results'][0]['status'])
+        self.assertEqual('1', data['results'][1]['status'])
+        self.assertEqual('0', data['results'][2]['status'])
+        self.assertEqual('1', data['results'][3]['status'])
+        self.assertEqual('2', data['results'][0]['role'])
+        self.assertEqual('1', data['results'][1]['role'])
+        self.assertEqual('2', data['results'][2]['role'])
+        self.assertEqual('2', data['results'][3]['role'])
 
         owner = User.objects.get(username="community_owner")
         token = core.utils.gen_auth_token(owner)
@@ -261,7 +262,7 @@ class MemberTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(9, len(data))
+        self.assertEqual(9, data['count'])
 
     def test_list_members_without_auth(self):
         """
@@ -332,19 +333,19 @@ class MemberTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(2, len(data))
-        self.assertEqual(1, data[0]['id'])
-        self.assertEqual('community_owner', data[0]['user']['username'])
-        self.assertEqual('/api/v1/users/1/', data[0]['user']['url'])
-        self.assertEqual(1, data[0]['user']['id'])
-        self.assertEqual('0', data[0]['role'])
-        self.assertEqual('1', data[0]['status'])
-        self.assertEqual(2, data[1]['id'])
-        self.assertEqual('moderator', data[1]['user']['username'])
-        self.assertEqual('/api/v1/users/2/', data[1]['user']['url'])
-        self.assertEqual(2, data[1]['user']['id'])
-        self.assertEqual('1', data[1]['role'])
-        self.assertEqual('1', data[1]['status'])
+        self.assertEqual(2, data['count'])
+        self.assertEqual(1, data['results'][0]['id'])
+        self.assertEqual('community_owner', data['results'][0]['user']['username'])
+        self.assertEqual('http://testserver/api/v1/users/1/', data['results'][0]['user']['url'])
+        self.assertEqual(1, data['results'][0]['user']['id'])
+        self.assertEqual('0', data['results'][0]['role'])
+        self.assertEqual('1', data['results'][0]['status'])
+        self.assertEqual(2, data['results'][1]['id'])
+        self.assertEqual('moderator', data['results'][1]['user']['username'])
+        self.assertEqual('http://testserver/api/v1/users/2/', data['results'][1]['user']['url'])
+        self.assertEqual(2, data['results'][1]['user']['id'])
+        self.assertEqual('1', data['results'][1]['role'])
+        self.assertEqual('1', data['results'][1]['status'])
 
     def test_list_members_with_owner_rights(self):
         """
@@ -360,7 +361,7 @@ class MemberTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(1, len(data))
+        self.assertEqual(1, data['count'])
 
     def test_accept_member_without_auth(self):
         """

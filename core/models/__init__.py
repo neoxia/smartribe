@@ -20,7 +20,6 @@ from core.models.address import Address
 from core.models.community import Community
 from core.models.community import LocalCommunity
 from core.models.community import TransportCommunity
-from core.models.community import TransportStop
 
 ## Member
 from core.models.member import Member
@@ -38,6 +37,7 @@ from core.models.offer import Offer
 # Meeting
 from core.models.meeting import Meeting
 from core.models.meeting import MeetingMessage
+from core.models.evaluation import Evaluation
 
 ## General
 from core.models.tos import Tos

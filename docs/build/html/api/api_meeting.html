@@ -29,7 +29,7 @@
 
   
     <link rel="top" title="Smartribe 0.0.1 documentation" href="../index.html"/>
-        <link rel="next" title="FAQ API" href="api_faq.html"/>
+        <link rel="next" title="Evaluation API" href="api_evaluation.html"/>
         <link rel="prev" title="Offer API" href="api_offer.html"/> 
 
   
@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../model/inappropriate.html">Inappropriate content</a></li>
@@ -87,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_offer.html">Offer API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_inappropriate.html">Inappropriate content API</a></li>
@@ -146,10 +148,106 @@
 </div>
 </div>
 </div></blockquote>
+<dl class="method">
+<dt id="api.views.meeting.MeetingViewSet.accept_meeting">
+<tt class="descname">accept_meeting</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/meeting.html#MeetingViewSet.accept_meeting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.meeting.MeetingViewSet.accept_meeting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept a meeting</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: IsConcernedByMeeting and Not meeting creator</div>
+<div class="line"><strong>endpoint</strong>: /meetings/{id}/accept_meeting/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not Found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified meeting object</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="api.views.meeting.MeetingViewSet.model">
 <tt class="descname">model</tt><a class="headerlink" href="#api.views.meeting.MeetingViewSet.model" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">Meeting</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.meeting.MeetingViewSet.refuse_meeting">
+<tt class="descname">refuse_meeting</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/meeting.html#MeetingViewSet.refuse_meeting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.meeting.MeetingViewSet.refuse_meeting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a meeting</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: IsConcernedByMeeting and Not meeting creator</div>
+<div class="line"><strong>endpoint</strong>: /meetings/{id}/refuse_meeting/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not Found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified meeting object</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="api.views.meeting.MeetingViewSet.validate_meeting">
+<tt class="descname">validate_meeting</tt><big>(</big><em>request</em>, <em>pk=None</em><big>)</big><a class="reference internal" href="../_modules/api/views/meeting.html#MeetingViewSet.validate_meeting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.views.meeting.MeetingViewSet.validate_meeting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a meeting</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>permission</strong>: IsConcernedByMeeting</div>
+<div class="line"><strong>endpoint</strong>: /meetings/{id}/validate_meeting/</div>
+<div class="line"><strong>method</strong>: POST</div>
+<div class="line"><strong>attr</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+<div class="line"><strong>http return</strong>:</div>
+<div class="line-block">
+<div class="line">- 200 OK</div>
+<div class="line">- 401 Unauthorized</div>
+<div class="line">- 403 Forbidden</div>
+<div class="line">- 404 Not Found</div>
+</div>
+<div class="line"><strong>data return</strong>:</div>
+<div class="line-block">
+<div class="line">- Modified meeting object</div>
+</div>
+<div class="line"><strong>other actions</strong>:</div>
+<div class="line-block">
+<div class="line">None</div>
+</div>
+</div>
+</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -162,7 +260,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api_faq.html" class="btn btn-neutral float-right" title="FAQ API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api_evaluation.html" class="btn btn-neutral float-right" title="Evaluation API"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="api_offer.html" class="btn btn-neutral" title="Offer API"><span class="fa fa-arrow-circle-left"></span> Previous</a>

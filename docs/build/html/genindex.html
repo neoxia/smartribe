@@ -70,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="model/request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/offer.html">Offer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/meeting.html">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model/evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model/inappropriate.html">Inappropriate content</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api/api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/api_inappropriate.html">Inappropriate content API</a></li>
@@ -129,23 +131,30 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#J"><strong>J</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api/api_meeting.html#api.views.meeting.MeetingViewSet.accept_meeting">accept_meeting() (api.views.meeting.MeetingViewSet method)</a>
+  </dt>
+
       
   <dt><a href="api/api_community.html#api.views.community.CommunityViewSet.accept_member">accept_member() (api.views.community.CommunityViewSet method)</a>
   </dt>
@@ -169,6 +178,10 @@
   </dt>
 
       
+  <dt><a href="api/api_evaluation.html#module-api.views.evaluation">api.views.evaluation (module)</a>
+  </dt>
+
+      
   <dt><a href="api/api_faq.html#module-api.views.faq">api.views.faq (module)</a>
   </dt>
 
@@ -180,12 +193,12 @@
   <dt><a href="api/api_local_community.html#module-api.views.local_community">api.views.local_community (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/api_meeting.html#module-api.views.meeting">api.views.meeting (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/api_meeting_point.html#module-api.views.meeting_point">api.views.meeting_point (module)</a>
   </dt>
@@ -224,6 +237,10 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.BAD">BAD (core.models.evaluation.Evaluation attribute)</a>
+  </dt>
+
       
   <dt><a href="api/api_community.html#api.views.community.CommunityViewSet.ban_member">ban_member() (api.views.community.CommunityViewSet method)</a>
   </dt>
@@ -268,6 +285,10 @@
 
       
   <dt><a href="api/api_community.html#api.views.community.CommunityViewSet.check_upper_permission">check_upper_permission() (api.views.community.CommunityViewSet method)</a>
+  </dt>
+
+      
+  <dt><a href="api/api_request.html#api.views.request.RequestViewSet.close_request">close_request() (api.views.request.RequestViewSet method)</a>
   </dt>
 
       
@@ -323,7 +344,49 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.DANGEROUS">DANGEROUS (core.models.evaluation.Evaluation attribute)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
   <dt><a href="api/api_community.html#api.views.community.CommunityViewSet.delete_location">delete_location() (api.views.community.CommunityViewSet method)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation">Evaluation (class in core.models.evaluation)</a>
+  </dt>
+
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.DoesNotExist">Evaluation.DoesNotExist</a>
+  </dt>
+
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.MultipleObjectsReturned">Evaluation.MultipleObjectsReturned</a>
+  </dt>
+
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.EVALUATION_CHOICES">EVALUATION_CHOICES (core.models.evaluation.Evaluation attribute)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="model/meeting.html#core.models.meeting.Meeting.evaluation_set">evaluation_set (core.models.meeting.Meeting attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api/api_evaluation.html#api.views.evaluation.EvaluationViewSet">EvaluationViewSet (class in api.views.evaluation)</a>
+  </dt>
+
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.EXCELLENT">EXCELLENT (core.models.evaluation.Evaluation attribute)</a>
   </dt>
 
   </dl></td>
@@ -369,11 +432,19 @@
   </dt>
 
       
+  <dt><a href="api/api_community.html#api.views.community.CommunityViewSet.get_custom_pagination_serializer">get_custom_pagination_serializer() (api.views.community.CommunityViewSet method)</a>
+  </dt>
+
+      
   <dt><a href="model/profile.html#core.models.profile.Profile.get_favorite_contact_display">get_favorite_contact_display() (core.models.profile.Profile method)</a>
   </dt>
 
       
   <dt><a href="model/profile.html#core.models.profile.Profile.get_gender_display">get_gender_display() (core.models.profile.Profile method)</a>
+  </dt>
+
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.get_mark_display">get_mark_display() (core.models.evaluation.Evaluation method)</a>
   </dt>
 
       
@@ -385,6 +456,10 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.get_next_by_creation_date">(core.models.evaluation.Evaluation method)</a>
+  </dt>
+
         
   <dt><a href="model/faq.html#core.models.faq.Faq.get_next_by_creation_date">(core.models.faq.Faq method)</a>
   </dt>
@@ -428,6 +503,10 @@
 
       <dd><dl>
         
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.get_next_by_last_update">(core.models.evaluation.Evaluation method)</a>
+  </dt>
+
+        
   <dt><a href="model/faq.html#core.models.faq.Faq.get_next_by_last_update">(core.models.faq.Faq method)</a>
   </dt>
 
@@ -463,6 +542,10 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.get_previous_by_creation_date">(core.models.evaluation.Evaluation method)</a>
+  </dt>
+
         
   <dt><a href="model/faq.html#core.models.faq.Faq.get_previous_by_creation_date">(core.models.faq.Faq method)</a>
   </dt>
@@ -506,6 +589,10 @@
 
       <dd><dl>
         
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.get_previous_by_last_update">(core.models.evaluation.Evaluation method)</a>
+  </dt>
+
+        
   <dt><a href="model/faq.html#core.models.faq.Faq.get_previous_by_last_update">(core.models.faq.Faq method)</a>
   </dt>
 
@@ -535,11 +622,25 @@
   </dt>
 
       
-  <dt><a href="model/member.html#core.models.member.Member.get_status_display">get_status_display() (core.models.member.Member method)</a>
+  <dt><a href="model/meeting.html#core.models.meeting.Meeting.get_status_display">get_status_display() (core.models.meeting.Meeting method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="model/member.html#core.models.member.Member.get_status_display">(core.models.member.Member method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="model/community.html#core.models.community.Community.get_type">get_type() (core.models.community.Community method)</a>
   </dt>
 
       
-  <dt><a href="model/community.html#core.models.community.Community.get_type">get_type() (core.models.community.Community method)</a>
+  <dt><a href="api/api_user.html#api.views.user.UserViewSet.get_user_evaluation">get_user_evaluation() (api.views.user.UserViewSet method)</a>
+  </dt>
+
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.GOOD">GOOD (core.models.evaluation.Evaluation attribute)</a>
   </dt>
 
   </dl></td>
@@ -587,6 +688,14 @@
   </dt>
 
       
+  <dt><a href="api/api_evaluation.html#api.views.evaluation.EvaluationViewSet.list_evaluations_about_me">list_evaluations_about_me() (api.views.evaluation.EvaluationViewSet method)</a>
+  </dt>
+
+      
+  <dt><a href="api/api_evaluation.html#api.views.evaluation.EvaluationViewSet.list_evaluations_created_by_me">list_evaluations_created_by_me() (api.views.evaluation.EvaluationViewSet method)</a>
+  </dt>
+
+      
   <dt><a href="api/api_community.html#api.views.community.CommunityViewSet.list_locations">list_locations() (api.views.community.CommunityViewSet method)</a>
   </dt>
 
@@ -610,12 +719,12 @@
   <dt><a href="model/local_community.html#core.models.community.LocalCommunity.DoesNotExist">LocalCommunity.DoesNotExist</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="model/local_community.html#core.models.community.LocalCommunity.MultipleObjectsReturned">LocalCommunity.MultipleObjectsReturned</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/api_local_community.html#api.views.local_community.LocalCommunityViewSet">LocalCommunityViewSet (class in api.views.local_community)</a>
   </dt>
@@ -655,6 +764,10 @@
   </dt>
 
       
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.meeting">meeting (core.models.evaluation.Evaluation attribute)</a>
+  </dt>
+
+      
   <dt><a href="model/meeting.html#core.models.meeting.Meeting.DoesNotExist">Meeting.DoesNotExist</a>
   </dt>
 
@@ -688,12 +801,12 @@
   <dt><a href="model/meeting_point.html#core.models.location.MeetingPoint.DoesNotExist">MeetingPoint.DoesNotExist</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="model/meeting_point.html#core.models.location.MeetingPoint.MultipleObjectsReturned">MeetingPoint.MultipleObjectsReturned</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="model/location.html#core.models.location.Location.meetingpoint_set">meetingpoint_set (core.models.location.Location attribute)</a>
   </dt>
@@ -727,6 +840,10 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="api/api_evaluation.html#api.views.evaluation.EvaluationViewSet.model">(api.views.evaluation.EvaluationViewSet attribute)</a>
+  </dt>
+
         
   <dt><a href="api/api_faq.html#api.views.faq.FaqViewSet.model">(api.views.faq.FaqViewSet attribute)</a>
   </dt>
@@ -783,6 +900,16 @@
   </dl></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.NEUTRAL">NEUTRAL (core.models.evaluation.Evaluation attribute)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
@@ -797,6 +924,10 @@
 
         
   <dt><a href="model/transport_community.html#core.models.community.TransportCommunity.objects">(core.models.community.TransportCommunity attribute)</a>
+  </dt>
+
+        
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.objects">(core.models.evaluation.Evaluation attribute)</a>
   </dt>
 
         
@@ -885,6 +1016,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="model/evaluation.html#core.models.evaluation.Evaluation.PERFECT">PERFECT (core.models.evaluation.Evaluation attribute)</a>
+  </dt>
+
+      
   <dt><a href="model/meeting_point.html#core.models.location.MeetingPoint.photo">photo (core.models.location.MeetingPoint attribute)</a>
   </dt>
 
@@ -935,6 +1070,10 @@
   </dt>
 
       
+  <dt><a href="api/api_meeting.html#api.views.meeting.MeetingViewSet.refuse_meeting">refuse_meeting() (api.views.meeting.MeetingViewSet method)</a>
+  </dt>
+
+      
   <dt><a href="model/request.html#core.models.request.Request">Request (class in core.models.request)</a>
   </dt>
 
@@ -946,12 +1085,12 @@
   <dt><a href="model/request.html#core.models.request.Request.DoesNotExist">Request.DoesNotExist</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="model/request.html#core.models.request.Request.MultipleObjectsReturned">Request.MultipleObjectsReturned</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="model/skill_category.html#core.models.skill.SkillCategory.request_set">request_set (core.models.skill.SkillCategory attribute)</a>
   </dt>
@@ -1025,9 +1164,15 @@
   </dt>
 
       
-  <dt><a href="model/member.html#core.models.member.Member.STATUS_CHOICES">STATUS_CHOICES (core.models.member.Member attribute)</a>
+  <dt><a href="model/meeting.html#core.models.meeting.Meeting.STATUS_CHOICES">STATUS_CHOICES (core.models.meeting.Meeting attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="model/member.html#core.models.member.Member.STATUS_CHOICES">(core.models.member.Member attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="model/suggestion.html#core.models.suggestion.Suggestion">Suggestion (class in core.models.suggestion)</a>
   </dt>
@@ -1096,6 +1241,10 @@
 
       <dd><dl>
         
+  <dt><a href="model/meeting.html#core.models.meeting.Meeting.user">(core.models.meeting.Meeting attribute)</a>
+  </dt>
+
+        
   <dt><a href="model/member.html#core.models.member.Member.user">(core.models.member.Member attribute)</a>
   </dt>
 
@@ -1128,6 +1277,16 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api/api_user.html#api.views.user.UserViewSet">UserViewSet (class in api.views.user)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api/api_meeting.html#api.views.meeting.MeetingViewSet.validate_meeting">validate_meeting() (api.views.meeting.MeetingViewSet method)</a>
   </dt>
 
   </dl></td>

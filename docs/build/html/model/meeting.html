@@ -29,7 +29,7 @@
 
   
     <link rel="top" title="Smartribe 0.0.1 documentation" href="../index.html"/>
-        <link rel="next" title="Frequently asked question" href="faq.html"/>
+        <link rel="next" title="Evaluation" href="evaluation.html"/>
         <link rel="prev" title="Offer" href="offer.html"/> 
 
   
@@ -71,6 +71,7 @@
 <li class="toctree-l1"><a class="reference internal" href="request.html">Request</a></li>
 <li class="toctree-l1"><a class="reference internal" href="offer.html">Offer</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Meeting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="evaluation.html">Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently asked question</a></li>
 <li class="toctree-l1"><a class="reference internal" href="suggestion.html">Suggestion</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inappropriate.html">Inappropriate content</a></li>
@@ -87,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/api_request.html">Request API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/api_offer.html">Offer API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/api_meeting.html">Meeting API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/api_evaluation.html">Evaluation API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/api_faq.html">FAQ API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/api_suggestion.html">Suggestion API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/api_inappropriate.html">Inappropriate content API</a></li>
@@ -130,7 +132,7 @@
 <dl class="class">
 <dt id="core.models.meeting.Meeting">
 <em class="property">class </em><tt class="descclassname">core.models.meeting.</tt><tt class="descname">Meeting</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/core/models/meeting.html#Meeting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.models.meeting.Meeting" title="Permalink to this definition">¶</a></dt>
-<dd><p>Meeting(id, offer_id, meeting_point_id, date_time, creation_date, last_update)</p>
+<dd><p>Meeting(id, offer_id, user_id, meeting_point_id, date_time, status, is_validated, creation_date, last_update)</p>
 <dl class="exception">
 <dt id="core.models.meeting.Meeting.DoesNotExist">
 <em class="property">exception </em><tt class="descname">DoesNotExist</tt><a class="headerlink" href="#core.models.meeting.Meeting.DoesNotExist" title="Permalink to this definition">¶</a></dt>
@@ -139,6 +141,16 @@
 <dl class="exception">
 <dt id="core.models.meeting.Meeting.MultipleObjectsReturned">
 <em class="property">exception </em><tt class="descclassname">Meeting.</tt><tt class="descname">MultipleObjectsReturned</tt><a class="headerlink" href="#core.models.meeting.Meeting.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.meeting.Meeting.STATUS_CHOICES">
+<tt class="descclassname">Meeting.</tt><tt class="descname">STATUS_CHOICES</tt><em class="property"> = {('R', 'Refused'), ('A', 'Accepted'), ('P', 'Pending')}</em><a class="headerlink" href="#core.models.meeting.Meeting.STATUS_CHOICES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.meeting.Meeting.evaluation_set">
+<tt class="descclassname">Meeting.</tt><tt class="descname">evaluation_set</tt><a class="headerlink" href="#core.models.meeting.Meeting.evaluation_set" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -171,6 +183,11 @@
 <tt class="descclassname">Meeting.</tt><tt class="descname">get_previous_by_last_update</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.meeting.Meeting.get_previous_by_last_update" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="core.models.meeting.Meeting.get_status_display">
+<tt class="descclassname">Meeting.</tt><tt class="descname">get_status_display</tt><big>(</big><em>*moreargs</em>, <em>**morekwargs</em><big>)</big><a class="headerlink" href="#core.models.meeting.Meeting.get_status_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="core.models.meeting.Meeting.meeting_point">
 <tt class="descclassname">Meeting.</tt><tt class="descname">meeting_point</tt><a class="headerlink" href="#core.models.meeting.Meeting.meeting_point" title="Permalink to this definition">¶</a></dt>
@@ -183,12 +200,17 @@
 
 <dl class="attribute">
 <dt id="core.models.meeting.Meeting.objects">
-<tt class="descclassname">Meeting.</tt><tt class="descname">objects</tt><em class="property"> = &lt;django.db.models.manager.Manager object at 0x10464e5c0&gt;</em><a class="headerlink" href="#core.models.meeting.Meeting.objects" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Meeting.</tt><tt class="descname">objects</tt><em class="property"> = &lt;django.db.models.manager.Manager object at 0x10468c6d8&gt;</em><a class="headerlink" href="#core.models.meeting.Meeting.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="core.models.meeting.Meeting.offer">
 <tt class="descclassname">Meeting.</tt><tt class="descname">offer</tt><a class="headerlink" href="#core.models.meeting.Meeting.offer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="core.models.meeting.Meeting.user">
+<tt class="descclassname">Meeting.</tt><tt class="descname">user</tt><a class="headerlink" href="#core.models.meeting.Meeting.user" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -201,7 +223,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="faq.html" class="btn btn-neutral float-right" title="Frequently asked question"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="evaluation.html" class="btn btn-neutral float-right" title="Evaluation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="offer.html" class="btn btn-neutral" title="Offer"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -6,10 +6,11 @@ class MeetingCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meeting
+        exclude = ('user', 'status', 'is_validated', 'creation_date', 'last_update')
 
 
 class MeetingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meeting
-        read_only_fields = ('offer', 'creation_date', 'last_update')
+        read_only_fields = ('offer', 'user', 'is_validated', 'creation_date', 'last_update')

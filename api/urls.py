@@ -15,6 +15,8 @@ from api.views import inappropriate
 from api.views import request
 from api.views import offer
 from api.views import meeting
+from api.views import evaluation
+from api.views import server_action
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -33,10 +35,12 @@ router.register(r'meeting_points', meeting_point.MeetingPointViewSet)
 router.register(r'requests', request.RequestViewSet)
 router.register(r'offers', offer.OfferViewSet)
 router.register(r'meetings', meeting.MeetingViewSet)
+router.register(r'evaluations', evaluation.EvaluationViewSet)
 
 router.register(r'faq', faq.FaqViewSet)
 router.register(r'suggestions', suggestion.SuggestionViewSet)
 router.register(r'inappropriates', inappropriate.InappropriateViewSet)
+
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browseable API.
@@ -44,6 +48,13 @@ urlpatterns = patterns('',
                        url(r'^v1/', include(router.urls)),
                        url(r'^v1/auth/', include('rest_framework.urls', namespace='rest_framework')),
                        )
+
+urlpatterns += patterns('',
+                        url(r'^v1/server_actions/auto_close_requests/',
+                            server_action.auto_close_requests
+                        )
+)
+
 
 urlpatterns += patterns('',
                         url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'))

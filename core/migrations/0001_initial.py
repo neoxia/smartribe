@@ -248,7 +248,7 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(blank=True, validators=[core.models.validator.PhoneValidatorFR()], null=True, max_length=15)),
                 ('birthdate', models.DateField(blank=True, null=True)),
                 ('bio', models.TextField(blank=True, null=True)),
-                ('photo', models.ImageField(blank=True, null=True, upload_to=core.models.profile.get_photo)),
+                ('photo', models.ImageField(blank=True, null=True, upload_to=core.models.profile.get_photo_path)),
                 ('favorite_contact', models.CharField(choices=[('E', 'Email'), ('P', 'Phone'), ('N', 'None')], max_length=2, default='N')),
                 ('address', models.OneToOneField(blank=True, to='core.Address', null=True)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
