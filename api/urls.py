@@ -57,7 +57,7 @@ urlpatterns += patterns('',
 
 
 urlpatterns += patterns('',
-                        url(r'^v1/api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'))
+                        url(r'^v1/api_token_auth/', 'rest_framework_jwt.views.obtain_jwt_token'))
 #urlpatterns += patterns('',
                         #url(r'^v1/(?P<path>.*)$', 'django.views.static.serve',
                             #{'document_root': ''}))
