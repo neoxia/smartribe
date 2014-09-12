@@ -1,18 +1,6 @@
-FORMAT: 1A
-HOST: http://www.google.com
-
-# smartribe
-Official documentation API v1.
-url: https://api.smartri.be/api/v1/
-FORMAT: 1A
-HOST: http://www.google.com
-
-# smartribe
-Official documentation API v1.
-url: https://api.smartri.be/api/v1/
-
 # Group Users
 User actions
+
 ## Authentication [/api-token-auth]
 ### Get session token [POST]
 
