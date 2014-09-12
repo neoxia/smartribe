@@ -1,0 +1,137 @@
+FORMAT: 1A
+HOST: http://www.google.com
+
+# smartribe
+Official documentation API v1.
+url: https://api.smartri.be/api/v1/
+# Group Users
+User actions
+
+## Authentication [/api-token-auth]
+### Get session token [POST]
+
+Generate a session token. The token takes place in
+HTTP Authorization header like:
+    Authorization: JWT {token}
+
++ Request (application/json)
+
+        { 
+            "username": "toto",
+            "password": "strongpassword"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5c...",
+        }
+
+## Users [/users]
+### Create user [POST]
+
+Once the user is succesfully created, an email is
+sent back to validate the authenticity of the
+email address. The email contains a link to the website
+address with a token in the url.
+
++ Request (application/json)
+
+        { 
+            "username": "toto",
+            "email": "toto@test.com",
+            "password": "strongpassword"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "id": "1",
+            "username": "toto",
+            "email": "toto@test.com",
+            "groups": [],
+            "is_active": false
+        }
+
+## Users info [/users/{id}]
+### Get user detail [GET]
+
+The return can change you are the object owner or not.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: JWT {token}
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action 
+      with.
+
++ Response 200 (application/json)
+Non Object Owner    
+    + Body
+
+        {
+            "id": "1",
+            "username": "toto",
+        }
+
++ Response 200 (application/json)
+Object owner    
+    + Body
+
+        {
+            "id": "1",
+            "username": "toto",
+            "email": "toto@test.com",
+            "groups": [],
+            "is_active": true
+        }
+
+## Users confirm registration [/users/{id}/confirm_registration]
+### Confirm registration [POST]
+
+Confirm registration by posting token sent by email
+
++ Request (application/json)
+
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the User to perform action 
+      with.
+
++ Request (application/json)
+
+        {
+            "token": "rh6qjjv89i0lqmkmm2sctmgvroxsroxiggzds3g10m...",
+        }
+
++ Response 200 (application/json)
+
+## Users password recovery  [/users/0/recover_password]
+### Recover password [POST]
+Sends an email with a password recovery token
+
++ Request (application/json)
+
++ Request (application/json)
+
+        {
+            "email": "toto@test.com",
+        }
+
++ Response 200 (application/json)
+
+
+
+## Users [/users]
+## Group [/users]
+## Users [/users]
+## Users [/users]
+## Users [/users]
+## Users [/users]
+## Users [/users]
+## Users [/users]
+## Users [/users]
+
+### Remove a Note [DELETE]
++ Response 204
