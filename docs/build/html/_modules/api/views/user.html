@@ -219,29 +219,40 @@
         <span class="sd">&quot;&quot;&quot; Confirm user registration:</span>
 
 <span class="sd">                | **permission**: any</span>
-<span class="sd">                | **endpoint**: /users/{id}/confirm_registration</span>
+<span class="sd">                | **endpoint**: /users/{token}/confirm_registration</span>
 <span class="sd">                | **method**: POST</span>
 <span class="sd">                | **attr**:</span>
-<span class="sd">                |       - token: string (required)</span>
+<span class="sd">                |       None</span>
 <span class="sd">                | **http return**:</span>
 <span class="sd">                |       - 200 OK</span>
 <span class="sd">                |       - 400 Bad request</span>
 <span class="sd">                | **data return**:</span>
-<span class="sd">                |       - None</span>
+<span class="sd">                |       None</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&quot;detail&quot;</span><span class="p">:</span> <span class="s">&quot;Wrong URL&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">JSONParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;token&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;if not User.objects.filter(id=pk).exists():</span>
+<span class="sd">            return Response({&quot;detail&quot;: &quot;Wrong URL&quot;}, status=status.HTTP_400_BAD_REQUEST)</span>
+<span class="sd">        data = JSONParser().parse(request)</span>
+<span class="sd">        if not &#39;token&#39; in data:</span>
+<span class="sd">            return Response({&quot;detail&quot;: &quot;Missing token&quot;}, status=status.HTTP_400_BAD_REQUEST)</span>
+<span class="sd">        user = User.objects.get(id=pk)</span>
+<span class="sd">        if not ActivationToken.objects.filter(user=user, token=data[&#39;token&#39;]).exists():</span>
+<span class="sd">            return Response({&quot;detail&quot;: &quot;Activation error&quot;}, status=status.HTTP_400_BAD_REQUEST)</span>
+<span class="sd">        user.is_active = True</span>
+<span class="sd">        user.save()</span>
+<span class="sd">        ActivationToken.objects.get(user=user, token=data[&#39;token&#39;]).delete()</span>
+<span class="sd">        return Response(status=status.HTTP_200_OK)&quot;&quot;&quot;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">pk</span>
+        <span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&quot;detail&quot;</span><span class="p">:</span> <span class="s">&quot;Missing token&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ActivationToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ActivationToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s">&quot;detail&quot;</span><span class="p">:</span> <span class="s">&quot;Activation error&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">ActivationToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">user</span>
         <span class="n">user</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="n">ActivationToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;token&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">ActivationToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
 </div>
     <span class="nd">@action</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="p">])</span>
 <div class="viewcode-block" id="UserViewSet.recover_password"><a class="viewcode-back" href="../../../api/api_user.html#api.views.user.UserViewSet.recover_password">[docs]</a>    <span class="k">def</span> <span class="nf">recover_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
