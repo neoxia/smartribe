@@ -91,18 +91,18 @@ class UserViewSet(viewsets.ModelViewSet):
         """ Confirm user registration:
 
                 | **permission**: any
-                | **endpoint**: /users/{id}/confirm_registration
+                | **endpoint**: /users/{token}/confirm_registration
                 | **method**: POST
                 | **attr**:
-                |       - token: string (required)
+                |       None
                 | **http return**:
                 |       - 200 OK
                 |       - 400 Bad request
                 | **data return**:
-                |       - None
+                |       None
 
         """
-        if not User.objects.filter(id=pk).exists():
+        """if not User.objects.filter(id=pk).exists():
             return Response({"detail": "Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
         data = JSONParser().parse(request)
         if not 'token' in data:
@@ -113,7 +113,18 @@ class UserViewSet(viewsets.ModelViewSet):
         user.is_active = True
         user.save()
         ActivationToken.objects.get(user=user, token=data['token']).delete()
+        return Response(status=status.HTTP_200_OK)"""
+        token = pk
+        if token is None:
+            return Response({"detail": "Missing token"}, status=status.HTTP_400_BAD_REQUEST)
+        if not ActivationToken.objects.filter(token=token).exists():
+            return Response({"detail": "Activation error"}, status=status.HTTP_400_BAD_REQUEST)
+        user = ActivationToken.objects.get(token=token).user
+        user.is_active = True
+        user.save()
+        ActivationToken.objects.get(token=token).delete()
         return Response(status=status.HTTP_200_OK)
+
 
     @action(methods=['POST', ])
     def recover_password(self, request, pk=None):

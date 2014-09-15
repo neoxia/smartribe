@@ -24,9 +24,14 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         token = ActivationToken.objects.get(id=1)
-        data = {'token': token.token}
+
+        """data = {'token': token.token}
         url = '/api/v1/users/1/confirm_registration/'
-        self.client.post(url, data, format='json')
+        self.client.post(url, data, format='json')"""
+
+        url = '/api/v1/users/'+token.token+'/confirm_registration/'
+        response = self.client.post(url, format='json')
+
         url = '/api/v1/users/'
         data = {
             'username': 'test0',
@@ -44,9 +49,14 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         token = ActivationToken.objects.get(id=1)
-        data = {'token': token.token}
+
+        """data = {'token': token.token}
         url = '/api/v1/users/1/confirm_registration/'
-        self.client.post(url, data, format='json')
+        self.client.post(url, data, format='json')"""
+
+        url = '/api/v1/users/'+token.token+'/confirm_registration/'
+        response = self.client.post(url, format='json')
+
         url = '/api/v1/users/'
         data = {
             'username': 'test0',
@@ -71,9 +81,13 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         token = ActivationToken.objects.get(id=1)
-        data = {'token': token.token}
+        """data = {'token': token.token}
         url = '/api/v1/users/1/confirm_registration/'
-        self.client.post(url, data, format='json')
+        self.client.post(url, data, format='json')"""
+
+        url = '/api/v1/users/'+token.token+'/confirm_registration/'
+        response = self.client.post(url, format='json')
+
         url = '/api/v1/users/'
         data = {
             'username': 'test0',
@@ -129,9 +143,13 @@ class AccountTests(APITestCase):
         self.assertTrue(ActivationToken.objects.filter(id=1).exists())
 
         token = ActivationToken.objects.get(id=1)
-        data = {'token': token.token}
+        """data = {'token': token.token}
         url = '/api/v1/users/1/confirm_registration/'
-        response = self.client.post(url, data, format='json')
+        response = self.client.post(url, data, format='json')"""
+
+        url = '/api/v1/users/'+token.token+'/confirm_registration/'
+        response = self.client.post(url, format='json')
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         user = User.objects.get(username='test')
         self.assertTrue(user.is_active)
