@@ -217,3 +217,20 @@ class RequestTests(APITestCase):
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+    def test_list_evaluations(self):
+        """
+
+        """
+        user = User.objects.get(username="user3")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/evaluations/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(2, data['count'])
+        self.assertEqual('Evaluation/2', data['results'][0]['reference'])
+

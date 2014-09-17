@@ -14,7 +14,7 @@ import django_filters
 
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
-from api.serializers.serializers import UserCreateSerializer, UserSerializer, UserPublicSerializer
+from api.serializers import UserCreateSerializer, UserPublicSerializer, UserSerializer
 from core.models import ActivationToken, PasswordRecovery, Evaluation
 import core.utils
 

@@ -1,9 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 from core.models import Meeting
+from core.models.reportable_model import ReportableModel
 
 
-class Evaluation(models.Model):
+class Evaluation(ReportableModel):
 
     meeting = models.ForeignKey(Meeting)
 

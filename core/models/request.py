@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
+from core.models.reportable_model import ReportableModel
 from core.models.skill import SkillCategory
 
-__author__ = 'Renaud'
 
-class Request(models.Model):
+class Request(ReportableModel):
 
     user = models.ForeignKey(User)
 

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from api.serializers import ReportableModelSerializer
 from core.models import MeetingMessage
 
 
@@ -12,7 +13,7 @@ class MeetingMessageCreateSerializer(serializers.ModelSerializer):
         exclude = ('creation_date')
 
 
-class MeetingMessageSerializer(serializers.ModelSerializer):
+class MeetingMessageSerializer(ReportableModelSerializer):
     """
 
     """

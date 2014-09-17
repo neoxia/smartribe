@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from core.models import Offer
 from core.models.location import MeetingPoint
+from core.models.reportable_model import ReportableModel
 
 
 class Meeting(models.Model):
@@ -35,7 +36,7 @@ class Meeting(models.Model):
         app_label = 'core'
 
 
-class MeetingMessage(models.Model):
+class MeetingMessage(ReportableModel):
 
     meeting = models.ForeignKey(Meeting)
 

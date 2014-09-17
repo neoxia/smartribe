@@ -241,11 +241,10 @@ class MemberTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(4, data['count'])
-        root_url = 'http://testserver'
-        self.assertEqual(root_url+'/api/v1/communities/1/', data['results'][0]['community']['url'])
-        self.assertEqual(root_url+'/api/v1/communities/3/', data['results'][1]['community']['url'])
-        self.assertEqual(root_url+'/api/v1/communities/8/', data['results'][2]['community']['url'])
-        self.assertEqual(root_url+'/api/v1/communities/9/', data['results'][3]['community']['url'])
+        self.assertEqual(1, data['results'][0]['community']['id'])
+        self.assertEqual(3, data['results'][1]['community']['id'])
+        self.assertEqual(8, data['results'][2]['community']['id'])
+        self.assertEqual(9, data['results'][3]['community']['id'])
         self.assertEqual('1', data['results'][0]['status'])
         self.assertEqual('1', data['results'][1]['status'])
         self.assertEqual('0', data['results'][2]['status'])

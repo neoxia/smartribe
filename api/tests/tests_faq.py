@@ -37,7 +37,7 @@ class FaqTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(1, data['count'])
-        self.assertEqual(3, length(data['results'][0]))
+        self.assertEqual(4, length(data['results'][0]))
         self.assertEqual('where?', data['results'][0]['question'])
         self.assertEqual('General', data['results'][0]['section']['title'])
 

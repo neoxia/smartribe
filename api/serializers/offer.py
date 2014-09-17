@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from api.serializers import ReportableModelSerializer
 from core.models import Offer
 
 
@@ -8,7 +9,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
         model = Offer
 
 
-class OfferSerializer(serializers.ModelSerializer):
+class OfferSerializer(ReportableModelSerializer):
 
     class Meta:
         model = Offer

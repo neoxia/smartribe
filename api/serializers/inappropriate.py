@@ -2,10 +2,8 @@ from rest_framework import serializers
 from core.models import Inappropriate
 
 
-class InappropriateSerializer(serializers.HyperlinkedModelSerializer):
-
-    user = serializers.PrimaryKeyRelatedField()
+class InappropriateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Inappropriate
-        fields = ('user', 'content_url', 'detail')
+        exclude = ('creation_date', 'last_update')

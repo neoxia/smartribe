@@ -1,9 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
+from api.serializers import ProfileCreateSerializer, ProfileSerializer
 from core.models import Profile
-from api.serializers.serializers import ProfileCreateSerializer
-from api.serializers.serializers import ProfileSerializer
 from rest_framework import status
 
 

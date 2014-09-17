@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
+from api.serializers import SkillCategorySerializer, SkillCreateSerializer, SkillSerializer
 
-from api.serializers.serializers import SkillSerializer, SkillCategorySerializer, SkillCreateSerializer
 from core.models import Skill
 from core.models.skill import SkillCategory
 from rest_framework import mixins

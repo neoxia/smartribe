@@ -1,56 +1,16 @@
-
-
-## User
-from api.serializers.serializers import UserCreateSerializer
-from api.serializers.serializers import UserPublicSerializer
-from api.serializers.serializers import UserSerializer
-
-## Group
-from api.serializers.serializers import GroupSerializer
-
-## Various
-from api.serializers.serializers import TokenSerializer
-from api.serializers.serializers import PermissionSerializer
-
-## Address
-from api.serializers.serializers import AddressSerializer
-
-## Profile
-from api.serializers.serializers import ProfileCreateSerializer
-from api.serializers.serializers import ProfileSerializer
-
-## Skill
-from api.serializers.serializers import SkillCategorySerializer
-from api.serializers.serializers import SkillCreateSerializer
-from api.serializers.serializers import SkillSerializer
-
-## Community
-from api.serializers.community import CommunitySerializer
-from api.serializers.community import LocalCommunitySerializer
-from api.serializers.community import TransportCommunitySerializer
-
-## Location
-from api.serializers.location import LocationCreateSerializer
-from api.serializers.location import LocationSerializer
-
-## Meeting point
-from api.serializers.meeting_point import MeetingPointCreateSerializer
-from api.serializers.meeting_point import MeetingPointSerializer
-
-## Member
-from api.serializers.member import MemberCreateSerializer
-from api.serializers.member import MemberSerializer
-from api.serializers.member import MyMembersSerializer
-from api.serializers.member import ListCommunityMemberSerializer
-
-## Request
-from api.serializers.request import RequestCreateSerializer
-from api.serializers.request import RequestSerializer
-
-## Offer
-from api.serializers.offer import OfferCreateSerializer
-from api.serializers.offer import OfferSerializer
-
-## Meeting
-from api.serializers.meeting import MeetingCreateSerializer
-from api.serializers.meeting import MeetingSerializer
+from api.serializers.user import *
+from api.serializers.address import *
+from api.serializers.community import *
+from api.serializers.evaluation import *
+from api.serializers.faq import *
+from api.serializers.inappropriate import *
+from api.serializers.location import *
+from api.serializers.meeting import *
+from api.serializers.meeting_message import *
+from api.serializers.meeting_point import *
+from api.serializers.member import *
+from api.serializers.offer import *
+from api.serializers.profile import *
+from api.serializers.request import *
+from api.serializers.skill import *
+from api.serializers.suggestion import *

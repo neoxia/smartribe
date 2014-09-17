@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from api.serializers import ReportableModelSerializer
 from core.models import Request
 
 
@@ -8,8 +9,8 @@ class RequestCreateSerializer(serializers.ModelSerializer):
         model = Request
 
 
-class RequestSerializer(serializers.ModelSerializer):
+class RequestSerializer(ReportableModelSerializer):
 
-     class Meta:
+    class Meta:
         model = Request
         read_only_fields = ('user', 'creation_date')
