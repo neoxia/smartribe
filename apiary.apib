@@ -4,6 +4,7 @@ HOST: http://www.google.com
 # smartribe
 Official documentation API v1.
 url: https://api.smartri.be/api/v1/
+
 # Group Users
 User actions
 
@@ -107,3 +108,24 @@ Sends an email with a password recovery token
         }
 
 + Response 200 (application/json)
+
+# Group Communities
+Communities actions
+
+## List Communities [/communities]
+### Get communitiy list [GET]
+
+Needs to be authenticated
+
++ Response 201 (application/json)
+
+        {
+            {
+                'id': 1,
+                'name': 'My community',
+                'description': 'Community for testing purpose',
+                'creation_date':
+                'last_update':
+                'auto_accept_member':
+            }
+        }
