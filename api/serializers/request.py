@@ -5,7 +5,7 @@ from core.models import Request
 
 class RequestCreateSerializer(serializers.ModelSerializer):
 
-     class Meta:
+    class Meta:
         model = Request
 
 

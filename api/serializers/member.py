@@ -4,13 +4,6 @@ from api.serializers.community import CommunitySerializer
 from core.models import Member
 
 
-class MemberCreateSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Member
-        fields = ('id', 'user', 'community')
-
-
 class MemberSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -18,18 +11,21 @@ class MemberSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'community', 'registration_date')
 
 
-class MyMembersSerializer(serializers.HyperlinkedModelSerializer):
+class MyMembersSerializer(serializers.ModelSerializer):
 
     community = CommunitySerializer()
 
     class Meta:
         model = Member
-        fields = ('community', 'role', 'status', 'registration_date', 'last_modification_date')
+        #fields = ('community', 'role', 'status', 'registration_date', 'last_modification_date')
+        exclude = ('user', )
 
-class ListCommunityMemberSerializer(serializers.HyperlinkedModelSerializer):
+
+class ListCommunityMembersSerializer(serializers.ModelSerializer):
 
     user = UserPublicSerializer()
 
     class Meta:
         model = Member
-        fields = ('id', 'user', 'role', 'status', 'registration_date', 'last_modification_date')
+        #fields = ('id', 'user', 'role', 'status', 'registration_date', 'last_modification_date')
+        exclude = ('community', )

@@ -2,10 +2,8 @@ from rest_framework import serializers
 from core.models import Suggestion
 
 
-class SuggestionSerializer(serializers.HyperlinkedModelSerializer):
-
-    user = serializers.PrimaryKeyRelatedField()
+class SuggestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Suggestion
-        fields = ('category', 'user', 'title', 'description')
+        exclude = ('creation_date', 'last_update')

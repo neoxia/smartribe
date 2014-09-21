@@ -3,19 +3,18 @@ from api.serializers import AddressSerializer
 from core.models import Profile
 
 
-class ProfileCreateSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.PrimaryKeyRelatedField()
+class ProfileCreateSerializer(serializers.ModelSerializer):
+
     address = AddressSerializer(many=False, blank=True)
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'gender', 'address', 'phone', 'birthdate', 'bio', 'photo', 'favorite_contact')
 
 
-class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+
     address = AddressSerializer(many=False, blank=True)
 
     class Meta:
         model = Profile
-        fields = ('url', 'user', 'gender', 'address', 'phone', 'birthdate', 'bio', 'photo', 'favorite_contact')
-        read_only_fields = ('user',)
+        read_only_fields = ('user', )

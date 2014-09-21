@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.community import IsCommunityOwner, IsCommunityModerator
-from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMemberSerializer
+from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMembersSerializer
 from api.serializers.location import LocationSerializer, LocationCreateSerializer
 from core.models import Community, Member, Location
 from api.serializers import CommunitySerializer
@@ -232,9 +232,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
         page = self.paginate_queryset(qs)
         if page is not None:
-            serializer = self.get_custom_pagination_serializer(page, ListCommunityMemberSerializer)
+            serializer = self.get_custom_pagination_serializer(page, ListCommunityMembersSerializer)
         else:
-            serializer = ListCommunityMemberSerializer(self.object_list, many=True)
+            serializer = ListCommunityMembersSerializer(self.object_list, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -284,7 +284,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
                   'You have been accepted as a new member of the community '+member.community.__str__(),
                   'noreply@smartribe.fr',
                   [member.user.email])
-        serializer = ListCommunityMemberSerializer(member, many=False)
+        serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
@@ -333,7 +333,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
                   'You have been banned from the community '+member.community.__str__(),
                   'noreply@smartribe.fr',
                   [member.user.email])
-        serializer = ListCommunityMemberSerializer(member, many=False)
+        serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # Owner actions
@@ -379,7 +379,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.role = '1'
         member.save()
-        serializer = ListCommunityMemberSerializer(member, many=False)
+        serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     ## Location management

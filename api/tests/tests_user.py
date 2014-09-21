@@ -269,7 +269,7 @@ class AccountTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
         data = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(root_url+url, data['url'])
+        self.assertEqual(1, data['id'])
         self.assertEqual('test', data['username'])
         self.assertEqual('test@test.com', data['email'])
         self.assertEqual([], data['groups'])
@@ -285,7 +285,7 @@ class AccountTests(APITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
         data = response.data
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(root_url+url, data['url'])
+        self.assertEqual(2, data['id'])
         self.assertEqual('test0', data['username'])
         error = False
         try:
@@ -363,12 +363,12 @@ class AccountTests(APITestCase):
         """
         self.create_two_users()
         url = '/api/v1/users/0/get_my_user/'
-        user_url = '/api/v1/users/1/'
+        user_id = 1
 
         response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
-        self.assertEqual(user_url, data['url'])
+        self.assertEqual(user_id, data['id'])
         self.assertEqual('test', data['username'])
         self.assertEqual('test@test.com', data['email'])
         self.assertEqual([], data['groups'])
