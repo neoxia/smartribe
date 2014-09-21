@@ -6,7 +6,6 @@ from django.core.mail import send_mail
 from django.db.models import Avg, Min, Max
 from rest_framework import viewsets
 from rest_framework.decorators import action, link
-from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -102,18 +101,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        """if not User.objects.filter(id=pk).exists():
-            return Response({"detail": "Wrong URL"}, status=status.HTTP_400_BAD_REQUEST)
-        data = JSONParser().parse(request)
-        if not 'token' in data:
-            return Response({"detail": "Missing token"}, status=status.HTTP_400_BAD_REQUEST)
-        user = User.objects.get(id=pk)
-        if not ActivationToken.objects.filter(user=user, token=data['token']).exists():
-            return Response({"detail": "Activation error"}, status=status.HTTP_400_BAD_REQUEST)
-        user.is_active = True
-        user.save()
-        ActivationToken.objects.get(user=user, token=data['token']).delete()
-        return Response(status=status.HTTP_200_OK)"""
         token = pk
         if token is None:
             return Response({"detail": "Missing token"}, status=status.HTTP_400_BAD_REQUEST)
@@ -145,7 +132,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 |       - Sends an email with a password recovery token
 
         """
-        data = JSONParser().parse(request)
+        data = request.DATA
         if 'email' not in data:
             return Response({"detail": "Email address required"}, status=status.HTTP_400_BAD_REQUEST)
         if not User.objects.filter(email=data['email']).exists():
@@ -188,7 +175,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         """
         token = pk
-        data = JSONParser().parse(request)
+        data = request.DATA
         if token is None:
             return Response({"detail": "Token required"}, status=status.HTTP_400_BAD_REQUEST)
         if not 'password' in data:
@@ -223,7 +210,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if not user:
             return response
         serializer = UserSerializer(user)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link(permission_classes=[IsJWTAuthenticated])
     def get_user_evaluation(self, request, pk=None):
