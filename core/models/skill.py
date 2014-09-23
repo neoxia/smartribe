@@ -24,7 +24,16 @@ class Skill(models.Model):
 
     description = models.TextField()
 
-    # Skill level
+    MEDIUM = 1
+    HIGH = 2
+    EXPERT = 3
+    LEVEL_CHOICES = (
+        (MEDIUM, 'Medium'),
+        (HIGH, 'High'),
+        (EXPERT, 'Expert')
+    )
+    level = models.IntegerField(default=MEDIUM,
+                                choices=LEVEL_CHOICES)
 
     def __str__(self):
         return self.description

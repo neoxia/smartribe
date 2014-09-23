@@ -2,6 +2,11 @@ from django.db import models
 from core.models import Community
 
 
+def get_photo_path(self, filename):
+    url = "meeting_points/%s/%s" % (self.id.__str__, filename)
+    return url
+
+
 class Location(models.Model):
 
     community = models.ForeignKey(Community)
@@ -30,7 +35,9 @@ class MeetingPoint(models.Model):
 
     description = models.TextField()
 
-    photo = models.ImageField(blank=True, null=True)
+    photo = models.ImageField(upload_to=get_photo_path,
+                              blank=True,
+                              null=True)
 
     class Meta:
         verbose_name = 'meeting point'

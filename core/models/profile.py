@@ -47,6 +47,7 @@ class Profile(models.Model):
     favorite_contact = models.CharField(max_length=2,
                                         choices=CONTACT_CHOICES,
                                         default='N')
+
     def __str__(self):
         return self.user.username
 

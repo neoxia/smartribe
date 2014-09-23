@@ -104,7 +104,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
             member.status = "1"
         # Register user as new member
         member.save(force_insert=True)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
 
     @link(permission_classes=[IsJWTAuthenticated()])
     def list_my_memberships(self, request, pk=None):
