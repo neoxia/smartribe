@@ -14,7 +14,7 @@ import django_filters
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers import UserCreateSerializer, UserPublicSerializer, UserSerializer
-from core.models import ActivationToken, PasswordRecovery, Evaluation
+from core.models import ActivationToken, PasswordRecovery, Evaluation, Profile
 import core.utils
 
 
@@ -72,12 +72,15 @@ class UserViewSet(viewsets.ModelViewSet):
             obj.is_active = False
 
     def post_save(self, obj, created=False):
+        profile = Profile(user=obj)
+        profile.save()
+
         if self.request.method == 'POST':
             token = ActivationToken(user=User.objects.get(username=obj.username),
                                     token=core.utils.gen_temporary_token())
             token.save()
             send_mail('SmarTribe registration',
-                      'https://demo.smartri.be/'+token.token+'/confirm_registration/',
+                      'https://demo.smartri.be/user/'+token.token+'/activate',
                       'noreply@smartri.be',
                       [obj.email],
                       fail_silently=False)
@@ -111,7 +114,6 @@ class UserViewSet(viewsets.ModelViewSet):
         user.save()
         ActivationToken.objects.get(token=token).delete()
         return Response(status=status.HTTP_200_OK)
-
 
     @action(methods=['POST', ])
     def recover_password(self, request, pk=None):
@@ -150,7 +152,7 @@ class UserViewSet(viewsets.ModelViewSet):
         pr = PasswordRecovery(user=user, token=token, ip_address=ip)
         pr.save()
         send_mail('SmarTribe password recovery',
-                  'https://demo.smartri.be/password/:'+token+'/edit',
+                  'https://demo.smartri.be/password/'+token+'/edit',
                   'noreply@smartri.be',
                   [user.email],
                   fail_silently=False)
