@@ -72,10 +72,9 @@ class UserViewSet(viewsets.ModelViewSet):
             obj.is_active = False
 
     def post_save(self, obj, created=False):
-        profile = Profile(user=obj)
-        profile.save()
-
         if self.request.method == 'POST':
+            profile = Profile(user=obj)
+            profile.save()
             token = ActivationToken(user=User.objects.get(username=obj.username),
                                     token=core.utils.gen_temporary_token())
             token.save()
