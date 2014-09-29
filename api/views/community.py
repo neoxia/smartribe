@@ -57,10 +57,11 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return [IsCommunityOwner()]
 
     def post_save(self, obj, created=False):
-        # Retrieve request author and creates a member for him, as community owner
-        user, _ = AuthUser().authenticate(self.request)
-        owner = Member(user=user, community=obj, role="0", status="1")
-        owner.save()
+        if self.request.method == 'POST':
+            # Retrieve request author and creates a member for him, as community owner
+            user, _ = AuthUser().authenticate(self.request)
+            owner = Member(user=user, community=obj, role="0", status="1")
+            owner.save()
 
     ## Members management
 
