@@ -79,7 +79,7 @@ class UserViewSet(viewsets.ModelViewSet):
                                     token=core.utils.gen_temporary_token())
             token.save()
             send_mail('SmarTribe registration',
-                      'https://demo.smartri.be/user/'+token.token+'/activate',
+                      'https://demo.smartri.be/#/user/'+token.token+'/activate',
                       'noreply@smartri.be',
                       [obj.email],
                       fail_silently=False)
@@ -151,7 +151,7 @@ class UserViewSet(viewsets.ModelViewSet):
         pr = PasswordRecovery(user=user, token=token, ip_address=ip)
         pr.save()
         send_mail('SmarTribe password recovery',
-                  'https://demo.smartri.be/password/'+token+'/edit',
+                  'https://demo.smartri.be/#/password/'+token+'/edit',
                   'noreply@smartri.be',
                   [user.email],
                   fail_silently=False)
