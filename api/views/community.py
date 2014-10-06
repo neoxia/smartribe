@@ -49,12 +49,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
         An authenticated user can create a new community or see existing communities.
         Only owner or moderator can modify an existing community.
         """
-        if self.request.method == 'GET' or self.request.method == 'POST':
-            return [IsJWTAuthenticated()]
+        if self.request.method == 'DELETE':
+            return [IsCommunityOwner()]
         elif self.request.method == 'PUT' or self.request.method == 'PATCH':
             return [IsCommunityModerator()]
         else:
-            return [IsCommunityOwner()]
+            return [IsJWTAuthenticated()]
 
     def post_save(self, obj, created=False):
         if self.request.method == 'POST':
@@ -184,6 +184,13 @@ class CommunityViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_401_UNAUTHORIZED)
         member.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['POST'], permission_classes=[IsJWTAuthenticated()])
+    def am_i_member(self, request, pk=None):
+        """
+        Checks if an authenticated user is a member of the community
+        """
+        #TODO : Implementation
 
     # Moderator actions
 

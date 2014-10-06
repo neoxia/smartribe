@@ -5,6 +5,9 @@ from core.models import Community, LocalCommunity, TransportCommunity
 
 class CommunitySerializer(serializers.ModelSerializer):
 
+    #TODO : Test "type"
+    type = serializers.CharField(max_length=1, source='get_type', read_only=True)
+
     class Meta:
         model = Community
         read_only_fields = ('creation_date', 'last_update')

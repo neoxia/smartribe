@@ -1,9 +1,11 @@
 from django.db import models
 from core.models import Address
 
+
 def get_banner_path(self, filename):
     url = "communities/%s/banner/%s" % (self.name, filename)
     return url
+
 
 def get_logo_path(self, filename):
     url = "communities/%s/logo/%s" % (self.name, filename)
@@ -32,7 +34,20 @@ class Community(models.Model):
     auto_accept_member = models.BooleanField(default=False)
 
     def get_type(self):
-        pass
+        """
+        Returns the type of the community as a capital letter.
+        """
+        try:
+            c = self.local_community
+            return "L"
+        except LocalCommunity.DoesNotExist:
+            pass
+        try:
+            c = self.transport_community
+            return "T"
+        except TransportCommunity.DoesNotExist:
+            pass
+        return "O"
 
     def __str__(self):
         return self.name
@@ -55,8 +70,8 @@ class TransportCommunity(Community):
 
     def __str__(self):
         return self.name+', de '+self.departure \
-               + ' à '+self.arrival \
-               + ', via '+self.via
+            + ' à '+self.arrival \
+            + ', via '+self.via
 
     class Meta:
         verbose_name = 'transport community'

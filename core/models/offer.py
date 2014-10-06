@@ -12,6 +12,8 @@ class Offer(ReportableModel):
 
     detail = models.TextField()
 
+    #TODO : Add a "closed" boolean field
+
     creation_date = models.DateTimeField(auto_now_add=True)
 
     last_update = models.DateTimeField(auto_now=True)

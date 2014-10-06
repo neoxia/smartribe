@@ -23,3 +23,7 @@ def auto_close_requests(request):
         r.save()
     return Response(status.HTTP_200_OK)
 
+
+#TODO : Implement a method to limit validity of password recovery tokens
+
+
