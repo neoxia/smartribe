@@ -9,6 +9,8 @@ def get_photo_path(self, filename):
 
 class Location(models.Model):
 
+    #TODO : Add creator
+
     community = models.ForeignKey(Community)
 
     name = models.CharField(max_length=50)

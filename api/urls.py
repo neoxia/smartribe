@@ -52,6 +52,9 @@ urlpatterns = patterns('',
 urlpatterns += patterns('',
                         url(r'^v1/server_actions/auto_close_requests/',
                             server_action.auto_close_requests
+                        ),
+                        url(r'^v1/server_actions/clean_password_recovery_tokens/',
+                            server_action.clean_password_recovery_tokens
                         )
 )
 

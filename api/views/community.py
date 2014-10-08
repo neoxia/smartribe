@@ -16,7 +16,6 @@ from api.authenticate import AuthUser
 
 class CommunityViewSet(viewsets.ModelViewSet):
     """
-
     Inherits standard characteristics from ModelViewSet:
 
             | **Endpoint**: /communities/
@@ -30,6 +29,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
             |           - join_community (POST / Authenticated)
             |           - list_my_memberships (GET / Authenticated)
             |           - leave_community (POST / Authenticated)
+            |           - am_i_member (POST / Authenticated)
             |           - retrieve_members (GET / Moderator)
             |           - accept_member (POST / Moderator)
             |           - ban_member (POST / Moderator)
@@ -189,8 +189,34 @@ class CommunityViewSet(viewsets.ModelViewSet):
     def am_i_member(self, request, pk=None):
         """
         Checks if an authenticated user is a member of the community
+
+                | **permission**: JWTAuthenticated
+                | **endpoint**: /communities/{id}/am_i_member/
+                | **method**: POST
+                | **attr**:
+                |       None
+                | **http return**:
+                |       - 200 OK
+                |       - 400 Bad request
+                |       - 401 Unauthorized
+                | **data return**:
+                |       - is_member (boolean)
+                | **other actions**:
+                |       None
+
         """
-        #TODO : Implementation
+        #TODO : Test
+        if pk is None:
+            return Response({'detail': 'Missing community index.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        if not Community.objects.filter(id=pk).exists():
+            return Response({'detail': 'This community does not exist'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        user, _ = AuthUser().authenticate(request)
+        community = Community.objects.get(id=pk)
+        is_member = Member.objects.filter(user=user, community=community).exists()
+        return Response({'is_member': is_member},
+                        status=status.HTTP_200_OK)
 
     # Moderator actions
 

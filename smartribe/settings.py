@@ -156,3 +156,6 @@ EMAIL_USE_TLS = True
 MEDIA_ROOT = 'media/'
 
 MEDIA_URL = '/media/'
+
+# Password recovery token validity (hour) :
+PRT_VALIDITY = 1
