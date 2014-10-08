@@ -38,12 +38,12 @@ class Community(models.Model):
         Returns the type of the community as a capital letter.
         """
         try:
-            c = self.local_community
+            c = self.localcommunity
             return "L"
         except LocalCommunity.DoesNotExist:
             pass
         try:
-            c = self.transport_community
+            c = self.transportcommunity
             return "T"
         except TransportCommunity.DoesNotExist:
             pass

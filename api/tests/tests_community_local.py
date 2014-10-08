@@ -314,3 +314,20 @@ class CommunityTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(0, LocalCommunity.objects.all().count())
         self.assertEqual(0, Community.objects.all().count())
+
+    def test_list_communities(self):
+        """
+
+        """
+        self.set_create_local_community()
+        user = User.objects.get(username="other")
+        token = core.utils.gen_auth_token(user)
+        auth = 'JWT {0}'.format(token)
+
+        url = '/api/v1/communities/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual(1, data['count'])
+        self.assertEqual('L', data['results'][0]['type'])
