@@ -1,8 +1,17 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 
+
+def validate_email_unique(value):
+    if User.objects.filter(email=value).exists():
+        raise ValidationError('Email address %s already exists, must be unique' % value)
+
+
 class UserCreateSerializer(serializers.ModelSerializer):
+
+    email = serializers.EmailField(required=True, validators=[validate_email_unique])
 
     class Meta:
         model = User
@@ -23,5 +32,5 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'password', 'groups')
-        read_only_fields = ('username', )
+        read_only_fields = ('username', 'email')
         write_only_fields = ('password', )

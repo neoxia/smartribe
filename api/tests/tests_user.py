@@ -129,6 +129,31 @@ class AccountTests(APITestCase):
         token = ActivationToken.objects.get(id=1)
         self.assertEqual(user, token.user)
 
+    def test_create_two_accounts_with_same_mail(self):
+        """
+        Ensure we can create a new account object.
+        """
+        url = '/api/v1/users/'
+        data = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'pass'
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(1, User.objects.all().count())
+
+        data = {
+            'username': 'test1',
+            'email': 'test@test.com',
+            'password': 'pass1'
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(1, User.objects.all().count())
+
     def test_activate_account(self):
         """
         Ensure a user can activate his account
