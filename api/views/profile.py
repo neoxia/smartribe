@@ -19,6 +19,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     """
     model = Profile
     serializer_class = ProfileSerializer
+    filter_fields = ('user__id')
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
