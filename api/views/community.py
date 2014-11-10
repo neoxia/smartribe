@@ -43,6 +43,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
     """
     model = Community
     serializer_class = CommunitySerializer
+    search_fields = ['name', 'description ']
+    # TODO : Test research
 
     def get_permissions(self):
         """
