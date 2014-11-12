@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from rest_framework.permissions import BasePermission
 from api.authenticate import AuthUser
 from core.models import Member, Request

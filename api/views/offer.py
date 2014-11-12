@@ -23,6 +23,7 @@ class OfferViewSet(ModelViewSet):
     """
     model = Offer
     serializer_class = OfferSerializer
+    filter_fields = ['request__user', 'request', 'user']
 
     def get_permissions(self):
         if self.request.method == 'GET':
