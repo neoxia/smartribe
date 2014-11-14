@@ -2,7 +2,6 @@ from datetime import timedelta, timezone, datetime
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.db.models import Avg, Min, Max
 from rest_framework import viewsets
 from rest_framework.decorators import action, link
@@ -12,8 +11,10 @@ from rest_framework import status
 import django_filters
 
 from api.authenticate import AuthUser
+from api.messages_templates.user import registration_message, recovery_password_message
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers import UserCreateSerializer, UserPublicSerializer, UserSerializer
+from api.utils.asyncronous_mail import send_mail
 from core.models import ActivationToken, PasswordRecovery, Evaluation, Profile
 import core.utils
 
@@ -78,8 +79,9 @@ class UserViewSet(viewsets.ModelViewSet):
             token = ActivationToken(user=User.objects.get(username=obj.username),
                                     token=core.utils.gen_temporary_token())
             token.save()
-            send_mail('SmarTribe registration',
-                      'https://demo.smartri.be/#/user/'+token.token+'/activate',
+            subject, message = registration_message(token)
+            send_mail(subject,
+                      message,
                       'noreply@smartri.be',
                       [obj.email],
                       fail_silently=False)
@@ -150,8 +152,9 @@ class UserViewSet(viewsets.ModelViewSet):
         token = core.utils.gen_temporary_token()
         pr = PasswordRecovery(user=user, token=token, ip_address=ip)
         pr.save()
-        send_mail('SmarTribe password recovery',
-                  'https://demo.smartri.be/#/password/'+token+'/edit',
+        subject, message = recovery_password_message(pr)
+        send_mail(subject,
+                  message,
                   'noreply@smartri.be',
                   [user.email],
                   fail_silently=False)

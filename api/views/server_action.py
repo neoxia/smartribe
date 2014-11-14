@@ -1,7 +1,6 @@
 import datetime
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.db.models import Count
 
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
@@ -10,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.throttling import AnonRateThrottle
 
+from api.utils.asyncronous_mail import send_mail
 from core.models import Request, Inappropriate
 from core.models.password_recovery import PasswordRecovery
 from smartribe.settings import INAP_LIMIT
