@@ -134,7 +134,7 @@ class ManageReportedObjectsTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
-                        '[SmarTribe] Inappropriate content warning : tests0')
+                         '[SmarTribe] Inappropriate content warning : tests0')
 
     def test_manage2(self):
         """
@@ -149,6 +149,6 @@ class ManageReportedObjectsTests(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
-                        '[SmarTribe] Inappropriate content warning : tests0')
+                         '[SmarTribe] Inappropriate content warning : tests0')
         self.assertEqual(mail.outbox[1].subject,
-                        '[SmarTribe] Inappropriate content warning : tests1')
+                         '[SmarTribe] Inappropriate content warning : tests1')

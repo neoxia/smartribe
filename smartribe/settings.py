@@ -60,7 +60,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser',),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend', 'rest_framework.filters.SearchFilter'),
     'PAGINATE_BY': 10,
     'DEFAULT_THROTTLE_RATES': {
         'anon': '1/day'
@@ -162,3 +162,4 @@ PRT_VALIDITY = 1
 
 # Warning threshold for inappropriate content :
 INAP_LIMIT = 5
+

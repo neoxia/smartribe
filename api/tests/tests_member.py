@@ -1,3 +1,4 @@
+from django.core import mail
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
@@ -408,6 +409,7 @@ class MemberTests(APITestCase):
         data = response.data
         self.assertEqual(2, data['id'])
         self.assertEqual('1', data['status'])
+        self.assertEqual(1, len(mail.outbox))
 
     def test_accept_member_with_owner_bad_request(self):
         """
@@ -459,6 +461,7 @@ class MemberTests(APITestCase):
         data = response.data
         self.assertEqual(2, data['id'])
         self.assertEqual('1', data['status'])
+        self.assertEqual(1, len(mail.outbox))
 
     def test_ban_member_without_auth(self):
         """
@@ -540,6 +543,7 @@ class MemberTests(APITestCase):
         data = response.data
         self.assertEqual(2, data['id'])
         self.assertEqual('2', data['status'])
+        self.assertEqual(1, len(mail.outbox))
 
     def test_ban_member_with_owner(self):
         """
@@ -559,6 +563,7 @@ class MemberTests(APITestCase):
         data = response.data
         self.assertEqual(2, data['id'])
         self.assertEqual('2', data['status'])
+        self.assertEqual(1, len(mail.outbox))
 
     def test_ban_owner_with_moderator(self):
         """

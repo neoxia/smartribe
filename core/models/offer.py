@@ -12,7 +12,9 @@ class Offer(ReportableModel):
 
     detail = models.TextField()
 
-    #TODO : Add a "closed" boolean field
+    closed = models.BooleanField(default=False)
+
+    usefull = models.BooleanField(default=True)
 
     creation_date = models.DateTimeField(auto_now_add=True)
 

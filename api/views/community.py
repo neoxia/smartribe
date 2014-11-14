@@ -1,14 +1,15 @@
-from django.core.mail import send_mail
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import action, link
+from rest_framework.filters import SearchFilter, DjangoFilterBackend
 from rest_framework.response import Response
 
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMembersSerializer
 from api.serializers.location import LocationSerializer, LocationCreateSerializer
+from api.utils.asyncronous_mail import send_mail
 from core.models import Community, Member, Location
 from api.serializers import CommunitySerializer
 from api.authenticate import AuthUser
@@ -43,7 +44,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
     """
     model = Community
     serializer_class = CommunitySerializer
-    search_fields = ['name', 'description']
+    filter_fields = ('name', 'description')
+    search_fields = ('name', 'description')
+
     # TODO : Test research
 
     def get_permissions(self):

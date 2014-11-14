@@ -19,9 +19,12 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user']
 
 
-@admin.register(Community)
+#@admin.register(Community)
 class CommunityAdmin(admin.ModelAdmin):
+    model = Community
     list_display = ['name']
+    search_fields = ('name', 'description')
+admin.site.register(Community, CommunityAdmin)
 
 
 @admin.register(TransportCommunity)

@@ -207,3 +207,23 @@ class ProfileTests(APITestCase):
         url = '/api/v1/profiles/2/'
         response = self.client.put(url, HTTP_AUTHORIZATION=self.token_line())
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_filter_profiles(self):
+        """
+        """
+        p_user = Profile(user=User.objects.get(id=1))
+        p_other = Profile(user=User.objects.get(id=2))
+        p_user.save()
+        p_other.save()
+
+        url = '/api/v1/profiles/'
+        data = {
+            'user__id': 1
+        }
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.token_line())
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(1, data['count'])
+        self.assertEqual(2, Profile.objects.all().count())
+
