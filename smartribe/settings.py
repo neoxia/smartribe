@@ -159,3 +159,6 @@ MEDIA_URL = '/media/'
 
 # Password recovery token validity (hour) :
 PRT_VALIDITY = 1
+
+# Warning threshold for inappropriate content :
+INAP_LIMIT = 5

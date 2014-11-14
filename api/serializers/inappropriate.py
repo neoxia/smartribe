@@ -6,4 +6,4 @@ class InappropriateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Inappropriate
-        exclude = ('creation_date', 'last_update')
+        exclude = ('user', 'creation_date', 'last_update')

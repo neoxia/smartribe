@@ -6,7 +6,7 @@ class Inappropriate(models.Model):
 
     user = models.ForeignKey(User)
 
-    content_url = models.URLField()
+    content_identifier = models.CharField(max_length=255)
 
     detail = models.TextField()
 
@@ -15,7 +15,7 @@ class Inappropriate(models.Model):
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.content_url
+        return self.content_identifier
 
     class Meta:
         verbose_name = 'inappropriate content'

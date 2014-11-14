@@ -57,6 +57,9 @@ urlpatterns += patterns('',
                         ),
                         url(r'^v1/server_actions/clean_password_recovery_tokens/',
                             server_action.clean_password_recovery_tokens
+                        ),
+                        url(r'^v1/server_actions/manage_reported_objects/',
+                            server_action.manage_reported_objects
                         )
 )
 

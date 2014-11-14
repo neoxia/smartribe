@@ -24,15 +24,14 @@ class InappropriateTests(APITestCase):
         """
         url = '/api/v1/inappropriates/'
         data = {
-            'user': 1,
-            'content_url': 'http://testserver.com/api/v1/communities/1/',
+            'content_identifier': 'Request/1',
             'detail': 'the test'
         }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
-    def test_create_inappropriate_with_auth_for_self(self):
+    def test_create_inappropriate_with_auth(self):
         """
         Ensure an authenticated user can report inappropriate content
         """
@@ -42,8 +41,7 @@ class InappropriateTests(APITestCase):
 
         url = '/api/v1/inappropriates/'
         data = {
-            'user': 1,
-            'content_url': 'http://testserver.com/api/v1/communities/1/',
+            'content_identifier': 'Request/1',
             'detail': 'the test'
         }
 
@@ -52,24 +50,5 @@ class InappropriateTests(APITestCase):
         self.assertEqual(1, Inappropriate.objects.all().count())
         i = Inappropriate.objects.get(id=1)
         self.assertEqual(user, i.user)
-        self.assertEqual('http://testserver.com/api/v1/communities/1/', i.content_url)
+        self.assertEqual('Request/1', i.content_identifier)
         self.assertEqual('the test', i.detail)
-
-    def test_create_inappropriate_with_auth_for_other(self):
-        """
-        Ensure an authenticated user cannot report inappropriate content for someone else
-        """
-        user = User.objects.get(username="test")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
-        url = '/api/v1/inappropriates/'
-        data = {
-            'user': 2,
-            'content_url': 'http://testserver.com/api/v1/communities/1/',
-            'detail': 'the test'
-        }
-
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
-        self.assertEqual(0, Inappropriate.objects.all().count())

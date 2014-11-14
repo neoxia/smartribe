@@ -1,8 +1,9 @@
 from django.core.mail import send_mail
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
+from api.authenticate import AuthUser
 
-from api.permissions.common import IsJWTSelf
+from api.permissions.common import IsJWTSelf, IsJWTAuthenticated
 from api.serializers.inappropriate import InappropriateSerializer
 from core.models import Inappropriate
 
@@ -19,12 +20,16 @@ class InappropriateViewSet(CreateModelMixin, GenericViewSet):
     """
     model = Inappropriate
     serializer_class = InappropriateSerializer
-    permission_classes = [IsJWTSelf]
+    permission_classes = [IsJWTAuthenticated]
+
+    def pre_save(self, obj):
+        user, _ = AuthUser().authenticate(self.request)
+        obj.user = user
 
     def post_save(self, obj, created=False):
 
         message = 'Reported by :\n' + obj.user.username \
-                  + '\n\nContent URL :\n' + obj.content_url \
+                  + '\n\nTarget content :\n' + obj.content_identifier \
                   + '\n\nDetail :\n' + obj.detail
 
         send_mail('[SmarTribe] Inappropriate content report',

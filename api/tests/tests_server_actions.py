@@ -1,13 +1,14 @@
 import datetime
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.cache import cache
 from rest_framework import status
 from rest_framework.test import APITestCase
-from core.models import Community, Member, SkillCategory, Request
+from core.models import Community, Member, SkillCategory, Request, Inappropriate
 import core.utils
 
 
-class RequestTests(APITestCase):
+class AutoCloseTests(APITestCase):
 
     def setUp(self):
         """
@@ -75,3 +76,79 @@ class RequestTests(APITestCase):
         self.assertEqual(status.HTTP_429_TOO_MANY_REQUESTS, response.status_code)
         obj = Request.objects.get(id=1)
         self.assertFalse(obj.closed)
+
+
+class CleanPrtTests(APITestCase):
+
+    def setUp(self):
+        """
+
+        """
+
+
+class ManageReportedObjectsTests(APITestCase):
+
+    def setUp(self):
+        """
+
+        """
+        user = User(username='user', password='user', email='user@test.fr')
+        user.save()
+
+        i01 = Inappropriate(user=user, content_identifier='tests1', detail='details')
+        i02 = Inappropriate(user=user, content_identifier='tests0', detail='details')
+        i03 = Inappropriate(user=user, content_identifier='tests0', detail='details')
+        i04 = Inappropriate(user=user, content_identifier='tests1', detail='details')
+        i05 = Inappropriate(user=user, content_identifier='tests0', detail='details')
+        i06 = Inappropriate(user=user, content_identifier='tests2', detail='details')
+        i07 = Inappropriate(user=user, content_identifier='tests1', detail='details')
+        i08 = Inappropriate(user=user, content_identifier='tests0', detail='details')
+        i09 = Inappropriate(user=user, content_identifier='tests0', detail='details')
+        i10 = Inappropriate(user=user, content_identifier='tests2', detail='details')
+        i11 = Inappropriate(user=user, content_identifier='tests1', detail='details')
+        i12 = Inappropriate(user=user, content_identifier='tests0', detail='details')
+        i13 = Inappropriate(user=user, content_identifier='tests2', detail='details')
+        i14 = Inappropriate(user=user, content_identifier='tests1', detail='details')
+        i01.save()
+        i02.save()
+        i03.save()
+        i04.save()
+        i05.save()
+        i06.save()
+        i07.save()
+        i08.save()
+        i09.save()
+        i10.save()
+        i11.save()
+        i12.save()
+        i13.save()
+        i14.save()
+
+    def test_manage(self):
+        """
+
+        """
+        url = '/api/v1/server_actions/manage_reported_objects/'
+
+        response = self.client.post(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].subject,
+                        '[SmarTribe] Inappropriate content warning : tests0')
+
+    def test_manage2(self):
+        """
+
+        """
+        i = Inappropriate(user=User.objects.get(id=1), content_identifier='tests1', detail='details3')
+        i.save()
+
+        url = '/api/v1/server_actions/manage_reported_objects/'
+
+        response = self.client.post(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].subject,
+                        '[SmarTribe] Inappropriate content warning : tests0')
+        self.assertEqual(mail.outbox[1].subject,
+                        '[SmarTribe] Inappropriate content warning : tests1')
