@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from core.models import Community
+from core.models.community import Community
 
 
 class Member(models.Model):

@@ -5,8 +5,10 @@ from core.models import Community, LocalCommunity, TransportCommunity
 
 class CommunitySerializer(serializers.ModelSerializer):
 
-    #TODO : Test "type"
+    #TODO : Test "type" and "members_count"
     type = serializers.CharField(max_length=1, source='get_type', read_only=True)
+
+    members_count = serializers.IntegerField(source='get_members_count', read_only=True)
 
     class Meta:
         model = Community
@@ -17,12 +19,16 @@ class LocalCommunitySerializer(serializers.ModelSerializer):
 
     address = AddressSerializer(many=False, blank=True)
 
+    members_count = serializers.IntegerField(source='get_members_count', read_only=True)
+
     class Meta:
         model = LocalCommunity
         read_only_fields = ('creation_date', 'last_update')
 
 
 class TransportCommunitySerializer(serializers.ModelSerializer):
+
+    members_count = serializers.IntegerField(source='get_members_count', read_only=True)
 
     class Meta:
         model = TransportCommunity

@@ -1,11 +1,10 @@
 from rest_framework import status
-from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
+from api.tests.api_test_case import CustomAPITestCase
 from core.models import Member, Community, LocalCommunity, Address
-import core.utils
 
 
-class LocalCommunityTests(APITestCase):
+class LocalCommunityTests(CustomAPITestCase):
 
     def setUp(self):
         """
@@ -78,11 +77,6 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure we can create community when we are authenticated
         """
-        # Generate token for community_owner user
-        user = User.objects.get(username="owner")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/'
         data = {
             'name': 'com10',
@@ -93,13 +87,13 @@ class LocalCommunityTests(APITestCase):
             }
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(7, Member.objects.all().count())
         self.assertEqual(6, Community.objects.all().count())
         member = Member.objects.get(id=7)
         community = Community.objects.get(id=6)
-        self.assertEqual(user, member.user)
+        self.assertEqual(User.objects.get(username="owner"), member.user)
         self.assertEqual(community, member.community)
         self.assertEqual("0", member.role)
         self.assertEqual("1", member.status)
@@ -117,13 +111,9 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure an authenticated user can list communities
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(5, data['count'])
@@ -132,11 +122,6 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure a community owner can modify a community
         """
-        # Generate token for community_owner user
-        user = User.objects.get(username="owner")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/1/'
         data = {
             'name': 'com1',
@@ -147,7 +132,7 @@ class LocalCommunityTests(APITestCase):
             }
         }
 
-        response = self.client.put(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
@@ -155,17 +140,12 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure a community owner can partially modify a community
         """
-
-        user = User.objects.get(username="owner")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/1/'
         data = {
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
@@ -173,7 +153,6 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure a non authenticated user cannot modify a community
         """
-
         url = '/api/v1/local_communities/1/'
         data = {
             'name': 'com1',
@@ -187,10 +166,6 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure a simple authenticated user cannot modify a community
         """
-        user = User.objects.get(username="other")
-        token_user = core.utils.gen_auth_token(user)
-        auth_user = 'JWT {0}'.format(token_user)
-
         # Create modification
         url = '/api/v1/local_communities/1/'
         data = {
@@ -198,42 +173,33 @@ class LocalCommunityTests(APITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth_user, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("other"), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modify_local_community_with_member(self):
         """
         Ensure a member cannot modify a community
         """
-        user = User.objects.get(username="member")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
-        # Create modification
         url = '/api/v1/local_communities/1/'
         data = {
             'name': 'com1',
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("member"), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modify_local_community_with_moderator(self):
         """
         Ensure a moderator can modify its community
         """
-        user = User.objects.get(username="moderator")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/1/'
         data = {
             'name': 'com1',
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("moderator"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
@@ -241,10 +207,6 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure a banned moderator cannot modify its former community
         """
-        user = User.objects.get(username="moderator")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         moderator = Member.objects.get(id=2)
         moderator.status = '2'
         moderator.save()
@@ -256,20 +218,16 @@ class LocalCommunityTests(APITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("moderator"), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_local_community_with_moderator(self):
         """
         Ensure a community moderator cannot delete its community
         """
-        user = User.objects.get(username="moderator")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/1/'
 
-        response = self.client.delete(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth("moderator"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(5, LocalCommunity.objects.all().count())
         self.assertEqual(5, Community.objects.all().count())
@@ -278,51 +236,35 @@ class LocalCommunityTests(APITestCase):
         """
         Ensure a community owner can delete its community
         """
-        user = User.objects.get(username="owner")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/local_communities/1/'
 
-        response = self.client.delete(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth("owner"))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(4, LocalCommunity.objects.all().count())
         self.assertEqual(4, Community.objects.all().count())
 
-    def test_list_communities(self):
+    def test_retrieve_community_type_and_count(self):
         """
 
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
+        url = '/api/v1/communities/1/'
 
-        url = '/api/v1/communities/'
-
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
-        self.assertEqual(5, data['count'])
-        self.assertEqual('L', data['results'][0]['type'])
-        self.assertEqual('L', data['results'][1]['type'])
-        self.assertEqual('L', data['results'][2]['type'])
-        self.assertEqual('L', data['results'][3]['type'])
-        self.assertEqual('L', data['results'][4]['type'])
+        self.assertEqual('L', data['type'])
+        self.assertEqual(3, data['members_count'])
 
     def test_search_communities_1(self):
         """
 
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/communities/'
         data = {
             'search': 'loc'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"), format='json')
         data = response.data
         self.assertEqual(3, data['count'])
 
@@ -330,16 +272,12 @@ class LocalCommunityTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/communities/'
         data = {
             'search': 'com'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
         data = response.data
         self.assertEqual(2, data['count'])
 
@@ -347,16 +285,12 @@ class LocalCommunityTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/communities/'
         data = {
             'search': 'loccom'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
         data = response.data
         self.assertEqual(1, data['count'])
 
@@ -364,16 +298,12 @@ class LocalCommunityTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/communities/'
         data = {
             'search': 'desc'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
         data = response.data
         self.assertEqual(4, data['count'])
 
@@ -381,16 +311,12 @@ class LocalCommunityTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="other")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/communities/'
         data = {
             'name': 'loc1'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
         data = response.data
         self.assertEqual(1, data['count'])
 

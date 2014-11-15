@@ -47,8 +47,6 @@ class CommunityViewSet(viewsets.ModelViewSet):
     filter_fields = ('name', 'description')
     search_fields = ('name', 'description')
 
-    # TODO : Test research
-
     def get_permissions(self):
         """
         An authenticated user can create a new community or see existing communities.
@@ -67,6 +65,28 @@ class CommunityViewSet(viewsets.ModelViewSet):
             user, _ = AuthUser().authenticate(self.request)
             owner = Member(user=user, community=obj, role="0", status="1")
             owner.save()
+
+    def validate_community(self, request, pk):
+        """
+        """
+        if pk is None:
+            return None, Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
+        user, _ = AuthUser().authenticate(request)
+        if not Community.objects.filter(id=pk).exists():
+            return None, Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        return Community.objects.get(id=pk), None
+
+
+    @link(permission_classes=[IsJWTAuthenticated])
+    def get_members_count(self, request, pk=None):
+        """
+        """
+        community, response = self.validate_community(request, pk)
+        if not community:
+            return response
+        count = Member.objects.filter(community=community).count()
+        return Response({'count': count}, status=status.HTTP_200_OK)
+
 
     ## Members management
 

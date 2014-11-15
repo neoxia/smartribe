@@ -38,16 +38,20 @@ class Community(models.Model):
         Returns the type of the community as a capital letter.
         """
         try:
-            c = self.localcommunity
+            self.localcommunity
             return "L"
         except LocalCommunity.DoesNotExist:
             pass
         try:
-            c = self.transportcommunity
+            self.transportcommunity
             return "T"
         except TransportCommunity.DoesNotExist:
             pass
         return "O"
+
+    def get_members_count(self):
+        from core.models.member import Member
+        return Member.objects.filter(community=self).count()
 
     def __str__(self):
         return self.name
