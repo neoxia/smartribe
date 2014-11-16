@@ -1,39 +1,22 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
+
+from api.tests.api_test_case import CustomAPITestCase
 from core.models import Profile
 from core.models.address import Address
 import core.utils
 
 
-class ProfileTests(APITestCase):
+class ProfileTests(CustomAPITestCase):
     def setUp(self):
         """
         Make a user for authenticating and
         testing profile actions
         """
-        user = User(
-            username="test_user",
-            password="test",
-            email="sd@kjhsq@.ds"
-        )
+        user = User(username="user", password="user", email="user@test.fr")
+        other = User( username="other", password="other", email="other@test.fr")
         user.save()
-        other_user = User(
-            username="other_user",
-            password="test",
-            email="s@s.id"
-        )
-        other_user.save()
-
-    def token_line(self):
-        user = User.objects.get(username="test_user")
-        token = core.utils.gen_auth_token(user)
-        return 'JWT {0}'.format(token)
-
-    def token_line_other(self):
-        user = User.objects.get(username="other_user")
-        token = core.utils.gen_auth_token(user)
-        return 'JWT {0}'.format(token)
+        other.save()
 
     def test_create_profile_without_auth(self):
         """
@@ -56,7 +39,7 @@ class ProfileTests(APITestCase):
             'user': 1,
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_profile_with_address(self):
@@ -69,7 +52,7 @@ class ProfileTests(APITestCase):
             'address': {'city': 'Poitiers', 'country': 'France'}
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(True, Address.objects.filter(id=1).exists())
         profile = Profile.objects.get(id=1)
@@ -85,10 +68,10 @@ class ProfileTests(APITestCase):
             'user': 1,
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_profile_for_other(self):
@@ -100,7 +83,7 @@ class ProfileTests(APITestCase):
             'user': 2,
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modify_self_profile(self):
@@ -113,14 +96,14 @@ class ProfileTests(APITestCase):
             'gender': 'M',
             'address': {'city': 'Poitiers', 'country': 'France'}
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         url = '/api/v1/profiles/1/'
         data = {
             'user': 1,
             #'gender': "M",
             'address': {'city': 'Nantes','country': 'France'}
         }
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Profile.objects.get(id=1).gender, 'M')
         profile = Profile.objects.get(id=1)
@@ -134,14 +117,14 @@ class ProfileTests(APITestCase):
         data = {
             'user': 1,
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         url = '/api/v1/profiles/1/'
         data = {
             'user': 2,
         }
-        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        original_user = User.objects.get(username="test_user")
+        original_user = User.objects.get(username="user")
         profile_user = Profile.objects.get(id=1).user
         self.assertEqual(original_user, profile_user)
 
@@ -154,20 +137,20 @@ class ProfileTests(APITestCase):
         data = {
             'user': 1,
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         # Create other_user profile
         url = '/api/v1/profiles/'
         data = {
             'user': 2,
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line_other(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('other'), format='json')
 
         url = '/api/v1/profiles/2/'
         data = {
             'user': 2,
             'gender': "M",
         }
-        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_self_profile(self):
@@ -179,10 +162,10 @@ class ProfileTests(APITestCase):
             'user': 1,
             'address': {'city': 'Poitiers', 'country': 'France'}
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
 
         url = '/api/v1/profiles/1/'
-        response = self.client.delete(url, HTTP_AUTHORIZATION=self.token_line())
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user'))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(False, Profile.objects.filter(id=1).exists())
         self.assertEqual(False, Address.objects.filter(id=1).exists())
@@ -196,16 +179,16 @@ class ProfileTests(APITestCase):
         data = {
             'user': 1,
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         # Create other_user profile
         url = '/api/v1/profiles/'
         data = {
             'user': 2,
         }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.token_line_other(), format='json')
+        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('other'), format='json')
 
         url = '/api/v1/profiles/2/'
-        response = self.client.put(url, HTTP_AUTHORIZATION=self.token_line())
+        response = self.client.put(url, HTTP_AUTHORIZATION=self.auth('user'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_filter_profiles(self):
@@ -221,7 +204,7 @@ class ProfileTests(APITestCase):
             'user__id': 1
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.token_line())
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(1, data['count'])

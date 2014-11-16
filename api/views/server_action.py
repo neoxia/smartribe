@@ -33,7 +33,7 @@ def auto_close_requests(request):
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
-#@throttle_classes([AnonRateThrottle])
+@throttle_classes([AnonRateThrottle])
 def clean_password_recovery_tokens(request):
     """
     Delete automatically password recovery tokens which lifetime exceeds
@@ -48,7 +48,7 @@ def clean_password_recovery_tokens(request):
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
-#@throttle_classes([AnonRateThrottle])
+@throttle_classes([AnonRateThrottle])
 def manage_reported_objects(request):
     """
     Analyses if a single object is reported more than five time.

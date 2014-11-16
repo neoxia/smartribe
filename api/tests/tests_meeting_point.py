@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
-from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint
+
+from api.tests.api_test_case import CustomAPITestCase
+from core.models import Community, Member, Location, MeetingPoint
 import core.utils
 
 
-class RequestTests(APITestCase):
+class RequestTests(CustomAPITestCase):
 
     def setUp(self):
         """
@@ -60,13 +61,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(1, data['count'])
@@ -75,13 +72,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user2")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user2'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(2, data['count'])
@@ -90,13 +83,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user3")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user3'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(3, data['count'])
@@ -105,13 +94,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user4")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user4'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(0, data['count'])
@@ -120,10 +105,6 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user4")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
         data = {
             'location': 1,
@@ -131,17 +112,13 @@ class RequestTests(APITestCase):
             'description': 'desc',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user4'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_create_meeting_point_member_of_community(self):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
         data = {
             'location': 1,
@@ -149,7 +126,7 @@ class RequestTests(APITestCase):
             'description': 'desc',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(4, MeetingPoint.objects.all().count())
 
@@ -157,10 +134,6 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/'
         data = {
             'location': 2,
@@ -168,23 +141,19 @@ class RequestTests(APITestCase):
             'description': 'desc',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_partial_update_meeting_point_not_moderator(self):
         """
 
         """
-        user = User.objects.get(username="user3")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/1/'
         data = {
             'description': 'desc bis',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         mp = MeetingPoint.objects.get(id=1)
         self.assertEqual('desc mp 1', mp.description)
@@ -193,16 +162,12 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/meeting_points/1/'
         data = {
             'description': 'desc bis',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         mp = MeetingPoint.objects.get(id=1)
         self.assertEqual('desc bis', mp.description)

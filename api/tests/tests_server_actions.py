@@ -1,16 +1,18 @@
 import datetime
+
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.cache import cache
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APITestCase
-from core.models import Community, Member, SkillCategory, Request, Inappropriate, PasswordRecovery
+
+from api.tests.api_test_case import CustomAPITestCase
+from core.models import SkillCategory, Request, Inappropriate, PasswordRecovery
 import core.utils
 from smartribe import settings
 
 
-class AutoCloseTests(APITestCase):
+class AutoCloseTests(CustomAPITestCase):
 
     def setUp(self):
         """
@@ -28,22 +30,18 @@ class AutoCloseTests(APITestCase):
 
         request1 = Request(user=user1, category=skill_cat, title='help1', detail='det help1',
                            expected_end_date=yesterday, auto_close=True)
-        request1.save()
-
         request2 = Request(user=user1, category=skill_cat, title='help2', detail='det help2',
                            expected_end_date=yesterday, auto_close=False)
-        request2.save()
-
         request3 = Request(user=user1, category=skill_cat, title='help3', detail='det help3',
                            expected_end_date=today, auto_close=True)
-        request3.save()
-
         request4 = Request(user=user1, category=skill_cat, title='help4', detail='det help4',
                            expected_end_date=today, auto_close=False)
-        request4.save()
-
         request5 = Request(user=user1, category=skill_cat, title='help5', detail='det help5',
                            expected_end_date=yesterday-datetime.timedelta(days=1), auto_close=True)
+        request1.save()
+        request2.save()
+        request3.save()
+        request4.save()
         request5.save()
 
     def test_auto_close_requests(self):
@@ -80,9 +78,10 @@ class AutoCloseTests(APITestCase):
         self.assertFalse(obj.closed)
 
 
-class CleanPrtTests(APITestCase):
+class CleanPrtTests(CustomAPITestCase):
 
     def setUp(self):
+        cache.clear()
         user1 = User(username='user1', password='user1', email='user1@test.fr')
         user2 = User(username='user2', password='user2', email='user2@test.fr')
         user3 = User(username='user3', password='user3', email='user3@test.fr')
@@ -127,12 +126,13 @@ class CleanPrtTests(APITestCase):
         self.assertTrue(PasswordRecovery.objects.filter(id=4).exists())
 
 
-class ManageReportedObjectsTests(APITestCase):
+class ManageReportedObjectsTests(CustomAPITestCase):
 
     def setUp(self):
         """
 
         """
+        cache.clear()
         user = User(username='user', password='user', email='user@test.fr')
         user.save()
 

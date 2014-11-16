@@ -1,34 +1,19 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
-import core.utils
+from api.tests.api_test_case import CustomAPITestCase
 
 
-class SkillTests(APITestCase):
+class SkillTests(CustomAPITestCase):
 
     def setUp(self):
         """
         Make a user for authenticating and
         testing skill actions
         """
-        user = User(username="test_user", password="test", email="te@st.fr")
+        user = User(username="user", password="user", email="user@test.fr")
+        other = User(username="other", password="other", email="other@test.fr")
         user.save()
-        other_user = User(
-            username="other_user",
-            password="test",
-            email="te@tsdd.fr"
-        )
-        other_user.save()
-
-    def token_line(self):
-        user = User.objects.get(username="test_user")
-        token = core.utils.gen_auth_token(user)
-        return 'JWT {0}'.format(token)
-
-    def token_line_other(self):
-        user = User.objects.get(username="other_user")
-        token = core.utils.gen_auth_token(user)
-        return 'JWT {0}'.format(token)
+        other.save()
 
     def test_create_skill_without_auth(self):
         """

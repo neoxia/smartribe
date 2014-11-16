@@ -1,100 +1,48 @@
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
 
-from core.models import PasswordRecovery
+from api.tests.api_test_case import CustomAPITestCase
+from core.models import PasswordRecovery, Profile
 from core.models.activation_token import ActivationToken
-import core.utils
+from core.utils import gen_temporary_token
 
 
-class AccountTests(APITestCase):
+class AccountTests(CustomAPITestCase):
 
-    def token_line(self):
-        user = User.objects.get(username="test")
-        token = core.utils.gen_auth_token(user)
-        return 'JWT {0}'.format(token)
+    def setUp(self):
 
-    def create_two_users(self):
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test',
-            'email': 'test@test.com',
-            'password': 'pass'
-        }
-        self.client.post(url, data, format='json')
-        token = ActivationToken.objects.get(id=1)
+        user1 = User(username='user1', password=make_password('user1'), email='user1@test.com', is_active=True)
+        user2 = User(username='user2', password=make_password('user2'), email='user2@test.com', is_active=False)
+        user3 = User(username='user3', password=make_password('user3'), email='user3@test.com', is_active=True)
+        user4 = User(username='user4', password=make_password('user4'), email='user4@test.com', is_active=True)
+        user5 = User(username='user5', password=make_password('user5'), email='user5@test.com', is_active=False)
+        user1.save()
+        user2.save()
+        user3.save()
+        user4.save()
+        user5.save()
 
-        url = '/api/v1/users/'+token.token+'/confirm_registration/'
-        response = self.client.post(url, format='json')
+        profile1 = Profile(user=user1)
+        profile2 = Profile(user=user2)
+        profile3 = Profile(user=user3)
+        profile4 = Profile(user=user4)
+        profile5 = Profile(user=user5)
+        profile1.save()
+        profile2.save()
+        profile3.save()
+        profile4.save()
+        profile5.save()
 
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test0',
-            'email': 'test0@test.com',
-            'password': 'pass0'
-        }
-        self.client.post(url, data, format='json')
+        act_token1 = ActivationToken(user=user2, token=gen_temporary_token())
+        act_token2 = ActivationToken(user=user5, token=gen_temporary_token())
+        act_token1.save()
+        act_token2.save()
 
-    def create_three_users(self):
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test',
-            'email': 'sqdtest@test.com',
-            'password': 'pass'
-        }
-        self.client.post(url, data, format='json')
-        token = ActivationToken.objects.get(id=1)
-
-        url = '/api/v1/users/'+token.token+'/confirm_registration/'
-        response = self.client.post(url, format='json')
-
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test0',
-            'email': 'tesqsdqsdsgdgt0@test.com',
-            'password': 'pass0'
-        }
-        self.client.post(url, data, format='json')
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test1',
-            'email': 'tessdgsdgdst1@test.com',
-            'password': 'pass1'
-        }
-        self.client.post(url, data, format='json')
-
-    def create_four_users(self):
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test',
-            'email': 'tessdgsdgt@test.com',
-            'password': 'pass'
-        }
-        self.client.post(url, data, format='json')
-        token = ActivationToken.objects.get(id=1)
-        url = '/api/v1/users/'+token.token+'/confirm_registration/'
-        response = self.client.post(url, format='json')
-
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test0',
-            'email': 'tasgsdgbvcest0@test.com',
-            'password': 'pass0'
-        }
-        self.client.post(url, data, format='json')
-        data = {
-            'username': 'test1',
-            'email': 'tesqsdvqjnqt1@test.com',
-            'password': 'pass1'
-        }
-        self.client.post(url, data, format='json')
-        data = {
-            'username': 'toto',
-            'email': 'totqsdfqdsfqo@testi.com',
-            'password': 'toto'
-        }
-        self.client.post(url, data, format='json')
+    def test_setup(self):
+        self.assertEqual(5, User.objects.all().count())
+        self.assertEqual(5, Profile.objects.all().count())
+        self.assertEqual(2, ActivationToken.objects.all().count())
 
     def test_create_account(self):
         """
@@ -104,18 +52,30 @@ class AccountTests(APITestCase):
         data = {
             'username': 'test',
             'email': 'test@test.com',
-            'password': 'pass'
+            'password': 'pass',
+            'first_name': 'first',
+            'last_name': 'last'
         }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.assertEqual(6, User.objects.all().count())
+        self.assertEqual(6, Profile.objects.all().count())
+
         self.assertTrue(User.objects.filter(username='test').exists())
         user = User.objects.get(username='test')
         self.assertEqual('test@test.com', user.email)
+        self.assertEqual('first', user.first_name)
+        self.assertEqual('last', user.last_name)
         self.assertFalse(user.is_active)
         self.assertTrue(check_password('pass', user.password))
-        token = ActivationToken.objects.get(id=1)
+
+        token = ActivationToken.objects.get(id=3)
         self.assertEqual(user, token.user)
+
+        profile = Profile.objects.get(id=6)
+        self.assertEqual(user, profile.user)
 
     def test_create_two_accounts_with_same_mail(self):
         """
@@ -124,43 +84,25 @@ class AccountTests(APITestCase):
         url = '/api/v1/users/'
         data = {
             'username': 'test',
-            'email': 'test@test.com',
-            'password': 'pass'
-        }
-
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(1, User.objects.all().count())
-
-        data = {
-            'username': 'test1',
-            'email': 'test@test.com',
+            'email': 'user1@test.com',
             'password': 'pass1'
         }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(1, User.objects.all().count())
+        self.assertEqual(5, User.objects.all().count())
 
     def test_activate_account(self):
         """
         Ensure a user can activate his account
         """
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test',
-            'email': 'test@test.com',
-            'password': 'pass'
-        }
-        self.client.post(url, data, format='json')
-        self.assertTrue(ActivationToken.objects.filter(id=1).exists())
-
         token = ActivationToken.objects.get(id=1)
         url = '/api/v1/users/'+token.token+'/confirm_registration/'
-        response = self.client.post(url, format='json')
 
+        response = self.client.post(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        user = User.objects.get(username='test')
+
+        user = User.objects.get(username='user2')
         self.assertTrue(user.is_active)
         self.assertFalse(ActivationToken.objects.filter(id=1).exists())
 
@@ -170,56 +112,42 @@ class AccountTests(APITestCase):
         """
         url = '/api/v1/users/'
         data = {
-            'username': 'test',
+            'username': 'user1',
             'email': 'test@test.com',
-            'password': 'pass'
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        data = {
-            'username': 'test',
-            'email': 'test1@test.com',
             'password': 'pass1'
         }
         response = self.client.post(url, data, format='json')
-
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(1, User.objects.filter().count())
+
+        self.assertEqual(5, User.objects.filter().count())
 
     def test_recover_password(self):
         """
-        Ensure a user can reset his password.toto
+        Ensure a user can reset his password.
         """
-        url = '/api/v1/users/'
-        data = {
-            'username': 'test',
-            'email': 'test@test.com',
-            'password': 'pass'
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
         url = '/api/v1/users/0/recover_password/'
-        data = {'email': 'test@test.com'}
+        data = {'email': 'user1@test.com'}
+
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        token = PasswordRecovery.objects.get(user=User.objects.get(email='test@test.com')).token
+        token = PasswordRecovery.objects.get(user=User.objects.get(email='user1@test.com')).token
         url = '/api/v1/users/'+token+'/set_new_password/'
         data = {'password': 'gloup'}
+
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         self.assertEqual(0, PasswordRecovery.objects.filter().count())
-        user = User.objects.get(username='test')
+        user = User.objects.get(username='user1')
         self.assertEqual(True, check_password('gloup', user.password))
 
     def test_list_users_without_auth(self):
         """
         Ensure an unauthenticated user cannot list users.
         """
-        self.create_two_users()
         url = '/api/v1/users/'
+
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -227,43 +155,52 @@ class AccountTests(APITestCase):
         """
         Ensure an authenticated user can list users with public information only.
         """
-        self.create_three_users()
         url = '/api/v1/users/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.data
-        self.assertEqual(3, data['count'])
-        self.assertEqual('test', data['results'][0]['username'])
-        self.assertEqual('test0', data['results'][1]['username'])
-        self.assertEqual('test1', data['results'][2]['username'])
-        error = False
-        try:
-            tmp = data['results'][0]['email']
-            tmp = data['results'][1]['email']
-            tmp = data['results'][2]['email']
-        except:
-            error = True
-        self.assertTrue(error)
 
-    def test_search_users(self):
+        data = response.data
+        self.assertEqual(5, data['count'])
+        self.assertEqual('user1', data['results'][0]['username'])
+        self.assertEqual('user2', data['results'][1]['username'])
+        self.assertEqual('user3', data['results'][2]['username'])
+        self.assertEqual('user4', data['results'][3]['username'])
+        self.assertEqual('user5', data['results'][4]['username'])
+
+    def test_email_not_in_list(self):
+        """  """
+        url = '/api/v1/users/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertNotIn('email', data['results'][0])
+        self.assertNotIn('email', data['results'][1])
+        self.assertNotIn('email', data['results'][2])
+        self.assertNotIn('email', data['results'][3])
+        self.assertNotIn('email', data['results'][4])
+
+    def test_search_users_1(self):
         """
         Ensure an authenticated user can search users.
         """
-        self.create_four_users()
-        self.assertEqual(4, User.objects.all().count())
-
-        # Search all user
         url = '/api/v1/users/'
-        response = self.client.get(url, {'username': 'test'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
+
+        response = self.client.get(url, {'username': 'user'}, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         data = response.data
-        self.assertEqual(3, data['count'])
+        self.assertEqual(5, data['count'])
 
-        # Search one user
+    def test_search_users_2(self):
+        """  """
         url = '/api/v1/users/'
-        response = self.client.get(url, {'username': 'to'}, HTTP_AUTHORIZATION=self.token_line(), format='json')
+
+        response = self.client.get(url, {'username': 'r1'}, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         data = response.data
         self.assertEqual(1, data['count'])
 
@@ -271,96 +208,86 @@ class AccountTests(APITestCase):
         """
         Ensure an authenticated user can retrieve his own FULL user.
         """
-        root_url = 'http://testserver'
-        self.create_two_users()
         url = '/api/v1/users/1/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
-        data = response.data
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
         self.assertEqual(1, data['id'])
-        self.assertEqual('test', data['username'])
-        self.assertEqual('test@test.com', data['email'])
+        self.assertEqual('user1', data['username'])
+        self.assertEqual('user1@test.com', data['email'])
         self.assertEqual([], data['groups'])
 
     def test_retrieve_other_user(self):
         """
         Ensure an authenticated user cannot retrieve a FULL user for other user.
         """
-        root_url = 'http://testserver'
-        self.create_two_users()
         url = '/api/v1/users/2/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
-        data = response.data
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
         self.assertEqual(2, data['id'])
-        self.assertEqual('test0', data['username'])
-        error = False
-        try:
-            tmp = data['email']
-            tmp = data['groups']
-        except:
-            error = True
-        self.assertTrue(error)
+        self.assertEqual('user2', data['username'])
+        self.assertNotIn('email', data)
+        self.assertNotIn('groups', data)
 
     def test_update_my_user(self):
         """
         Ensure an authenticated user can update his own user.
         """
-        self.create_two_users()
         url = '/api/v1/users/1/'
         data = {
             'password': 'password'
         }
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        user = User.objects.get(username='test')
+
+        user = User.objects.get(username='user1')
         self.assertTrue(check_password('password', user.password))
 
     def test_update_other_user(self):
         """
         Ensure an authenticated user cannot update another user.
         """
-        self.create_two_users()
-        url = '/api/v1/users/2/'
+        url = '/api/v1/users/3/'
         data = {
             'password': 'password'
         }
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        user = User.objects.get(username='test0')
-        self.assertTrue(check_password('pass0', user.password))
+
+        user = User.objects.get(username='user3')
+        self.assertTrue(check_password('user3', user.password))
 
     def test_delete_my_user(self):
         """
         Ensure an authenticated user can delete his own user.
         """
-        self.create_two_users()
         url = '/api/v1/users/1/'
 
-        response = self.client.delete(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        user = User.objects.filter(username='test').exists()
-        self.assertFalse(user)
+
+        self.assertFalse(User.objects.filter(username='user1').exists())
 
     def test_delete_other_user(self):
         """
         Ensure an authenticated user cannot delete another user.
         """
-        self.create_two_users()
         url = '/api/v1/users/2/'
 
-        response = self.client.delete(url, HTTP_AUTHORIZATION=self.token_line(), format='json')
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        user = User.objects.filter(username='test0').exists()
-        self.assertTrue(user)
+
+        self.assertTrue(User.objects.filter(username='user2').exists())
 
     def test_get_my_user_without_auth(self):
         """
         Ensure an unauthenticated user cannot retrieve user information
         """
-        self.create_two_users()
         url = '/api/v1/users/0/get_my_user/'
 
         response = self.client.get(url)
@@ -370,14 +297,13 @@ class AccountTests(APITestCase):
         """
         Ensure an authenticated user can retrieve his own information
         """
-        self.create_two_users()
         url = '/api/v1/users/0/get_my_user/'
-        user_id = 1
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.token_line())
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         data = response.data
-        self.assertEqual(user_id, data['id'])
-        self.assertEqual('test', data['username'])
-        self.assertEqual('test@test.com', data['email'])
+        self.assertEqual(1, data['id'])
+        self.assertEqual('user1', data['username'])
+        self.assertEqual('user1@test.com', data['email'])
         self.assertEqual([], data['groups'])

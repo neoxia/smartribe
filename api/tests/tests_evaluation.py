@@ -1,11 +1,10 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
+from api.tests.api_test_case import CustomAPITestCase
 from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint, Offer, Meeting, Evaluation
-import core.utils
 
 
-class RequestTests(APITestCase):
+class RequestTests(CustomAPITestCase):
 
     def setUp(self):
         """
@@ -75,13 +74,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/users/1/get_user_evaluation/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual({}, response.data)
 
@@ -89,13 +84,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/users/2/get_user_evaluation/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
         #self.assertEqual('', response.content)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
@@ -107,13 +98,9 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/users/3/get_user_evaluation/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(2.5, data['average_eval'])
@@ -124,10 +111,6 @@ class RequestTests(APITestCase):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/evaluations/'
         data = {
             'meeting': 4,
@@ -135,17 +118,13 @@ class RequestTests(APITestCase):
             'comment': 'blabla5',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_create_evaluation_wrong_user3(self):
         """
 
         """
-        user = User.objects.get(username="user3")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/evaluations/'
         data = {
             'meeting': 4,
@@ -153,17 +132,13 @@ class RequestTests(APITestCase):
             'comment': 'blabla5',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_create_evaluation_meeting_not_validated(self):
         """
 
         """
-        user = User.objects.get(username="user2")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/evaluations/'
         data = {
             'meeting': 4,
@@ -171,17 +146,13 @@ class RequestTests(APITestCase):
             'comment': 'blabla5',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_create_evaluation_validated_user1(self):
         """
 
         """
-        user = User.objects.get(username="user1")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         m = Meeting.objects.get(id=4)
         m.is_validated = True
         m.save()
@@ -193,17 +164,13 @@ class RequestTests(APITestCase):
             'comment': 'blabla5',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
     def test_create_evaluation(self):
         """
 
         """
-        user = User.objects.get(username="user2")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         m = Meeting.objects.get(id=4)
         m.is_validated = True
         m.save()
@@ -215,20 +182,16 @@ class RequestTests(APITestCase):
             'comment': 'blabla5',
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
     def test_list_evaluations(self):
         """
 
         """
-        user = User.objects.get(username="user3")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-
         url = '/api/v1/evaluations/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth, format='json')
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(2, data['count'])

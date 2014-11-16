@@ -1,12 +1,12 @@
 from django.template.defaultfilters import length
 from rest_framework import status
-from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
+from api.tests.api_test_case import CustomAPITestCase
 import core.utils
 from core.models import FaqSection, Faq
 
 
-class FaqTests(APITestCase):
+class FaqTests(CustomAPITestCase):
 
     def setUp(self):
         """
@@ -45,12 +45,9 @@ class FaqTests(APITestCase):
         """
         Ensure an authenticated user can retrieve all answers
         """
-        user = User.objects.get(username="test")
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
         url = '/api/v1/faq/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('test'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(3, data['count'])

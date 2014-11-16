@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.test import APITestCase
+from api.tests.api_test_case import CustomAPITestCase
 
 from core.models import Member, TransportCommunity, Location, Community
 import core.utils
 
 
-class LocationTests(APITestCase):
+class LocationTests(CustomAPITestCase):
 
     def setUp(self):
         """  """
@@ -82,12 +82,6 @@ class LocationTests(APITestCase):
         location21.save()
         location30.save()
 
-    def get_auth(self, username):
-        user = User.objects.get(username=username)
-        token = core.utils.gen_auth_token(user)
-        auth = 'JWT {0}'.format(token)
-        return auth
-
     def test_valid_setup(self):
         """
 
@@ -105,7 +99,7 @@ class LocationTests(APITestCase):
             'other_user': 2
         }
 
-        response = self.client.get(url, data,  HTTP_AUTHORIZATION=self.get_auth('user1'))
+        response = self.client.get(url, data,  HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(3, data['count'])
@@ -118,7 +112,7 @@ class LocationTests(APITestCase):
             'other_user': 3
         }
 
-        response = self.client.get(url, data,  HTTP_AUTHORIZATION=self.get_auth('user1'))
+        response = self.client.get(url, data,  HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(1, data['count'])
@@ -131,7 +125,7 @@ class LocationTests(APITestCase):
             'other_user': 4
         }
 
-        response = self.client.get(url, data,  HTTP_AUTHORIZATION=self.get_auth('user1'))
+        response = self.client.get(url, data,  HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(4, data['count'])
