@@ -2,10 +2,12 @@ import datetime
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.cache import cache
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from core.models import Community, Member, SkillCategory, Request, Inappropriate
+from core.models import Community, Member, SkillCategory, Request, Inappropriate, PasswordRecovery
 import core.utils
+from smartribe import settings
 
 
 class AutoCloseTests(APITestCase):
@@ -81,9 +83,48 @@ class AutoCloseTests(APITestCase):
 class CleanPrtTests(APITestCase):
 
     def setUp(self):
-        """
+        user1 = User(username='user1', password='user1', email='user1@test.fr')
+        user2 = User(username='user2', password='user2', email='user2@test.fr')
+        user3 = User(username='user3', password='user3', email='user3@test.fr')
+        user4 = User(username='user4', password='user4', email='user4@test.fr')
+        user1.save()
+        user2.save()
+        user3.save()
+        user4.save()
 
+        prt1 = PasswordRecovery(user=user1, token=core.utils.gen_temporary_token(), ip_address='192.168.0.1')
+        prt2 = PasswordRecovery(user=user2, token=core.utils.gen_temporary_token(), ip_address='192.168.0.2')
+        prt3 = PasswordRecovery(user=user3, token=core.utils.gen_temporary_token(), ip_address='192.168.0.3')
+        prt4 = PasswordRecovery(user=user4, token=core.utils.gen_temporary_token(), ip_address='192.168.0.4')
+        prt1.save()
+        prt2.save()
+        prt3.save()
+        prt4.save()
+
+        prt1.request_datetime = timezone.now() - datetime.timedelta(hours=settings.PRT_VALIDITY, minutes=1)
+        prt2.request_datetime = timezone.now() - datetime.timedelta(hours=settings.PRT_VALIDITY, minutes=40)
+        prt3.request_datetime = timezone.now() - datetime.timedelta(hours=settings.PRT_VALIDITY-1, minutes=59)
+        prt1.save()
+        prt2.save()
+        prt3.save()
+
+    def test_setup(self):
         """
+        """
+        self.assertEqual(4, User.objects.all().count())
+        self.assertEqual(4, PasswordRecovery.objects.all().count())
+
+    def test_clean(self):
+        """
+        """
+        url = '/api/v1/server_actions/clean_password_recovery_tokens/'
+        response = self.client.post(url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, PasswordRecovery.objects.all().count())
+        self.assertFalse(PasswordRecovery.objects.filter(id=1).exists())
+        self.assertFalse(PasswordRecovery.objects.filter(id=2).exists())
+        self.assertTrue(PasswordRecovery.objects.filter(id=3).exists())
+        self.assertTrue(PasswordRecovery.objects.filter(id=4).exists())
 
 
 class ManageReportedObjectsTests(APITestCase):

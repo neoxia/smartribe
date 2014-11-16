@@ -25,10 +25,6 @@ class AccountTests(APITestCase):
         self.client.post(url, data, format='json')
         token = ActivationToken.objects.get(id=1)
 
-        """data = {'token': token.token}
-        url = '/api/v1/users/1/confirm_registration/'
-        self.client.post(url, data, format='json')"""
-
         url = '/api/v1/users/'+token.token+'/confirm_registration/'
         response = self.client.post(url, format='json')
 
@@ -49,10 +45,6 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         token = ActivationToken.objects.get(id=1)
-
-        """data = {'token': token.token}
-        url = '/api/v1/users/1/confirm_registration/'
-        self.client.post(url, data, format='json')"""
 
         url = '/api/v1/users/'+token.token+'/confirm_registration/'
         response = self.client.post(url, format='json')
@@ -81,10 +73,6 @@ class AccountTests(APITestCase):
         }
         self.client.post(url, data, format='json')
         token = ActivationToken.objects.get(id=1)
-        """data = {'token': token.token}
-        url = '/api/v1/users/1/confirm_registration/'
-        self.client.post(url, data, format='json')"""
-
         url = '/api/v1/users/'+token.token+'/confirm_registration/'
         response = self.client.post(url, format='json')
 
@@ -168,10 +156,6 @@ class AccountTests(APITestCase):
         self.assertTrue(ActivationToken.objects.filter(id=1).exists())
 
         token = ActivationToken.objects.get(id=1)
-        """data = {'token': token.token}
-        url = '/api/v1/users/1/confirm_registration/'
-        response = self.client.post(url, data, format='json')"""
-
         url = '/api/v1/users/'+token.token+'/confirm_registration/'
         response = self.client.post(url, format='json')
 

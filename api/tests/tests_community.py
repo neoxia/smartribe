@@ -45,6 +45,18 @@ class CommunityTests(CustomAPITestCase):
         lcom5.save()
         tcom5.save()
 
+        own_mbr = Member(user=owner, community=lcom2, role='0', status='1')
+        mod_mbr = Member(user=moderator, community=lcom2, role='1', status='1')
+        spl_mbr = Member(user=member, community=lcom2, role='2', status='1')
+        own_mbr.save()
+        mod_mbr.save()
+        spl_mbr.save()
+
+        own_mbr = Member(user=owner, community=tcom5, role='0', status='1')
+        spl_mbr = Member(user=member, community=tcom5, role='2', status='1')
+        own_mbr.save()
+        spl_mbr.save()
+
     def test_setup(self):
         """
         """
@@ -52,6 +64,7 @@ class CommunityTests(CustomAPITestCase):
         self.assertEqual(5, TransportCommunity.objects.all().count())
         self.assertEqual(5, LocalCommunity.objects.all().count())
         self.assertEqual(10, Community.objects.all().count())
+        self.assertEqual(5, Member.objects.all().count())
 
     def test_list_communities(self):
         """
@@ -162,3 +175,65 @@ class CommunityTests(CustomAPITestCase):
         response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
         data = response.data
         self.assertEqual(1, data['count'])
+
+    def test_retrieve_community_type_and_count_1(self):
+        """
+
+        """
+        url = '/api/v1/communities/1/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual('T', data['type'])
+        self.assertEqual(0, data['members_count'])
+
+    def test_retrieve_community_type_and_count_2(self):
+        """
+
+        """
+        url = '/api/v1/communities/4/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual('L', data['type'])
+        self.assertEqual(3, data['members_count'])
+
+    def test_retrieve_community_type_and_count_3(self):
+        """
+
+        """
+        url = '/api/v1/communities/10/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual('T', data['type'])
+        self.assertEqual(2, data['members_count'])
+
+    def test_am_i_member(self):
+        """
+
+        """
+        url = '/api/v1/communities/4/am_i_member/'
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("other"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertFalse(data['is_member'])
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("owner"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertTrue(data['is_member'])
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("moderator"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertTrue(data['is_member'])
+
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("member"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertTrue(data['is_member'])

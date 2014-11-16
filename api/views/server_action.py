@@ -2,6 +2,7 @@ import datetime
 
 from django.conf import settings
 from django.db.models import Count
+from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny
@@ -32,14 +33,13 @@ def auto_close_requests(request):
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
-@throttle_classes([AnonRateThrottle])
+#@throttle_classes([AnonRateThrottle])
 def clean_password_recovery_tokens(request):
     """
     Delete automatically password recovery tokens which lifetime exceeds
     the PRT_VALIDITY setting.
     """
-    #TODO : Test
-    limit = datetime.datetime.now() - datetime.timedelta(hours=settings.PRT_VALIDITY)
+    limit = timezone.now() - datetime.timedelta(hours=settings.PRT_VALIDITY)
     tokens = PasswordRecovery.objects.filter(request_datetime__lt=limit)
     for t in tokens:
         t.delete()

@@ -71,7 +71,6 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
         if pk is None:
             return None, Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
-        user, _ = AuthUser().authenticate(request)
         if not Community.objects.filter(id=pk).exists():
             return None, Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         return Community.objects.get(id=pk), None
@@ -230,18 +229,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        #TODO : Test
-        if pk is None:
-            return Response({'detail': 'Missing community index.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        if not Community.objects.filter(id=pk).exists():
-            return Response({'detail': 'This community does not exist'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        community, response = self.validate_community(request, pk)
+        if not community:
+            return response
         user, _ = AuthUser().authenticate(request)
-        community = Community.objects.get(id=pk)
         is_member = Member.objects.filter(user=user, community=community).exists()
-        return Response({'is_member': is_member},
-                        status=status.HTTP_200_OK)
+        return Response({'is_member': is_member}, status=status.HTTP_200_OK)
 
     # Moderator actions
 
