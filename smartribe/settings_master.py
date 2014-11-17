@@ -60,8 +60,12 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser',),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
-    'PAGINATE_BY': 10,
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend', 'rest_framework.filters.SearchFilter'),
+    'PAGINATE_BY': 30,
+    'PAGINATE_BY_PARAM': 'page_size',
+        'DEFAULT_THROTTLE_RATES': {
+        'anon': '1/day'
+    }
 }
 
 MIDDLEWARE_CLASSES = (

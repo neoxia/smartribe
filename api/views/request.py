@@ -7,7 +7,7 @@ from rest_framework import status
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
 from api.serializers import RequestSerializer, RequestCreateSerializer
-from core.models import Request, Member
+from core.models import Request, Member, Skill
 
 
 class RequestViewSet(viewsets.ModelViewSet):
@@ -95,9 +95,15 @@ class RequestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link()
-    def list_suggested_requests(self, request, pk=None):
+    def list_suggested_requests_skills(self, request, pk=None):
         """  """
         user, _ = AuthUser().authenticate(self.request)
+        my_category_list = Skill.objects.filter(user=user).values('category').distinct()
+
+
+        queryset = self.get_queryset().exclude(user=user).filter(category__in=my_category_list).order_by('-creation_date')
+        serializer = self.get_paginated_serializer(queryset)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def get_paginated_serializer(self, queryset):

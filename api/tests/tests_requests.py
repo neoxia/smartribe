@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Community, Member, SkillCategory, Request
+from core.models import Community, Member, SkillCategory, Request, Skill
 import core.utils
 
 
@@ -28,8 +28,27 @@ class RequestTests(CustomAPITestCase):
         community1.save()
         community2.save()
 
-        skill_cat = SkillCategory(name='cat', detail='desc')
-        skill_cat.save()
+        category1 = SkillCategory(name='cat1', detail='desc')
+        category2 = SkillCategory(name='cat2', detail='desc')
+        category3 = SkillCategory(name='cat3', detail='desc')
+        category4 = SkillCategory(name='cat4', detail='desc')
+        category1.save()
+        category2.save()
+        category3.save()
+        category4.save()
+
+        skill1 = Skill(user=user1, category=category1, description='skill desc 1', level=1)
+        skill2 = Skill(user=user1, category=category2, description='skill desc 2', level=3)
+        skill3 = Skill(user=user2, category=category1, description='skill desc 3', level=1)
+        skill4 = Skill(user=user3, category=category1, description='skill desc 4', level=2)
+        skill5 = Skill(user=user3, category=category2, description='skill desc 5', level=2)
+        skill6 = Skill(user=user1, category=category2, description='skill desc 2 bis', level=3)
+        skill1.save()
+        skill2.save()
+        skill3.save()
+        skill4.save()
+        skill5.save()
+        skill6.save()
 
         member1 = Member(user=user1, community=community1, role='2', status='1')
         member2 = Member(user=user1, community=community2, role='2', status='1')
@@ -42,11 +61,11 @@ class RequestTests(CustomAPITestCase):
         member4.save()
         member5.save()
 
-        request1 = Request(user=user1, category=skill_cat, title='help1', detail='det help1', )
-        request2 = Request(user=user1, category=skill_cat, title='help2', detail='det help2', community=community1)
-        request3 = Request(user=user2, category=skill_cat, title='help3', detail='det help3', )
-        request4 = Request(user=user2, category=skill_cat, title='help4', detail='det help4', )
-        request5 = Request(user=user3, category=skill_cat, title='help5', detail='det help5', )
+        request1 = Request(user=user1, category=category1, title='help1', detail='det help1', )
+        request2 = Request(user=user1, category=category2, title='help2', detail='det help2', community=community1)
+        request3 = Request(user=user2, category=category1, title='help3', detail='det help3', )
+        request4 = Request(user=user2, category=category3, title='help4', detail='det help4', )
+        request5 = Request(user=user3, category=category4, title='help5', detail='det help5', )
         request1.save()
         request2.save()
         request3.save()
@@ -149,3 +168,37 @@ class RequestTests(CustomAPITestCase):
 
         response = self.client.post(url, HTTP_AUTHORIZATION=self.auth('user2'))
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_list_suggested_requests_skill_user1(self):
+        """ """
+        url = '/api/v1/requests/0/list_suggested_requests_skills/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(1, data['count'])
+        self.assertEqual(3, data['results'][0]['id'])
+
+    def test_list_suggested_requests_skill_user2(self):
+        """ """
+        url = '/api/v1/requests/0/list_suggested_requests_skills/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user2'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(1, data['count'])
+        self.assertEqual(1, data['results'][0]['id'])
+
+    def test_list_suggested_requests_skill_user3(self):
+        """ """
+        url = '/api/v1/requests/0/list_suggested_requests_skills/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user3'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(2, data['count'])
+        self.assertEqual(1, data['results'][0]['id'])
+        self.assertEqual(2, data['results'][1]['id'])
