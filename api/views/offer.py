@@ -38,6 +38,11 @@ class OfferViewSet(ModelViewSet):
             serializer_class = OfferCreateSerializer
         return serializer_class
 
+    def pre_save(self, obj):
+        user, _ = AuthUser().authenticate(self.request)
+        if self.request.method == 'POST':
+            obj.user = user
+
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
         return Offer.objects.filter(Q(user=user) | Q(request__user=user))

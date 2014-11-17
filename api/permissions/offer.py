@@ -12,11 +12,7 @@ class IsJWTSelfAndConcerned(BasePermission):
         data = request.DATA
         if not user:
             return False
-        if 'user' not in data:
-            return False
         if 'request' not in data:
-            return False
-        if user.id != data['user']:
             return False
         if not Request.objects.filter(id=data['request']).exists():
             return False

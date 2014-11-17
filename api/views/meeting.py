@@ -45,7 +45,7 @@ class MeetingViewSet(ModelViewSet):
 
     def pre_save(self, obj):
         user, _ = AuthUser().authenticate(self.request)
-        if self.request.method =='POST':
+        if self.request.method == 'POST':
             obj.user = user
 
     @action(methods=['POST'])

@@ -42,7 +42,8 @@ class RequestViewSet(viewsets.ModelViewSet):
 
     def pre_save(self, obj):
         user, _ = AuthUser().authenticate(self.request)
-        obj.user = user
+        if self.request.method == 'POST':
+            obj.user = user
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
