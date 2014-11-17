@@ -43,7 +43,7 @@ class RequestTests(CustomAPITestCase):
         member5.save()
 
         request1 = Request(user=user1, category=skill_cat, title='help1', detail='det help1', )
-        request2 = Request(user=user1, category=skill_cat, title='help2', detail='det help2', )
+        request2 = Request(user=user1, category=skill_cat, title='help2', detail='det help2', community=community1)
         request3 = Request(user=user2, category=skill_cat, title='help3', detail='det help3', )
         request4 = Request(user=user2, category=skill_cat, title='help4', detail='det help4', )
         request5 = Request(user=user3, category=skill_cat, title='help5', detail='det help5', )
@@ -73,7 +73,7 @@ class RequestTests(CustomAPITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user2'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(4, data['count'])
+        self.assertEqual(3, data['count'])
 
     def test_list_request_user3(self):
         """
@@ -106,7 +106,7 @@ class RequestTests(CustomAPITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user5'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(4, data['count'])
+        self.assertEqual(3, data['count'])
 
     def test_list_my_requests_user1(self):
         """

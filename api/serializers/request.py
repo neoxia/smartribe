@@ -7,6 +7,7 @@ class RequestCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Request
+        exclude = ('user', 'creation_date')
 
 
 class RequestSerializer(ReportableModelSerializer):

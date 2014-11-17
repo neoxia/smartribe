@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.throttling import AnonRateThrottle
+from api.permissions.server_actions import HasAllowedIp
 
 from api.utils.asyncronous_mail import send_mail
 from core.models import Request, Inappropriate
@@ -17,7 +18,7 @@ from smartribe.settings import INAP_LIMIT
 
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+@permission_classes((HasAllowedIp,))
 @throttle_classes([AnonRateThrottle])
 def auto_close_requests(request):
     """
@@ -32,7 +33,7 @@ def auto_close_requests(request):
 
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+@permission_classes((HasAllowedIp,))
 @throttle_classes([AnonRateThrottle])
 def clean_password_recovery_tokens(request):
     """
@@ -47,14 +48,13 @@ def clean_password_recovery_tokens(request):
 
 
 @api_view(['POST'])
-@permission_classes((AllowAny,))
+@permission_classes((HasAllowedIp,))
 @throttle_classes([AnonRateThrottle])
 def manage_reported_objects(request):
     """
     Analyses if a single object is reported more than five time.
     If yes, it warns service administrators.
     """
-    #TODO : Throttle
     qs = Inappropriate.objects.values('content_identifier').annotate(total=Count('content_identifier'))
     #qs = qs.order_by('content_identifier')
     for obj in qs:

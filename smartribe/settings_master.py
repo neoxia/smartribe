@@ -158,3 +158,6 @@ MEDIA_URL = '/media/'
 PRT_VALIDITY = 1
 # Warning threshold for inappropriate content :
 INAP_LIMIT = 5
+
+# Allowed IP addresses for server actions
+ALLOWED_IP = ['127.0.0.1']

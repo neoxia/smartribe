@@ -186,10 +186,20 @@ class ManageReportedObjectsTests(CustomAPITestCase):
 
         url = '/api/v1/server_actions/manage_reported_objects/'
 
-        response = self.client.post(url)
+        response = self.client.post(url, REMOTE_ADDR='192.168.161.12')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
                          '[SmarTribe] Inappropriate content warning : tests0')
         self.assertEqual(mail.outbox[1].subject,
                          '[SmarTribe] Inappropriate content warning : tests1')
+
+    def test_manage_twice(self):
+        """  """
+        url = '/api/v1/server_actions/manage_reported_objects/'
+
+        response = self.client.post(url, REMOTE_ADDR='192.168.161.12')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        response = self.client.post(url, REMOTE_ADDR='192.168.161.12')
+        self.assertEqual(status.HTTP_429_TOO_MANY_REQUESTS, response.status_code)
