@@ -15,8 +15,6 @@ RUN dpkg-reconfigure locales && \
     /usr/sbin/update-locale LANG=C.UTF-8
 ENV LC_ALL C.UTF-8
 
-RUN pip3 install https://www.djangoproject.com/download/1.7c1/tarball/
-
 RUN mkdir -p /srv
 ADD . /srv/smartribe
 

@@ -4,7 +4,6 @@ script:
   - pip3 install -r requirements.txt 
   - python3 manage.py migrate
   - python3 manage.py test
-  - cp smartribe/settings_$DRONE_BRANCH.py smartribe/settings.py
   - /etc/init.d/docker.io start
   - sleep 5
   - docker.io build --tag="docker.eip.infoclip.fr:5000/api:$DRONE_BRANCH" .
