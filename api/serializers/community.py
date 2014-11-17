@@ -16,8 +16,6 @@ class CommunitySerializer(serializers.ModelSerializer):
 
 class LocalCommunitySerializer(serializers.ModelSerializer):
 
-    address = AddressSerializer(many=False, blank=True)
-
     members_count = serializers.IntegerField(source='get_members_count', read_only=True)
 
     class Meta:

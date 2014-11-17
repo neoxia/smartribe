@@ -24,7 +24,8 @@ class LocationLocalCommunityTests(CustomAPITestCase):
         address = Address(city='Paris', country='France')
         address.save()
 
-        com = LocalCommunity(name='com', description='com_desc', auto_accept_member=True, address=address)
+        com = LocalCommunity(name='com', description='com_desc', city='Paris', country='France', gps_x=0, gps_y=0,
+                             auto_accept_member=True)
         com.save()
 
         own_mbr = Member(user=owner, community=com, role='0', status='1')
@@ -47,7 +48,6 @@ class LocationLocalCommunityTests(CustomAPITestCase):
 
     def test_setup(self):
         self.assertEqual(4, User.objects.all().count())
-        self.assertEqual(1, Address.objects.all().count())
         self.assertEqual(1, LocalCommunity.objects.all().count())
         self.assertEqual(1, Community.objects.all().count())
         self.assertEqual(3, Member.objects.all().count())
@@ -100,7 +100,7 @@ class LocationLocalCommunityTests(CustomAPITestCase):
         community = Community.objects.get(id=1)
         location = Location.objects.get(id=6)
         self.assertEqual(community, location.community)
-        self.assertEqual('Paris', community.localcommunity.address.city)
+        self.assertEqual('Paris', community.localcommunity.city)
 
     def test_create_location_with_moderator(self):
         """

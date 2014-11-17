@@ -33,4 +33,4 @@ class LocalCommunityViewSet(CommunityViewSet):
     """
     model = LocalCommunity
     serializer_class = LocalCommunitySerializer
-    search_fields = ('name', 'description', 'address__city')
+    search_fields = ('name', 'description', 'city')

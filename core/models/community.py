@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import Address
+from core.models.validator import ZipCodeValidatorFR
 
 
 def get_banner_path(self, filename):
@@ -14,18 +15,15 @@ def get_logo_path(self, filename):
 
 class Community(models.Model):
 
-    name = models.CharField(max_length=50,
-                            unique=True)
+    name = models.CharField(max_length=50, unique=True)
 
     description = models.TextField(max_length=180)
 
     banner = models.ImageField(upload_to=get_banner_path,
-                               blank=True,
-                               null=True)
+                               blank=True, null=True)
 
     logo = models.ImageField(upload_to=get_logo_path,
-                             blank=True,
-                             null=True)
+                             blank=True, null=True)
 
     creation_date = models.DateField(auto_now_add=True)
 
@@ -67,8 +65,7 @@ class TransportCommunity(Community):
     departure = models.CharField(max_length=255)
 
     via = models.CharField(max_length=255,
-                           null=True,
-                           blank=True)
+                           null=True, blank=True)
 
     arrival = models.CharField(max_length=255)
 
@@ -85,7 +82,22 @@ class TransportCommunity(Community):
 
 class LocalCommunity(Community):
 
-    address = models.ForeignKey(Address)
+    gps_x = models.FloatField()
+
+    gps_y = models.FloatField()
+
+    street_num = models.IntegerField(blank=True, null=True)
+
+    street = models.CharField(max_length=100,
+                              blank=True, null=True)
+
+    zip_code = models.CharField(max_length=10,
+                                blank=True, null=True,
+                                validators=[ZipCodeValidatorFR(), ])
+
+    city = models.CharField(max_length=100)
+
+    country = models.CharField(max_length=50)
 
     class Meta:
         verbose_name = 'local community'

@@ -1,5 +1,6 @@
 from django.db import models
 from core.models import Community
+from core.models.validator import ZipCodeValidatorFR
 
 
 def get_photo_path(self, filename):
@@ -22,6 +23,21 @@ class Location(models.Model):
     gps_x = models.FloatField()
 
     gps_y = models.FloatField()
+
+    street_num = models.IntegerField(blank=True, null=True)
+
+    street = models.CharField(max_length=100,
+                              blank=True, null=True)
+
+    zip_code = models.CharField(max_length=10,
+                                blank=True, null=True,
+                                validators=[ZipCodeValidatorFR(), ])
+
+    city = models.CharField(max_length=100,
+                            blank=True, null=True)
+
+    country = models.CharField(max_length=50,
+                               blank=True, null=True)
 
     class Meta:
         verbose_name = 'location'

@@ -35,11 +35,4 @@ class ProfileViewSet(viewsets.ModelViewSet):
         else:
             return [IsJWTOwner()]
 
-    def pre_delete(self, obj):
-        pk = self.kwargs['pk']
-        if Profile.objects.filter(id=pk).exists():
-            address = Profile.objects.get(id=pk).address
-            if address is not None:
-                address.delete()
-
     # FIXME : Allow GET only for members sharing at least one community ?

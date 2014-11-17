@@ -3,8 +3,6 @@ from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
 from core.models import Profile
-from core.models.address import Address
-import core.utils
 
 
 class ProfileTests(CustomAPITestCase):
@@ -42,23 +40,6 @@ class ProfileTests(CustomAPITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_create_profile_with_address(self):
-        """
-        Ensure an  authenticated user can create a profile with an address
-        """
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 1,
-            'address': {'city': 'Poitiers', 'country': 'France'}
-        }
-
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(True, Address.objects.filter(id=1).exists())
-        profile = Profile.objects.get(id=1)
-        self.assertEqual('Poitiers', profile.address.city)
-        self.assertEqual('France', profile.address.country)
-
     def test_create_two_profiles_with_auth(self):
         """
         Ensure an authenticated user cannot create two profiles
@@ -94,20 +75,22 @@ class ProfileTests(CustomAPITestCase):
         data = {
             'user': 1,
             'gender': 'M',
-            'address': {'city': 'Poitiers', 'country': 'France'}
+            'city': 'Poitiers',
+            'country': 'France'
         }
         self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         url = '/api/v1/profiles/1/'
         data = {
             'user': 1,
             #'gender': "M",
-            'address': {'city': 'Nantes','country': 'France'}
+            'city': 'Nantes',
+            'country': 'France'
         }
         response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Profile.objects.get(id=1).gender, 'M')
         profile = Profile.objects.get(id=1)
-        self.assertEqual('Nantes', profile.address.city)
+        self.assertEqual('Nantes', profile.city)
 
     def test_profile_user_is_readonly(self):
         """
@@ -124,6 +107,7 @@ class ProfileTests(CustomAPITestCase):
         }
         response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         original_user = User.objects.get(username="user")
         profile_user = Profile.objects.get(id=1).user
         self.assertEqual(original_user, profile_user)
@@ -160,15 +144,16 @@ class ProfileTests(CustomAPITestCase):
         url = '/api/v1/profiles/'
         data = {
             'user': 1,
-            'address': {'city': 'Poitiers', 'country': 'France'}
+            'city': 'Poitiers',
+            'country': 'France'
         }
         self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
 
         url = '/api/v1/profiles/1/'
         response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user'))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
         self.assertEqual(False, Profile.objects.filter(id=1).exists())
-        self.assertEqual(False, Address.objects.filter(id=1).exists())
 
     def test_delete_other_profile(self):
         """

@@ -19,14 +19,12 @@ class LocalCommunityTests(CustomAPITestCase):
         member.save()
         other.save()
 
-        addr = Address(city='city', country='FR')
-        addr.save()
-
-        com1 = LocalCommunity(name='com1', description='desc1', address=addr)
-        com2 = LocalCommunity(name='loc1', description='desc2', address=addr, auto_accept_member=True)
-        com3 = LocalCommunity(name='loccom1', description='desc3', address=addr)
-        com4 = LocalCommunity(name='con2', description='desc4', address=addr)
-        com5 = LocalCommunity(name='loc2', description='des5', address=addr)
+        com1 = LocalCommunity(name='com1', description='desc1', city='Paris', country='FR', gps_x=0, gps_y=0)
+        com2 = LocalCommunity(name='loc1', description='desc2', city='Paris', country='FR', gps_x=0, gps_y=0,
+                              auto_accept_member=True)
+        com3 = LocalCommunity(name='loccom1', description='desc3', city='Paris', country='FR', gps_x=0, gps_y=0)
+        com4 = LocalCommunity(name='con2', description='desc4', city='Paris', country='FR', gps_x=0, gps_y=0)
+        com5 = LocalCommunity(name='loc2', description='des5', city='Paris', country='FR', gps_x=0, gps_y=0)
         com1.save()
         com2.save()
         com3.save()
@@ -70,7 +68,8 @@ class LocalCommunityTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
         self.assertEqual(5, Community.objects.all().count())
 
     def test_create_community_with_auth(self):
@@ -81,14 +80,15 @@ class LocalCommunityTests(CustomAPITestCase):
         data = {
             'name': 'com10',
             'description': 'com1desc',
-            'address': {
-                'city': 'city',
-                'country': 'country'
-            }
+            'city': 'city',
+            'country': 'country',
+            'gps_x': 0,
+            'gps_y': 1
         }
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
         self.assertEqual(7, Member.objects.all().count())
         self.assertEqual(6, Community.objects.all().count())
         member = Member.objects.get(id=7)
@@ -126,10 +126,10 @@ class LocalCommunityTests(CustomAPITestCase):
         data = {
             'name': 'com1',
             'description': 'com1descmodify',
-            'address': {
-                'city': 'city',
-                'country': 'country'
-            }
+            'city': 'city',
+            'country': 'country',
+            'gps_x': 0,
+            'gps_y': 1
         }
 
         response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')

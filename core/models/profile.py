@@ -20,10 +20,20 @@ class Profile(models.Model):
                               choices=GENDER_CHOICES,
                               default='O')
 
-    address = models.OneToOneField(Address,
-                                   related_name='profile',
-                                   blank=True,
-                                   null=True)
+    street_num = models.IntegerField(blank=True, null=True)
+
+    street = models.CharField(max_length=100,
+                              blank=True, null=True)
+
+    zip_code = models.CharField(max_length=10,
+                                blank=True, null=True,
+                                validators=[ZipCodeValidatorFR(), ])
+
+    city = models.CharField(max_length=100,
+                            blank=True, null=True)
+
+    country = models.CharField(max_length=50,
+                               blank=True, null=True)
 
     phone = models.CharField(max_length=15,
                              validators=[PhoneValidatorFR(), ],

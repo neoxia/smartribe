@@ -22,14 +22,13 @@ class MemberTests(CustomAPITestCase):
         member.save()
         user.save()
 
-        addr = Address(city='city', country='FR')
-        addr.save()
-
-        lcom1 = LocalCommunity(name='lcom1', description='descl1', address=addr)
-        lcom2 = LocalCommunity(name='lcom2', description='descl2', address=addr, auto_accept_member=True)
-        lcom3 = LocalCommunity(name='lcom3', description='descl3', address=addr)
-        lcom4 = LocalCommunity(name='lcom4', description='descl4', address=addr, auto_accept_member=True)
-        lcom5 = LocalCommunity(name='lcom5', description='descl5', address=addr)
+        lcom1 = LocalCommunity(name='lcom1', description='descl1', city='Paris', country='FR', gps_x=0, gps_y=0)
+        lcom2 = LocalCommunity(name='lcom2', description='descl2', city='Paris', country='FR', gps_x=0, gps_y=0,
+                               auto_accept_member=True)
+        lcom3 = LocalCommunity(name='lcom3', description='descl3', city='Paris', country='FR', gps_x=0, gps_y=0)
+        lcom4 = LocalCommunity(name='lcom4', description='descl4', city='Paris', country='FR', gps_x=0, gps_y=0,
+                               auto_accept_member=True)
+        lcom5 = LocalCommunity(name='lcom5', description='descl5', city='Paris', country='FR', gps_x=0, gps_y=0)
         tcom1 = TransportCommunity(name='tcom1', description='desct1', departure='dep1', arrival='arr1',
                                    auto_accept_member=True)
         tcom2 = TransportCommunity(name='tcom2', description='desct2', departure='dep2', arrival='arr2')
