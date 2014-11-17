@@ -17,7 +17,7 @@ class Request(ReportableModel):
 
     detail = models.TextField()
 
-    creation_date = models.DateField(auto_now_add=True)
+    created_on = models.DateField(auto_now_add=True)
 
     expected_end_date = models.DateField(blank=True,
                                          null=True)
@@ -28,6 +28,8 @@ class Request(ReportableModel):
     auto_close = models.BooleanField(default=False)
 
     closed = models.BooleanField(default=False)
+
+    last_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'request'

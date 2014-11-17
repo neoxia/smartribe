@@ -21,6 +21,8 @@ class MeetingPointViewSet(ModelViewSet):
     """
     model = MeetingPoint
     serializer_class = MeetingPointSerializer
+    filter_fields = ('location',)
+    search_fields = ('name', 'description')
 
     def get_permissions(self):
         if self.request.method == 'GET':

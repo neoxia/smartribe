@@ -90,7 +90,7 @@ class RequestViewSet(viewsets.ModelViewSet):
 
         """
         user, _ = AuthUser().authenticate(self.request)
-        requests = self.model.objects.filter(user=user).order_by('-creation_date')
+        requests = self.model.objects.filter(user=user).order_by('-created_on')
         serializer = self.get_paginated_serializer(requests)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -101,7 +101,7 @@ class RequestViewSet(viewsets.ModelViewSet):
         my_category_list = Skill.objects.filter(user=user).values('category').distinct()
 
 
-        queryset = self.get_queryset().exclude(user=user).filter(category__in=my_category_list).order_by('-creation_date')
+        queryset = self.get_queryset().exclude(user=user).filter(category__in=my_category_list).order_by('-created_on')
         serializer = self.get_paginated_serializer(queryset)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

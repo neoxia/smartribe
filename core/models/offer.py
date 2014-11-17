@@ -16,7 +16,7 @@ class Offer(ReportableModel):
 
     usefull = models.BooleanField(default=True)
 
-    creation_date = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
     last_update = models.DateTimeField(auto_now=True)
 

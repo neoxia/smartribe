@@ -7,11 +7,11 @@ class RequestCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Request
-        exclude = ('user', 'creation_date')
+        exclude = ('user', 'created_on', 'last_update')
 
 
 class RequestSerializer(ReportableModelSerializer):
 
     class Meta:
         model = Request
-        read_only_fields = ('user', 'creation_date')
+        read_only_fields = ('user', 'created_on', 'last_update')

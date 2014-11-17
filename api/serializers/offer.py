@@ -7,10 +7,11 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
+        exclude = ('created_on', 'last_update')
 
 
 class OfferSerializer(ReportableModelSerializer):
 
     class Meta:
         model = Offer
-        read_only_fields = ('request', 'user', 'creation_date', 'last_update')
+        read_only_fields = ('request', 'user', 'created_on', 'last_update')
