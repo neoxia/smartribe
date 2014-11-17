@@ -71,9 +71,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
         if pk is None:
             return None, Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Community.objects.filter(id=pk).exists():
+        if not self.model.objects.filter(id=pk).exists():
             return None, Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-        return Community.objects.get(id=pk), None
+        return self.model.objects.get(id=pk), None
+
+    def get_queryset(self):
+        return self.model.objects.all().order_by('name')
 
 
     @link(permission_classes=[IsJWTAuthenticated])

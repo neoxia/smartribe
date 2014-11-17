@@ -1,5 +1,4 @@
 from api.serializers.user import *
-from api.serializers.address import *
 from api.serializers.community import *
 from api.serializers.evaluation import *
 from api.serializers.faq import *

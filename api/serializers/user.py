@@ -15,8 +15,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password', 'groups', 'is_active')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password', 'is_active')
         write_only_fields = ('password', )
+        exclude = ('groups', )
 
 
 class UserPublicSerializer(serializers.ModelSerializer):

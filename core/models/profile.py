@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from core.models.address import Address
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
 

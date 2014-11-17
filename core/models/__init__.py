@@ -13,9 +13,6 @@ from django.contrib.auth.models import User
 from core.models.skill import SkillCategory
 from core.models.skill import Skill
 
-## Address
-from core.models.address import Address
-
 ## Community
 from core.models.community import Community
 from core.models.community_local import LocalCommunity

@@ -1,8 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import status
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Member, LocalCommunity, Location, Community, Address
-import core.utils
+from core.models import Member, LocalCommunity, Location, Community
 
 
 class LocationLocalCommunityTests(CustomAPITestCase):
@@ -20,9 +19,6 @@ class LocationLocalCommunityTests(CustomAPITestCase):
         moderator.save()
         member.save()
         other.save()
-
-        address = Address(city='Paris', country='France')
-        address.save()
 
         com = LocalCommunity(name='com', description='com_desc', city='Paris', country='France', gps_x=0, gps_y=0,
                              auto_accept_member=True)
