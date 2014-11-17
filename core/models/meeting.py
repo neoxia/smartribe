@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
+
 from core.models import Offer
-from core.models.location import MeetingPoint
-from core.models.reportable_model import ReportableModel
+from core.models import MeetingPoint
 
 
 class Meeting(models.Model):
@@ -33,20 +33,4 @@ class Meeting(models.Model):
     class Meta:
         verbose_name = 'meeting'
         verbose_name_plural = 'meetings'
-        app_label = 'core'
-
-
-class MeetingMessage(ReportableModel):
-
-    meeting = models.ForeignKey(Meeting)
-
-    user = models.ForeignKey(User)
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-
-    content = models.TextField()
-
-    class Meta:
-        verbose_name = 'meeting message'
-        verbose_name_plural = 'meeting messages'
         app_label = 'core'

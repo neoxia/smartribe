@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import core.models.location
+import core.models.meeting_point
 
 
 class Migration(migrations.Migration):
@@ -25,6 +25,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='meetingpoint',
             name='photo',
-            field=models.ImageField(null=True, upload_to=core.models.location.get_photo_path, blank=True),
+            field=models.ImageField(null=True, upload_to=core.models.meeting_point.get_photo_path, blank=True),
         ),
     ]

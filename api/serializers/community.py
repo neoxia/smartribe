@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.serializers.address import AddressSerializer
+
 from core.models import Community, LocalCommunity, TransportCommunity
 
 

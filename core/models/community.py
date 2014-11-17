@@ -1,6 +1,4 @@
 from django.db import models
-from core.models import Address
-from core.models.validator import ZipCodeValidatorFR
 
 
 def get_banner_path(self, filename):
@@ -35,6 +33,8 @@ class Community(models.Model):
         """
         Returns the type of the community as a capital letter.
         """
+        from core.models.community_local import LocalCommunity
+        from core.models.community_transport import TransportCommunity
         try:
             self.localcommunity
             return "L"
@@ -60,46 +60,4 @@ class Community(models.Model):
         app_label = 'core'
 
 
-class TransportCommunity(Community):
 
-    departure = models.CharField(max_length=255)
-
-    via = models.CharField(max_length=255,
-                           null=True, blank=True)
-
-    arrival = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name+', de '+self.departure \
-            + ' à '+self.arrival \
-            + ', via '+self.via
-
-    class Meta:
-        verbose_name = 'transport community'
-        verbose_name_plural = 'transport communities'
-        app_label = 'core'
-
-
-class LocalCommunity(Community):
-
-    gps_x = models.FloatField()
-
-    gps_y = models.FloatField()
-
-    street_num = models.IntegerField(blank=True, null=True)
-
-    street = models.CharField(max_length=100,
-                              blank=True, null=True)
-
-    zip_code = models.CharField(max_length=10,
-                                blank=True, null=True,
-                                validators=[ZipCodeValidatorFR(), ])
-
-    city = models.CharField(max_length=100)
-
-    country = models.CharField(max_length=50)
-
-    class Meta:
-        verbose_name = 'local community'
-        verbose_name_plural = 'local communities'
-        app_label = 'core'

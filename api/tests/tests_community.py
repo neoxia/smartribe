@@ -1,8 +1,7 @@
 from rest_framework import status
 from django.contrib.auth.models import User
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Member, Community, Address, LocalCommunity, TransportCommunity
-import core.utils
+from core.models import Member, Community, LocalCommunity, TransportCommunity
 
 
 class CommunityTests(CustomAPITestCase):

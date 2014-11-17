@@ -53,20 +53,6 @@ class OfferTests(CustomAPITestCase):
         request4.save()
         request5.save()
 
-    def test_create_offer_for_other(self):
-        """
-
-        """
-        url = '/api/v1/offers/'
-        data = {
-            'request': 5,
-            'user': 2,
-            'detail': 'offer'
-        }
-
-        response = self.client.post(url, data,  HTTP_AUTHORIZATION=self.auth('user1'), format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
-
     def test_create_offer_for_not_linked_request(self):
         """
 

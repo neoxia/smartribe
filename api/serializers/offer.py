@@ -7,7 +7,7 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        exclude = ('created_on', 'last_update')
+        exclude = ('user', 'created_on', 'last_update')
 
 
 class OfferSerializer(ReportableModelSerializer):
