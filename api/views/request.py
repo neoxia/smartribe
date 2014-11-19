@@ -7,7 +7,7 @@ from rest_framework import status
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
 from api.serializers import RequestSerializer, RequestCreateSerializer
-from core.models import Request, Member, Skill
+from core.models import Request, Member, Skill, Offer
 
 
 class RequestViewSet(viewsets.ModelViewSet):
@@ -101,20 +101,19 @@ class RequestViewSet(viewsets.ModelViewSet):
         user, _ = AuthUser().authenticate(self.request)
         my_category_list = Skill.objects.filter(user=user).values('category').distinct()
 
-
         queryset = self.get_queryset().exclude(user=user).filter(category__in=my_category_list).order_by('-created_on')
         serializer = self.get_paginated_serializer(queryset)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-    def get_paginated_serializer(self, queryset):
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_pagination_serializer(page)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-        return serializer
-
+    @link()
+    def get_offer_count(self, request, pk=None):
+        """  """
+        # TODO : Test
+        req, response = self.validate_object(request, pk)
+        if not req:
+            return response
+        count = Offer.objects.filter(request=req).count()
+        return Response({'count': count}, status=status.HTTP_200_OK)
 
     @action()
     def close_request(self, request, pk=None):
@@ -146,3 +145,11 @@ class RequestViewSet(viewsets.ModelViewSet):
         req.save()
         serializer = RequestSerializer(req)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_paginated_serializer(self, queryset):
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+        return serializer
