@@ -5,13 +5,18 @@ script:
   - python3 manage.py migrate
   - python3 manage.py test
   - bash /cgroups.sh
-  - docker -d --dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry docker.eip.infoclip.fr:5000 &
   - sleep 5
+  - service docker start
   - docker build --tag=docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35} .
+  - service docker stop
+  - sleep 4
+  - docker -d --dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry docker.eip.infoclip.fr:5000 &
+  - sleep 3
   - docker push docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35}
+  - sleep 2
   - killall docker
   - echo "Build Finished"
-  - sleep 5
+  - sleep 1
 
 notify:
   email:
