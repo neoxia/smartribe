@@ -1,9 +1,10 @@
-image: smartribe/test-python34:0.4
+image: smartribe/test-python34:0.5
 
 script:
   - pip3 install -r requirements.txt 
   - python3 manage.py migrate
   - python3 manage.py test
+  - bash /cgroups.sh
   - docker -d --dns 8.8.8.8 --dns 8.8.4.4 --insecure-registry docker.eip.infoclip.fr:5000 &
   - sleep 5
   - docker build --tag=docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35} .
