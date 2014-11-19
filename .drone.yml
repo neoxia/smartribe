@@ -4,11 +4,11 @@ script:
   - pip3 install -r requirements.txt 
   - python3 manage.py migrate
   - python3 manage.py test
-  - /etc/init.d/docker.io start
+  - /etc/init.d/docker start
   - sleep 5
-  - docker.io build --tag=docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35} .
-  - docker.io push docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35}
-  - /etc/init.d/docker.io stop
+  - docker build --tag=docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35} .
+  - docker push docker.eip.infoclip.fr:5000/api:${DRONE_COMMIT:35}
+  - /etc/init.d/docker stop
   - echo "Build Finished"
   - sleep 5
 
