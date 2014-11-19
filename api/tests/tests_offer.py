@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Community, Member, SkillCategory, Request
+from core.models import Community, Member, SkillCategory, Request, Offer
 import core.utils
 
 
@@ -52,6 +52,57 @@ class OfferTests(CustomAPITestCase):
         request3.save()
         request4.save()
         request5.save()
+
+        offer1 = Offer(request=request1, user=user2, detail='offer1')
+        offer2 = Offer(request=request1, user=user3, detail='offer2')
+        offer3 = Offer(request=request1, user=user4, detail='offer3')
+        offer4 = Offer(request=request1, user=user5, detail='offer4')
+        offer5 = Offer(request=request2, user=user2, detail='offer5')
+        offer6 = Offer(request=request2, user=user3, detail='offer6')
+        offer7 = Offer(request=request3, user=user4, detail='offer7')
+        offer8 = Offer(request=request4, user=user4, detail='offer8')
+        offer9 = Offer(request=request4, user=user5, detail='offer9')
+        offer1.save()
+        offer2.save()
+        offer3.save()
+        offer4.save()
+        offer5.save()
+        offer6.save()
+        offer7.save()
+        offer8.save()
+        offer9.save()
+
+    def test_setup(self):
+        self.assertEqual(5, User.objects.all().count())
+        self.assertEqual(2, Community.objects.all().count())
+        self.assertEqual(1, SkillCategory.objects.all().count())
+        self.assertEqual(5, Member.objects.all().count())
+        self.assertEqual(5, Request.objects.all().count())
+        self.assertEqual(9, Offer.objects.all().count())
+
+    def test_request_offer_count_1(self):
+        """ """
+        url = '/api/v1/requests/1/get_offer_count/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(4, response.data['count'])
+
+    def test_request_offer_count_2(self):
+        """ """
+        url = '/api/v1/requests/2/get_offer_count/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, response.data['count'])
+
+    def test_request_offer_count_3(self):
+        """ """
+        url = '/api/v1/requests/5/get_offer_count/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(0, response.data['count'])
 
     def test_create_offer_for_not_linked_request(self):
         """
