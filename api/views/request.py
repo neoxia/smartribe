@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from api.authenticate import AuthUser
-from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
+from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.serializers import RequestSerializer, RequestCreateSerializer
 from core.models import Request, Member, Skill, Offer
 

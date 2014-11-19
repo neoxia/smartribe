@@ -1,6 +1,7 @@
 from django.core import mail
 from rest_framework import status
 from django.contrib.auth.models import User
+import time
 
 from api.tests.api_test_case import CustomAPITestCase
 from core.models import Member, Community, LocalCommunity, TransportCommunity
@@ -393,6 +394,7 @@ class MemberTests(CustomAPITestCase):
         data = response.data
         self.assertEqual(5, data['id'])
         self.assertEqual('1', data['status'])
+        time.sleep(0.2)
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
                          '[Smartribe] Membership accepted')

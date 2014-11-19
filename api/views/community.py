@@ -2,7 +2,6 @@ from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import action, link
-from rest_framework.filters import SearchFilter, DjangoFilterBackend
 from rest_framework.response import Response
 
 from api.permissions.common import IsJWTAuthenticated
