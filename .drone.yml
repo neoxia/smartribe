@@ -5,6 +5,16 @@ script:
   - python3 manage.py migrate
   - python3 manage.py test
 
+publish:
+  docker:
+      docker_host tcp://docker.eip.infoclip.fr:5000
+      docker_version: 1.0.1
+      registry_host: docker.eip.infoclip.fr
+      registry_protocol: http
+      registry_login_uri: /registry/v1/
+      image_name: smartribe/api
+      tags: [0.1, latest]
+
 notify:
   email:
     recipients:
