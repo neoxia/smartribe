@@ -7,12 +7,10 @@ script:
 
 publish:
   docker:
-      docker_host tcp://docker.eip.infoclip.fr:5000
+      docker_host: tcp://ci.eip.infoclip.fr:10000
       docker_version: 1.0.1
-      registry_host: docker.eip.infoclip.fr
       registry_protocol: http
-      registry_login_uri: /registry/v1/
-      image_name: smartribe/api
+      image_name: docker.eip.infoclip.fr:5000/api
       tags: [0.1, latest]
 
 notify:
