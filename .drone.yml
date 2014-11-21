@@ -10,12 +10,10 @@ publish:
       docker_host: tcp://ci.eip.infoclip.fr:10000
       docker_version: 1.0.1
       registry_protocol: https
-      image_name: docker.eip.infoclip.fr:443/api
+      image_name: docker.eip.infoclip.fr/api
       registry_login: true
-      username: smartribe
-      password: totoro
-      email: "bidon@bidon.com"
-      tags: [0.1, latest]
+      username: "smartribe"
+      password: "totoro"
 
 notify:
   email:
