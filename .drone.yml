@@ -9,8 +9,10 @@ publish:
   docker:
       docker_host: tcp://ci.eip.infoclip.fr:10000
       docker_version: 1.0.1
-      registry_protocol: http
-      image_name: docker.eip.infoclip.fr:5000/api
+      registry_protocol: https
+      image_name: docker.eip.infoclip.fr:443/api
+      username: smartribe
+      password: totoro
       tags: [0.1, latest]
 
 notify:
