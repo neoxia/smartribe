@@ -11,11 +11,6 @@ publish:
       docker_version: 1.0.1
       registry_protocol: https
       image_name: "docker.eip.infoclip.fr:443/api"
-      registry_login_uri: "https://docker.eip.infoclip.fr"
-      registry_login: true
-      username: "smartribe"
-      password: "totoro"
-      email: "bidon@bidon.fr"
 
 notify:
   email:
