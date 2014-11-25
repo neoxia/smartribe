@@ -11,14 +11,9 @@ publish:
       docker_version: 1.0.1
       registry_protocol: https
       image_name: "docker.eip.infoclip.fr:443/api"
-      #registry_login_uri: "https://docker.eip.infoclip.fr:443"
-      registry_login: true
-      username: "smartribe"
-      password: "totoro"
-      email: "bidon@bidon.fr"
 
 notify:
   email:
     recipients:
-      - y@nn-col.eu
+      - coleu_y@etna-alternance.net
       - bordie_r@etna-alternance.net
