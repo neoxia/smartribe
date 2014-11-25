@@ -10,7 +10,7 @@ publish:
       docker_host: tcp://ci.smartribe.fr:10000
       docker_version: 1.0.1
       registry_protocol: https
-      image_name: "docker.smartribe.fr:443/api-$(git rev-parse –short HEAD)"
+      image_name: "docker.smartribe.fr:443/api:$(git rev-parse –short HEAD)"
 
 notify:
   email:
