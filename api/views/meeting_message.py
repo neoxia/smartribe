@@ -27,6 +27,7 @@ class MeetingMessageViewSet(mixins.CreateModelMixin,
     """
     model = MeetingMessage
     serializer_class = MeetingMessageSerializer
+    filter_fields = ('user__id', 'offer__id')
 
     def get_permissions(self):
         if self.request.method == 'GET':
@@ -41,4 +42,4 @@ class MeetingMessageViewSet(mixins.CreateModelMixin,
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter( Q(meeting__offer__user=user) | Q(meeting__offer__request__user=user))
+        return self.model.objects.filter( Q(offer__user=user) | Q(offer__request__user=user)).order_by('-creation_date')

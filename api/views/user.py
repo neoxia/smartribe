@@ -239,10 +239,10 @@ class UserViewSet(viewsets.ModelViewSet):
         if not self.model.objects.filter(id=pk).exists():
             return Response({'detail': 'No such object.'}, status.HTTP_404_NOT_FOUND)
         obj = self.model.objects.get(id=pk)
-        if not Evaluation.objects.filter(meeting__offer__user=obj).exists():
+        if not Evaluation.objects.filter(offer__user=obj).exists():
             eval = {}
         else:
-            eval = Evaluation.objects.filter(meeting__offer__user=obj).aggregate(average_eval=Avg('mark'),
-                                                                                 min_eval=Min('mark'),
-                                                                                 max_eval=Max('mark'))
+            eval = Evaluation.objects.filter(offer__user=obj).aggregate(average_eval=Avg('mark'),
+                                                                        min_eval=Min('mark'),
+                                                                        max_eval=Max('mark'))
         return Response(eval, status=status.HTTP_200_OK)

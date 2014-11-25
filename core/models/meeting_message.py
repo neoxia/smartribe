@@ -1,18 +1,18 @@
 from django.contrib.auth.models import User
 from django.db import models
-from core.models import Meeting
+from core.models.offer import Offer
 from core.models.reportable_model import ReportableModel
 
 
 class MeetingMessage(ReportableModel):
 
-    meeting = models.ForeignKey(Meeting)
+    offer = models.ForeignKey(Offer)
 
     user = models.ForeignKey(User)
 
-    creation_date = models.DateTimeField(auto_now_add=True)
-
     content = models.TextField()
+
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'meeting message'
