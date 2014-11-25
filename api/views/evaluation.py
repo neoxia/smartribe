@@ -41,8 +41,8 @@ class EvaluationViewSet(ModelViewSet):
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter(Q(meeting__offer__user=user) |
-                                         Q(meeting__offer__request__user=user))
+        return self.model.objects.filter(Q(offer__user=user) |
+                                         Q(offer__request__user=user))
 
     @link()
     def list_evaluations_about_me(self, request, pk=None):
@@ -71,7 +71,7 @@ class EvaluationViewSet(ModelViewSet):
 
         """
         user, _ = AuthUser().authenticate(self.request)
-        qs = self.get_queryset().filter(meeting__offer__user=user)
+        qs = self.get_queryset().filter(offer__user=user)
         page = self.paginate_queryset(qs)
         if page is not None:
             serializer = self.get_pagination_serializer(page)
@@ -106,7 +106,7 @@ class EvaluationViewSet(ModelViewSet):
 
         """
         user, _ = AuthUser().authenticate(self.request)
-        qs = self.get_queryset().filter(meeting__offer__request__user=user)
+        qs = self.get_queryset().filter(offer__request__user=user)
         page = self.paginate_queryset(qs)
         if page is not None:
             serializer = self.get_pagination_serializer(page)

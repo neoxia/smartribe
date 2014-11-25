@@ -58,16 +58,13 @@ class RequestTests(CustomAPITestCase):
         meeting1.save()
         meeting2 = Meeting(offer=offer2, user=user3, meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
         meeting2.save()
-        meeting3 = Meeting(offer=offer3, user=user3, meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
-        meeting3.save()
-        meeting4 = Meeting(offer=offer4, user=user1, meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
-        meeting4.save()
 
-        evaluation1 = Evaluation(meeting=meeting1, mark=1, comment='blabla1')
+
+        evaluation1 = Evaluation(offer=offer1, mark=1, comment='blabla1')
         evaluation1.save()
-        evaluation2 = Evaluation(meeting=meeting2, mark=2, comment='blabla2')
+        evaluation2 = Evaluation(offer=offer2, mark=2, comment='blabla2')
         evaluation2.save()
-        evaluation3 = Evaluation(meeting=meeting3, mark=3, comment='blabla3')
+        evaluation3 = Evaluation(offer=offer3, mark=3, comment='blabla3')
         evaluation3.save()
 
     def test_get_user_evaluation_user1(self):
@@ -113,7 +110,7 @@ class RequestTests(CustomAPITestCase):
         """
         url = '/api/v1/evaluations/'
         data = {
-            'meeting': 4,
+            'offer': 4,
             'mark': 5,
             'comment': 'blabla5',
         }
@@ -127,7 +124,7 @@ class RequestTests(CustomAPITestCase):
         """
         url = '/api/v1/evaluations/'
         data = {
-            'meeting': 4,
+            'offer': 4,
             'mark': 5,
             'comment': 'blabla5',
         }
@@ -135,31 +132,13 @@ class RequestTests(CustomAPITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
 
-    def test_create_evaluation_meeting_not_validated(self):
-        """
-
-        """
-        url = '/api/v1/evaluations/'
-        data = {
-            'meeting': 4,
-            'mark': 5,
-            'comment': 'blabla5',
-        }
-
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
-
     def test_create_evaluation_validated_user1(self):
         """
 
         """
-        m = Meeting.objects.get(id=4)
-        m.is_validated = True
-        m.save()
-
         url = '/api/v1/evaluations/'
         data = {
-            'meeting': 4,
+            'offer': 4,
             'mark': 5,
             'comment': 'blabla5',
         }
@@ -171,13 +150,9 @@ class RequestTests(CustomAPITestCase):
         """
 
         """
-        m = Meeting.objects.get(id=4)
-        m.is_validated = True
-        m.save()
-
         url = '/api/v1/evaluations/'
         data = {
-            'meeting': 4,
+            'offer': 4,
             'mark': 5,
             'comment': 'blabla5',
         }
@@ -196,4 +171,8 @@ class RequestTests(CustomAPITestCase):
         data = response.data
         self.assertEqual(2, data['count'])
         self.assertEqual('Evaluation/2', data['results'][0]['reference'])
+        self.assertTrue(data['results'][0]['had_meeting'])
+        self.assertEqual('Evaluation/3', data['results'][1]['reference'])
+        self.assertFalse(data['results'][1]['had_meeting'])
+
 

@@ -20,4 +20,4 @@ class MeetingMessageSerializer(ReportableModelSerializer):
 
     class Meta:
         model = MeetingMessage
-        read_only_fields = ('meeting', 'user', 'creation_date')
+        read_only_fields = ('offer', 'user', 'creation_date')

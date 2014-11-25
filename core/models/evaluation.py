@@ -1,12 +1,12 @@
-from django.contrib.auth.models import User
 from django.db import models
-from core.models import Meeting
+from core.models.meeting import Meeting
+from core.models.offer import Offer
 from core.models.reportable_model import ReportableModel
 
 
 class Evaluation(ReportableModel):
 
-    meeting = models.ForeignKey(Meeting)
+    offer = models.ForeignKey(Offer)
 
     DANGEROUS = 0
     BAD = 1
@@ -29,6 +29,11 @@ class Evaluation(ReportableModel):
     creation_date = models.DateTimeField(auto_now_add=True)
 
     last_update = models.DateTimeField(auto_now=True)
+
+    def had_meeting(self):
+        if Meeting.objects.filter(offer=self.offer).exists():
+            return True
+        return False
 
     def __str__(self):
         return self.meeting.offer.user.username + ', ' + self.id.__str__()

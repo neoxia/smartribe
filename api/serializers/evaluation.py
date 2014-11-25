@@ -13,6 +13,8 @@ class EvaluationCreateSerializer(serializers.ModelSerializer):
 
 class EvaluationSerializer(ReportableModelSerializer):
 
+    had_meeting = serializers.BooleanField(source='had_meeting', read_only=True)
+
     class Meta:
         model = Evaluation
-        read_only_fields = ('meeting', 'creation_date', 'last_update')
+        read_only_fields = ('offer', 'creation_date', 'last_update')
