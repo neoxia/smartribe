@@ -15,7 +15,7 @@ class Community(models.Model):
 
     name = models.CharField(max_length=50, unique=True)
 
-    description = models.TextField(max_length=180)
+    description = models.TextField()
 
     banner = models.ImageField(upload_to=get_banner_path,
                                blank=True, null=True)
