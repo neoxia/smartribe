@@ -12,6 +12,12 @@ class RequestCreateSerializer(serializers.ModelSerializer):
 
 class RequestSerializer(ReportableModelSerializer):
 
+    user_username = serializers.CharField(max_length=255, source='user.username', read_only=True)
+
+    user_first_name = serializers.CharField(max_length=255, source='user.first_name', read_only=True)
+
+    user_last_name = serializers.CharField(max_length=255, source='user.last_name', read_only=True)
+
     class Meta:
         model = Request
         read_only_fields = ('user', 'created_on', 'last_update')
