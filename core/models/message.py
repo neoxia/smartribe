@@ -4,7 +4,7 @@ from core.models.offer import Offer
 from core.models.reportable_model import ReportableModel
 
 
-class MeetingMessage(ReportableModel):
+class Message(ReportableModel):
 
     offer = models.ForeignKey(Offer)
 
@@ -15,6 +15,6 @@ class MeetingMessage(ReportableModel):
     creation_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'meeting message'
-        verbose_name_plural = 'meeting messages'
+        verbose_name = 'message'
+        verbose_name_plural = 'messages'
         app_label = 'core'

@@ -15,6 +15,7 @@ from api.views import suggestion
 from api.views import inappropriate
 from api.views import request
 from api.views import offer
+from api.views import message
 from api.views import meeting
 from api.views import evaluation
 from api.views import server_action
@@ -36,6 +37,7 @@ router.register(r'meeting_points', meeting_point.MeetingPointViewSet)
 
 router.register(r'requests', request.RequestViewSet)
 router.register(r'offers', offer.OfferViewSet)
+router.register(r'messages', message.MessageViewSet)
 router.register(r'meetings', meeting.MeetingViewSet)
 router.register(r'evaluations', evaluation.EvaluationViewSet)
 

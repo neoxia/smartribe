@@ -4,12 +4,12 @@ from rest_framework.viewsets import GenericViewSet
 
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
-from api.permissions.meeting_message import IsConcernedByMeeting
-from api.serializers.meeting_message import MeetingMessageSerializer, MeetingMessageCreateSerializer
-from core.models import MeetingMessage
+from api.permissions.message import IsConcernedByOffer
+from api.serializers.message import MessageSerializer, MessageCreateSerializer
+from core.models import Message
 
 
-class MeetingMessageViewSet(mixins.CreateModelMixin,
+class MessageViewSet(mixins.CreateModelMixin,
                             mixins.RetrieveModelMixin,
                             mixins.ListModelMixin,
                             GenericViewSet):
@@ -25,19 +25,19 @@ class MeetingMessageViewSet(mixins.CreateModelMixin,
             |       - GET response restricted to 'MeetingMessage' objects linked with user
 
     """
-    model = MeetingMessage
-    serializer_class = MeetingMessageSerializer
+    model = Message
+    serializer_class = MessageSerializer
     filter_fields = ('user__id', 'offer__id')
 
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
-        return [IsConcernedByMeeting()]
+        return [IsConcernedByOffer()]
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.method == 'POST':
-            serializer_class = MeetingMessageCreateSerializer
+            serializer_class = MessageCreateSerializer
         return serializer_class
 
     def get_queryset(self):

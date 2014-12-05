@@ -33,7 +33,7 @@ from core.models.offer import Offer
 
 # Meeting
 from core.models.meeting import Meeting
-from core.models.meeting_message import MeetingMessage
+from core.models.message import Message
 from core.models.evaluation import Evaluation
 
 ## General

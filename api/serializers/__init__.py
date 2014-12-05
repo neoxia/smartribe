@@ -5,7 +5,7 @@ from api.serializers.faq import *
 from api.serializers.inappropriate import *
 from api.serializers.location import *
 from api.serializers.meeting import *
-from api.serializers.meeting_message import *
+from api.serializers.message import *
 from api.serializers.meeting_point import *
 from api.serializers.member import *
 from api.serializers.offer import *

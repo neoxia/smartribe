@@ -4,7 +4,7 @@ from api.authenticate import AuthUser
 from core.models import Offer, MeetingPoint, Member, Meeting
 
 
-class IsConcernedByMeeting(BasePermission):
+class IsConcernedByOffer(BasePermission):
     """
 
     """

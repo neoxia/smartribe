@@ -1,23 +1,23 @@
 from rest_framework import serializers
 from api.serializers import ReportableModelSerializer
-from core.models import MeetingMessage
+from core.models import Message
 
 
-class MeetingMessageCreateSerializer(serializers.ModelSerializer):
+class MessageCreateSerializer(serializers.ModelSerializer):
     """
 
     """
 
     class Meta:
-        model = MeetingMessage
+        model = Message
         exclude = ('creation_date')
 
 
-class MeetingMessageSerializer(ReportableModelSerializer):
+class MessageSerializer(ReportableModelSerializer):
     """
 
     """
 
     class Meta:
-        model = MeetingMessage
+        model = Message
         read_only_fields = ('offer', 'user', 'creation_date')
