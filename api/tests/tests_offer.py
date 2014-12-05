@@ -131,3 +131,13 @@ class OfferTests(CustomAPITestCase):
 
         response = self.client.post(url, data,  HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+    def test_offers_count_on_request(self):
+        """ """
+        url = '/api/v1/requests/1/'
+
+        response = self.client.get(url,  HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(4, data['offers_count'])

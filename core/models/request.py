@@ -31,6 +31,11 @@ class Request(ReportableModel):
 
     last_update = models.DateTimeField(auto_now=True)
 
+    def get_offers_count(self):
+        """  """
+        from core.models.offer import Offer
+        return Offer.objects.filter(request=self).count()
+
     class Meta:
         verbose_name = 'request'
         verbose_name_plural = 'requests'

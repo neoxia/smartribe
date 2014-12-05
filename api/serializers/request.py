@@ -5,6 +5,8 @@ from core.models import Request
 
 class RequestCreateSerializer(serializers.ModelSerializer):
 
+    offers_count = serializers.IntegerField(source='get_offers_count', read_only=True)
+
     class Meta:
         model = Request
         exclude = ('user', 'created_on', 'last_update')
@@ -17,6 +19,8 @@ class RequestSerializer(ReportableModelSerializer):
     user_first_name = serializers.CharField(max_length=255, source='user.first_name', read_only=True)
 
     user_last_name = serializers.CharField(max_length=255, source='user.last_name', read_only=True)
+
+    offers_count = serializers.IntegerField(source='get_offers_count', read_only=True)
 
     class Meta:
         model = Request
