@@ -25,7 +25,7 @@ class Skill(models.Model):
 
     def get_average_mark(self):
         from core.models.evaluation import Evaluation
-        return Evaluation.objects.filter(offer__skill=self).aggregate(average_eval=Avg('mark'))
+        return Evaluation.objects.filter(offer__skill=self).aggregate(average_eval=Avg('mark'))['average_eval']
 
     def get_mark_count(self):
         # TODO : Test
