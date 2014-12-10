@@ -20,7 +20,7 @@ class RequestSerializer(ReportableModelSerializer):
 
     user_last_name = serializers.CharField(max_length=255, source='user.last_name', read_only=True)
 
-    user_photo = serializers.ImageField(source='user.profile.photo', read_only=True)
+    user_photo = serializers.CharField(source='get_photo', read_only=True)
 
     offers_count = serializers.IntegerField(source='get_offers_count', read_only=True)
 

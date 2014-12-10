@@ -31,6 +31,13 @@ class Request(ReportableModel):
 
     last_update = models.DateTimeField(auto_now=True)
 
+    def get_photo(self):
+        """ """
+        from core.models.profile import Profile
+        if Profile.objects.filter(user=self.user).exists():
+            return Profile.objects.get(user=self.user).photo
+        return ''
+
     def get_offers_count(self):
         """  """
         from core.models.offer import Offer
