@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Avg
 from core.models.skill_category import SkillCategory
 
 
@@ -21,6 +22,15 @@ class Skill(models.Model):
     )
     level = models.IntegerField(default=MEDIUM,
                                 choices=LEVEL_CHOICES)
+
+    def get_average_mark(self):
+        from core.models.evaluation import Evaluation
+        return Evaluation.objects.filter(offer__skill=self).aggregate(average_eval=Avg('mark'))
+
+    def get_mark_count(self):
+        # TODO : Test
+        from core.models.evaluation import Evaluation
+        return Evaluation.objects.filter(offer__skill=self).count()
 
     def __str__(self):
         return self.description

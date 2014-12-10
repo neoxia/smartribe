@@ -36,6 +36,9 @@ class Request(ReportableModel):
         from core.models.offer import Offer
         return Offer.objects.filter(request=self).count()
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         verbose_name = 'request'
         verbose_name_plural = 'requests'

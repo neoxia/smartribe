@@ -57,6 +57,11 @@ class Profile(models.Model):
                                         choices=CONTACT_CHOICES,
                                         default='N')
 
+    def get_skills(self):
+        # TODO : Test
+        from core.models.skill import Skill
+        return Skill.objects.filter(user=self.user)
+
     def __str__(self):
         return self.user.username
 

@@ -8,10 +8,11 @@ from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.meeting import IsConcernedByMeeting
 from api.serializers import MeetingSerializer, MeetingCreateSerializer
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Meeting
 
 
-class MeetingViewSet(ModelViewSet):
+class MeetingViewSet(CustomViewSet):
     """
 
     Inherits standard characteristics from ModelViewSet:
@@ -26,6 +27,7 @@ class MeetingViewSet(ModelViewSet):
 
     """
     model = Meeting
+    create_serializer_class = MeetingCreateSerializer
     serializer_class = MeetingSerializer
 
     def get_permissions(self):
@@ -33,20 +35,12 @@ class MeetingViewSet(ModelViewSet):
             return [IsJWTAuthenticated()]
         return [IsConcernedByMeeting()]
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == 'POST':
-            serializer_class = MeetingCreateSerializer
-        return serializer_class
-
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
         return self.model.objects.filter(Q(offer__user=user) | Q(offer__request__user=user))
 
     def pre_save(self, obj):
-        user, _ = AuthUser().authenticate(self.request)
-        if self.request.method == 'POST':
-            obj.user = user
+        self.set_auto_user(obj)
 
     @action(methods=['POST'])
     def accept_meeting(self, request, pk=None):
@@ -68,12 +62,10 @@ class MeetingViewSet(ModelViewSet):
                 | **other actions**:
                 |       None
         """
+        obj, response = self.validate_object(request, pk)
+        if not obj:
+            return response
         user, _ = AuthUser().authenticate(self.request)
-        if pk is None:
-            return Response({'detail': 'Id requested in URL.'}, status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'No such object.'}, status.HTTP_404_NOT_FOUND)
-        obj = self.model.objects.get(id=pk)
         if user == obj.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         obj.status = 'A'
@@ -101,12 +93,10 @@ class MeetingViewSet(ModelViewSet):
                 | **other actions**:
                 |       None
         """
+        obj, response = self.validate_object(request, pk)
+        if not obj:
+            return response
         user, _ = AuthUser().authenticate(self.request)
-        if pk is None:
-            return Response({'detail': 'Id requested in URL.'}, status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'No such object.'}, status.HTTP_404_NOT_FOUND)
-        obj = self.model.objects.get(id=pk)
         if user == obj.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         obj.status = 'R'
@@ -134,12 +124,10 @@ class MeetingViewSet(ModelViewSet):
                 | **other actions**:
                 |       None
         """
+        obj, response = self.validate_object(request, pk)
+        if not obj:
+            return response
         user, _ = AuthUser().authenticate(self.request)
-        if pk is None:
-            return Response({'detail': 'Id requested in URL.'}, status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'No such object.'}, status.HTTP_404_NOT_FOUND)
-        obj = self.model.objects.get(id=pk)
         if user != obj.offer.user and user != obj.offer.request.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         if obj.status != 'A':

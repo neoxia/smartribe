@@ -1,10 +1,14 @@
 from rest_framework import viewsets
+from rest_framework.decorators import link
+from rest_framework.response import Response
+from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
 from api.serializers import SkillCategorySerializer, SkillCreateSerializer, SkillSerializer
 
 from core.models import Skill
 from core.models.skill import SkillCategory
 from rest_framework import mixins
+from rest_framework import status
 
 
 class SkillCategoryViewSet(viewsets.GenericViewSet,
@@ -51,3 +55,20 @@ class SkillViewSet(viewsets.ModelViewSet):
             return [IsJWTSelf()]
         else:
             return [IsJWTOwner()]
+
+    @link()
+    def list_my_skills(self, request, pk=None):
+        """ """
+        # TODO : Test
+        user, _ = AuthUser().authenticate(self.request)
+        my_skills = Skill.objects.filter(user=user)
+        serializer = self.get_paginated_serializer(my_skills)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def get_paginated_serializer(self, queryset):
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+        return serializer
