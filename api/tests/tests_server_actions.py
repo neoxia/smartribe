@@ -1,4 +1,5 @@
 import datetime
+import time
 
 from django.contrib.auth.models import User
 from django.core import mail
@@ -173,6 +174,7 @@ class ManageReportedObjectsTests(CustomAPITestCase):
 
         response = self.client.post(url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
+        time.sleep(0.2)
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
                          '[SmarTribe] Inappropriate content warning : tests0')
@@ -188,6 +190,7 @@ class ManageReportedObjectsTests(CustomAPITestCase):
 
         response = self.client.post(url, REMOTE_ADDR='192.168.161.12')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
+        time.sleep(0.2)
         self.assertEqual(2, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
                          '[SmarTribe] Inappropriate content warning : tests0')
