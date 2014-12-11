@@ -33,9 +33,12 @@ class Request(ReportableModel):
 
     def get_photo(self):
         """ """
+        # TODO : Test
         from core.models.profile import Profile
         if Profile.objects.filter(user=self.user).exists():
-            return Profile.objects.get(user=self.user).photo
+            profile = Profile.objects.get(user=self.user)
+            if profile.photo:
+                return profile.photo.path
         return ''
 
     def get_offers_count(self):
