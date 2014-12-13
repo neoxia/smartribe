@@ -14,6 +14,16 @@ class Message(ReportableModel):
 
     creation_date = models.DateTimeField(auto_now_add=True)
 
+    def get_photo(self):
+        """ """
+        # TODO : Test
+        from core.models.profile import Profile
+        if Profile.objects.filter(user=self.user).exists():
+            profile = Profile.objects.get(user=self.user)
+            if profile.photo:
+                return profile.photo.path
+        return ''
+
     class Meta:
         verbose_name = 'message'
         verbose_name_plural = 'messages'

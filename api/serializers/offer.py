@@ -12,6 +12,12 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
 class OfferSerializer(ReportableModelSerializer):
 
+    user_first_name = serializers.CharField(max_length=255, source='user.first_name', read_only=True)
+
+    user_last_name = serializers.CharField(max_length=255, source='user.last_name', read_only=True)
+
+    user_photo = serializers.CharField(source='get_photo', read_only=True)
+
     class Meta:
         model = Offer
         read_only_fields = ('request', 'user', 'created_on', 'last_update')

@@ -4,9 +4,7 @@ from core.models import Message
 
 
 class MessageCreateSerializer(serializers.ModelSerializer):
-    """
-
-    """
+    """  """
 
     class Meta:
         model = Message
@@ -14,9 +12,9 @@ class MessageCreateSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(ReportableModelSerializer):
-    """
+    """  """
 
-    """
+    user_photo = serializers.CharField(source='get_photo', read_only=True)
 
     class Meta:
         model = Message
