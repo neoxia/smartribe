@@ -7,6 +7,8 @@ def get_photo_path(self, filename):
     url = "profiles/%s/%s" % (self.user.username, filename)
     return url
 
+#fs = FileSystemStorage(location='/media/photos')
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
@@ -46,6 +48,7 @@ class Profile(models.Model):
                            null=True)
 
     photo = models.ImageField(upload_to=get_photo_path,
+                              #storage=fs,
                               blank=True,
                               null=True)
 

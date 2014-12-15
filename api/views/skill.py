@@ -26,7 +26,6 @@ class SkillCategoryViewSet(viewsets.GenericViewSet,
     model = SkillCategory
     serializer_class = SkillCategorySerializer
     permission_classes = [IsJWTAuthenticated, ]
-    filter_fields = ('user__id', )
 
 
 class SkillViewSet(viewsets.ModelViewSet):
@@ -41,6 +40,7 @@ class SkillViewSet(viewsets.ModelViewSet):
     """
     model = Skill
     serializer_class = SkillSerializer
+    filter_fields = ('user__id', )
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
