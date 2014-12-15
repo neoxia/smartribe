@@ -30,7 +30,7 @@ class Offer(ReportableModel):
         if Profile.objects.filter(user=self.user).exists():
             profile = Profile.objects.get(user=self.user)
             if profile.photo:
-                return profile.photo.path
+                return profile.photo.url
         return ''
 
     def get_skill_description(self):
