@@ -33,6 +33,12 @@ class Offer(ReportableModel):
                 return profile.photo.path
         return ''
 
+    def get_skill_description(self):
+        """ """
+        if self.skill:
+            return self.skill.description
+        return ''
+
     def __str__(self):
         return self.request.title + ' - ' + self.user.first_name + ' ' + self.user.last_name
 
