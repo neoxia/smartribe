@@ -40,6 +40,10 @@ class MessageViewSet(mixins.CreateModelMixin,
             serializer_class = MessageCreateSerializer
         return serializer_class
 
+    def pre_save(self, obj):
+        user, _ = AuthUser().authenticate(self.request)
+        obj.user = user
+
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
         return self.model.objects.filter( Q(offer__user=user) | Q(offer__request__user=user)).order_by('-creation_date')

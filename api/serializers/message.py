@@ -8,7 +8,7 @@ class MessageCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        exclude = ('creation_date')
+        exclude = ('user', 'creation_date', )
 
 
 class MessageSerializer(ReportableModelSerializer):

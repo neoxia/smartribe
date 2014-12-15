@@ -1,31 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.decorators import link
 from rest_framework.response import Response
-from api.authenticate import AuthUser
-from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
-from api.serializers import SkillCategorySerializer, SkillCreateSerializer, SkillSerializer
-
-from core.models import Skill
-from core.models.skill import SkillCategory
-from rest_framework import mixins
 from rest_framework import status
 
-
-class SkillCategoryViewSet(viewsets.GenericViewSet,
-                           mixins.CreateModelMixin,
-                           mixins.RetrieveModelMixin,
-                           mixins.ListModelMixin):
-    """
-    Inherits standard characteristics from GenericViewSet and additionally provides
-    'create', 'retrieve' and 'list' methods :
-            | **Endpoint**: /skill_categories/
-            | **Methods**: GET / POST / OPTIONS
-            | **Permissions**:
-            |       - Default : IsJWTAuthenticated
-    """
-    model = SkillCategory
-    serializer_class = SkillCategorySerializer
-    permission_classes = [IsJWTAuthenticated, ]
+from api.authenticate import AuthUser
+from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
+from api.serializers import SkillCreateSerializer, SkillSerializer
+from core.models import Skill
 
 
 class SkillViewSet(viewsets.ModelViewSet):

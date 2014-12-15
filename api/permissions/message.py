@@ -13,10 +13,6 @@ class IsConcernedByOffer(BasePermission):
         data = request.DATA
         if not user:
             return False
-        if 'user' not in data:
-            return False
-        if user.id != data['user']:
-            return False
         if 'offer' not in data:
             return False
         if not Offer.objects.filter(id=data['offer']).exists():

@@ -19,6 +19,7 @@ from api.views import message
 from api.views import meeting
 from api.views import evaluation
 from api.views import server_action
+from api.views.skill_category import SkillCategoryViewSet
 from smartribe.settings import MEDIA_ROOT
 
 
@@ -26,7 +27,7 @@ router = routers.DefaultRouter()
 router.register(r'users', user.UserViewSet)
 
 router.register(r'profiles', profile.ProfileViewSet)
-router.register(r'skill_categories', skill.SkillCategoryViewSet)
+router.register(r'skill_categories', SkillCategoryViewSet)
 router.register(r'skills', skill.SkillViewSet)
 
 router.register(r'communities', community.CommunityViewSet)
