@@ -47,4 +47,4 @@ class MessageViewSet(mixins.CreateModelMixin,
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter( Q(offer__user=user) | Q(offer__request__user=user)).order_by('-creation_date')
+        return self.model.objects.filter( Q(offer__user=user) | Q(offer__request__user=user)).order_by('creation_date')
