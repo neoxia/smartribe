@@ -27,7 +27,7 @@ class RequestViewSet(viewsets.ModelViewSet):
     """
     model = Request
     serializer_class = RequestSerializer
-    filter_fields = ['user', 'category', 'closed']
+    filter_fields = ['user__id', 'category__id', 'closed']
 
     def get_permissions(self):
         if self.request.method in ['GET', 'POST']:

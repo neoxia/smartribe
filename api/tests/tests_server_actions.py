@@ -206,3 +206,10 @@ class ManageReportedObjectsTests(CustomAPITestCase):
 
         response = self.client.post(url, REMOTE_ADDR='192.168.161.12')
         self.assertEqual(status.HTTP_429_TOO_MANY_REQUESTS, response.status_code)
+
+    def test_manage_wrong_ip(self):
+        """  """
+        url = '/api/v1/server_actions/manage_reported_objects/'
+
+        response = self.client.post(url, REMOTE_ADDR='212.212.212.212')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
