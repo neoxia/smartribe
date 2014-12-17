@@ -141,3 +141,14 @@ class OfferTests(CustomAPITestCase):
 
         data = response.data
         self.assertEqual(4, data['offers_count'])
+
+    def test_offer_closing(self):
+        """ """
+        url = '/api/v1/requests/1/close_request/'
+
+        response = self.client.post(url,  HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        offers = Offer.objects.filter(request__id=1)
+        for offer in offers:
+            self.assertTrue(offer.closed)

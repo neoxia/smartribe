@@ -24,6 +24,8 @@ class Evaluation(ReportableModel):
     }
     mark = models.IntegerField(choices=EVALUATION_CHOICES)
 
+    usefull = models.BooleanField(default=True)
+
     comment = models.TextField()
 
     creation_date = models.DateTimeField(auto_now_add=True)

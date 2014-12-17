@@ -1,14 +1,14 @@
 from django.db.models import Q
-from rest_framework.viewsets import ModelViewSet
 
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.permissions.offer import IsJWTSelfAndConcerned
 from api.serializers import OfferSerializer, OfferCreateSerializer
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Offer
 
 
-class OfferViewSet(ModelViewSet):
+class OfferViewSet(CustomViewSet):
     """
 
     Inherits standard characteristics from ModelViewSet:
@@ -22,6 +22,7 @@ class OfferViewSet(ModelViewSet):
 
     """
     model = Offer
+    create_serializer_class = OfferCreateSerializer
     serializer_class = OfferSerializer
     filter_fields = ['request__user__id', 'request__id', 'user__id']
 
@@ -32,16 +33,8 @@ class OfferViewSet(ModelViewSet):
             return [IsJWTSelfAndConcerned()]
         return [IsJWTOwner()]
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == 'POST':
-            serializer_class = OfferCreateSerializer
-        return serializer_class
-
     def pre_save(self, obj):
-        user, _ = AuthUser().authenticate(self.request)
-        if self.request.method == 'POST':
-            obj.user = user
+        self.set_auto_user(obj)
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)

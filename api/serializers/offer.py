@@ -22,4 +22,4 @@ class OfferSerializer(ReportableModelSerializer):
 
     class Meta:
         model = Offer
-        read_only_fields = ('request', 'user', 'created_on', 'last_update')
+        read_only_fields = ('request', 'user', 'created_on', 'last_update', 'usefull', 'closed')

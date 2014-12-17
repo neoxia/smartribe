@@ -1,5 +1,4 @@
 from django.db.models import Q
-from rest_framework import viewsets
 from rest_framework.decorators import link, action
 from rest_framework.response import Response
 from rest_framework import status
@@ -7,10 +6,11 @@ from rest_framework import status
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.serializers import RequestSerializer, RequestCreateSerializer
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Request, Member, Skill, Offer
 
 
-class RequestViewSet(viewsets.ModelViewSet):
+class RequestViewSet(CustomViewSet):
     """
 
     Inherits standard characteristics from ModelViewSet:
@@ -26,6 +26,7 @@ class RequestViewSet(viewsets.ModelViewSet):
 
     """
     model = Request
+    create_serializer_class = RequestCreateSerializer
     serializer_class = RequestSerializer
     filter_fields = ['user__id', 'category__id', 'closed']
 
@@ -34,16 +35,8 @@ class RequestViewSet(viewsets.ModelViewSet):
             return [IsJWTAuthenticated()]
         return [IsJWTOwner()]
 
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == 'POST':
-            serializer_class = RequestCreateSerializer
-        return serializer_class
-
     def pre_save(self, obj):
-        user, _ = AuthUser().authenticate(self.request)
-        if self.request.method == 'POST':
-            obj.user = user
+        self.set_auto_user(obj)
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
@@ -51,14 +44,6 @@ class RequestViewSet(viewsets.ModelViewSet):
         linked_users = Member.objects.filter(community__in=my_communities).values('user')
         return self.model.objects.filter(Q(user__in=linked_users),
                                          Q(community=None) | Q(community__in=my_communities))
-
-    def validate_object(self, request, pk):
-        """  """
-        if pk is None:
-            return None, Response({'detail': 'Missing object index.'}, status=status.HTTP_400_BAD_REQUEST)
-        if not self.model.objects.filter(id=pk).exists():
-            return None, Response({'detail': 'This object does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-        return self.model.objects.get(id=pk), None
 
     @link()
     def list_my_requests(self, request, pk=None):
@@ -108,7 +93,6 @@ class RequestViewSet(viewsets.ModelViewSet):
     @link()
     def get_offer_count(self, request, pk=None):
         """  """
-        # TODO : Test
         req, response = self.validate_object(request, pk)
         if not req:
             return response
@@ -143,13 +127,9 @@ class RequestViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         req.closed = True
         req.save()
+        offers = Offer.objects.filter(request=req, closed=False)
+        for offer in offers:
+            offer.closed = True
+            offer.save()
         serializer = RequestSerializer(req)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def get_paginated_serializer(self, queryset):
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_pagination_serializer(page)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-        return serializer

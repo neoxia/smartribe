@@ -27,5 +27,13 @@ class CustomViewSet(ModelViewSet):
         if self.request.method == 'POST':
             obj.user = user
 
+    def get_paginated_serializer(self, queryset):
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+        return serializer
+
     class Meta:
         abstract = True

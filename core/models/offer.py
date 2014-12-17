@@ -17,8 +17,6 @@ class Offer(ReportableModel):
 
     closed = models.BooleanField(default=False)
 
-    usefull = models.BooleanField(default=True)
-
     created_on = models.DateTimeField(auto_now_add=True)
 
     last_update = models.DateTimeField(auto_now=True)

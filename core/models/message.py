@@ -24,6 +24,9 @@ class Message(ReportableModel):
                 return profile.photo.url
         return ''
 
+    def __str__(self):
+        return self.user.first_name + ' ' + self.user.last_name + ' - Offer : ' + str(self.offer.id)
+
     class Meta:
         verbose_name = 'message'
         verbose_name_plural = 'messages'
