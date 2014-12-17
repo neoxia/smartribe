@@ -20,8 +20,6 @@ notify:
       - delabr_e@etna-alternance.net
   slack:
       - webhook_url: "https://hooks.slack.com/services/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"
-      - channel: "#api"
-      - username: "drone ci"
       - on_started: true
       - on_success: true
       - on_failure: true
