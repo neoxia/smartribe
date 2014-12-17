@@ -462,6 +462,7 @@ class MemberTests(CustomAPITestCase):
         data = response.data
         self.assertEqual(8, data['id'])
         self.assertEqual('2', data['status'])
+        time.sleep(0.2)
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
                          '[Smartribe] Membership cancelled')
@@ -481,6 +482,7 @@ class MemberTests(CustomAPITestCase):
         data = response.data
         self.assertEqual(8, data['id'])
         self.assertEqual('2', data['status'])
+        time.sleep(0.2)
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
                          '[Smartribe] Membership cancelled')
