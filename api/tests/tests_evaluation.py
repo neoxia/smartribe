@@ -150,6 +150,7 @@ class RequestTests(CustomAPITestCase):
         """
 
         """
+        self.assertFalse(Offer.objects.get(id=4).closed)
         url = '/api/v1/evaluations/'
         data = {
             'offer': 4,
@@ -159,6 +160,7 @@ class RequestTests(CustomAPITestCase):
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertTrue(Offer.objects.get(id=4).closed)
 
     def test_list_evaluations(self):
         """

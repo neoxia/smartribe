@@ -8,7 +8,7 @@ from api.permissions.common import IsJWTAuthenticated
 from api.permissions.evaluation import IsEvaluator
 from api.serializers.evaluation import EvaluationSerializer, EvaluationCreateSerializer
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
-from core.models import Evaluation
+from core.models import Evaluation, Offer
 
 
 class EvaluationViewSet(CustomViewSet):
@@ -33,6 +33,10 @@ class EvaluationViewSet(CustomViewSet):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
         return [IsEvaluator()]
+
+    def post_save(self, obj, created=False):
+        obj.offer.closed = True
+        obj.offer.save()
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
