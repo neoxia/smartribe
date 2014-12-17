@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from core.models import Skill
@@ -23,12 +24,11 @@ class Offer(ReportableModel):
 
     def get_photo(self):
         """ """
-        # TODO : Test
         from core.models.profile import Profile
         if Profile.objects.filter(user=self.user).exists():
             profile = Profile.objects.get(user=self.user)
             if profile.photo:
-                return profile.photo.url
+                return profile.photo.url[len(settings.MEDIA_URL):]
         return ''
 
     def get_skill_description(self):

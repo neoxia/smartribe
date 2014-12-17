@@ -5,7 +5,6 @@ from django.db.models import Count
 from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.throttling import AnonRateThrottle
@@ -14,7 +13,7 @@ from api.permissions.server_actions import HasAllowedIp
 from api.utils.asyncronous_mail import send_mail
 from core.models import Request, Inappropriate
 from core.models.password_recovery import PasswordRecovery
-from smartribe.settings import INAP_LIMIT
+
 
 
 @api_view(['POST'])
@@ -58,9 +57,9 @@ def manage_reported_objects(request):
     qs = Inappropriate.objects.values('content_identifier').annotate(total=Count('content_identifier'))
     #qs = qs.order_by('content_identifier')
     for obj in qs:
-        if obj['total'] > INAP_LIMIT:
+        if obj['total'] > settings.INAP_LIMIT:
             message = 'Content URL :\n' + obj['content_identifier'] \
-                + '\n\nThis content has been reported as inappropriate more than ' + str(INAP_LIMIT) + ' times.' \
+                + '\n\nThis content has been reported as inappropriate more than ' + str(settings.INAP_LIMIT) + ' times.' \
                 + '\n\nPlease, specific attention required !'
 
             send_mail('[SmarTribe] Inappropriate content warning : ' + obj['content_identifier'],

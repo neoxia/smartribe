@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Community, Member, SkillCategory, Request, Skill
+from core.models import Community, Member, SkillCategory, Request, Skill, Profile
 import core.utils
 
 
@@ -22,6 +22,9 @@ class RequestTests(CustomAPITestCase):
         user3.save()
         user4.save()
         user5.save()
+
+        profile1 = Profile(user=user1, photo='profiles/user1.jpg')
+        profile1.save()
 
         community1 = Community(name='com1', description='desc1')
         community2 = Community(name='com2', description='desc2')
@@ -82,6 +85,7 @@ class RequestTests(CustomAPITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(5, data['count'])
+        self.assertEqual('profiles/user1.jpg', data['results'][0]['user_photo'])
 
     def test_list_request_user2(self):
         """
