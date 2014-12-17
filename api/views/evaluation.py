@@ -2,16 +2,16 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import link
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.evaluation import IsEvaluator
 from api.serializers.evaluation import EvaluationSerializer, EvaluationCreateSerializer
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Evaluation
 
 
-class EvaluationViewSet(ModelViewSet):
+class EvaluationViewSet(CustomViewSet):
     """
 
     Inherits standard characteristics from ModelViewSet:
@@ -26,18 +26,13 @@ class EvaluationViewSet(ModelViewSet):
 
     """
     model = Evaluation
+    create_serializer_class = EvaluationCreateSerializer
     serializer_class = EvaluationSerializer
 
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
         return [IsEvaluator()]
-
-    def get_serializer_class(self):
-        serializer_class = self.serializer_class
-        if self.request.method == 'POST':
-            serializer_class = EvaluationCreateSerializer
-        return serializer_class
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
@@ -72,11 +67,7 @@ class EvaluationViewSet(ModelViewSet):
         """
         user, _ = AuthUser().authenticate(self.request)
         qs = self.get_queryset().filter(offer__user=user)
-        page = self.paginate_queryset(qs)
-        if page is not None:
-            serializer = self.get_pagination_serializer(page)
-        else:
-            serializer = self.get_serializer(self.object_list, many=True)
+        serializer = self.get_paginated_serializer(qs)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link()
@@ -107,9 +98,5 @@ class EvaluationViewSet(ModelViewSet):
         """
         user, _ = AuthUser().authenticate(self.request)
         qs = self.get_queryset().filter(offer__request__user=user)
-        page = self.paginate_queryset(qs)
-        if page is not None:
-            serializer = self.get_pagination_serializer(page)
-        else:
-            serializer = self.get_serializer(self.object_list, many=True)
+        serializer = self.get_paginated_serializer(qs)
         return Response(serializer.data, status=status.HTTP_200_OK)
