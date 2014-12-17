@@ -13,7 +13,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(required=True, validators=[validate_email_unique])
 
-    # TODO : Make first and last names mandatory
+    first_name = serializers.CharField(max_length=30, required=True)
+
+    last_name = serializers.CharField(max_length=30, required=True)
 
     class Meta:
         model = User

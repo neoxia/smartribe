@@ -85,7 +85,9 @@ class AccountTests(CustomAPITestCase):
         data = {
             'username': 'test',
             'email': 'user1@test.com',
-            'password': 'pass1'
+            'password': 'pass1',
+            'first_name': 'first',
+            'last_name': 'last'
         }
 
         response = self.client.post(url, data, format='json')
@@ -114,7 +116,9 @@ class AccountTests(CustomAPITestCase):
         data = {
             'username': 'user1',
             'email': 'test@test.com',
-            'password': 'pass1'
+            'password': 'pass1',
+            'first_name': 'first',
+            'last_name': 'last'
         }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
