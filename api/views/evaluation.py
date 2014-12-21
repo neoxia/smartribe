@@ -28,6 +28,7 @@ class EvaluationViewSet(CustomViewSet):
     model = Evaluation
     create_serializer_class = EvaluationCreateSerializer
     serializer_class = EvaluationSerializer
+    filter_fields = ('offer__id', 'usefull')
 
     def get_permissions(self):
         if self.request.method == 'GET':

@@ -6,7 +6,7 @@ def registration_message(activation_token):
     m = 'Cher '+ activation_token.user.username +', \n\n' \
         'Vous venez de vous inscrire sur SmarTribe et nous vous en remercions.\n\n' \
         'Afin de confirmer votre inscription, merci de suivre le lien suivant: \n\n' \
-        'https://demo.smartri.be/#/user/' + activation_token.token + '/activate \n\n' \
+        'https://demo.smartri.be/#/account/' + activation_token.token + '/activation \n\n' \
         'Cordialement.\n\n' \
         'L\'équipe SmarTribe'
     return s, m
