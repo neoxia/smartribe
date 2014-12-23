@@ -38,7 +38,7 @@ class Evaluation(ReportableModel):
         return False
 
     def __str__(self):
-        return self.meeting.offer.user.username + ', ' + self.id.__str__()
+        return self.offer.user.username + ', ' + self.id.__str__()
 
     class Meta:
         verbose_name = 'evaluation'

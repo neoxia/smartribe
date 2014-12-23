@@ -13,6 +13,8 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
     skill_description = serializers.CharField(source='get_skill_description', read_only=True)
 
+    is_evaluated = serializers.BooleanField(source='is_evaluated', read_only=True)
+
     class Meta:
         model = Offer
         exclude = ('user', 'created_on', 'last_update')
@@ -27,6 +29,8 @@ class OfferSerializer(ReportableModelSerializer):
     user_photo = serializers.CharField(source='get_photo', read_only=True)
 
     skill_description = serializers.CharField(source='get_skill_description', read_only=True)
+
+    is_evaluated = serializers.BooleanField(source='is_evaluated', read_only=True)
 
     class Meta:
         model = Offer

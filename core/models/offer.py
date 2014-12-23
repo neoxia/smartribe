@@ -37,6 +37,10 @@ class Offer(ReportableModel):
             return self.skill.description
         return ''
 
+    def is_evaluated(self):
+        from core.models.evaluation import Evaluation
+        return Evaluation.objects.filter(offer=self).exists()
+
     def __str__(self):
         return self.request.title + ' - ' + self.user.first_name + ' ' + self.user.last_name
 
