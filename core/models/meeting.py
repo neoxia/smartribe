@@ -30,6 +30,9 @@ class Meeting(models.Model):
 
     last_update = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return str(self.id) + ' - Date : ' + str(self.date_time) + ' - Offer : ' + str(self.offer)
+
     class Meta:
         verbose_name = 'meeting'
         verbose_name_plural = 'meetings'

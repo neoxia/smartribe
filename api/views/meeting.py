@@ -29,6 +29,7 @@ class MeetingViewSet(CustomViewSet):
     model = Meeting
     create_serializer_class = MeetingCreateSerializer
     serializer_class = MeetingSerializer
+    filter_fields = ('offer__id', 'user__id', 'status')
 
     def get_permissions(self):
         if self.request.method == 'GET':

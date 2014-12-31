@@ -19,6 +19,9 @@ class MeetingPoint(models.Model):
                               blank=True,
                               null=True)
 
+    def __str__(self):
+        return str(self.id) + ' - ' + self.name
+
     class Meta:
         verbose_name = 'meeting point'
         verbose_name_plural = 'meeting points'
