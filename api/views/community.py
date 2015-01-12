@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import status
@@ -635,6 +636,29 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Bad operation.'}, status=status.HTTP_400_BAD_REQUEST)
         location.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @link(permission_classes=[IsJWTAuthenticated()])
+    def get_shared_communities(self, request, pk=None):
+        """
+         Get communities shared by two users
+        """
+        user, _ = AuthUser().authenticate(request)
+        data = request.QUERY_PARAMS
+        if 'other_user' not in data:
+            return Response({'detail': 'Missing other_user id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not User.objects.filter(pk=data['other_user']).exists():
+            return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
+        other_user = User.objects.get(pk=data['other_user'])
+        user_communities = Member.objects.filter(user=user, status='1').values('community')
+        other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
+        shared_communities = user_communities and other_user_communities
+        community_list = Community.objects.filter(id__in=shared_communities)
+        page = self.paginate_queryset(community_list)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+        else:
+            serializer = self.get_serializer(community_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def pre_delete_location(self, location, community):
         """

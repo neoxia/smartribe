@@ -234,3 +234,43 @@ class CommunityTests(CustomAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertTrue(data['is_member'])
+
+    def test_get_shared_communities_moderator(self):
+        """ """
+        url = '/api/v1/communities/0/get_shared_communities/'
+        data = {
+            'other_user': 2
+        }
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("owner"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual(1, data['count'])
+        self.assertEqual(4, data['results'][0]['id'])
+
+
+    def test_get_shared_communities_member(self):
+        """ """
+        url = '/api/v1/communities/0/get_shared_communities/'
+        data = {
+            'other_user': 3
+        }
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("owner"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual(2, data['count'])
+        self.assertEqual(4, data['results'][0]['id'])
+        self.assertEqual(10, data['results'][1]['id'])
+
+    def test_get_shared_communities_other(self):
+        """ """
+        url = '/api/v1/communities/0/get_shared_communities/'
+        data = {
+            'other_user': 4
+        }
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("owner"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.data
+        self.assertEqual(0, data['count'])
