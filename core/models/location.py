@@ -34,6 +34,12 @@ class Location(models.Model):
     country = models.CharField(max_length=50,
                                blank=True, null=True)
 
+    def __desc_str__(self):
+        return self.community.name + " / " + self.name
+
+    def __str__(self):
+        return str(self.id) + " : " + self.__desc_str__()
+
     class Meta:
         verbose_name = 'location'
         verbose_name_plural = 'locations'

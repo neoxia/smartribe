@@ -19,8 +19,11 @@ class MeetingPoint(models.Model):
                               blank=True,
                               null=True)
 
+    def __desc_str__(self):
+        return self.name
+
     def __str__(self):
-        return str(self.id) + ' - ' + self.name
+        return str(self.id) + ' : ' + self.location.__desc_str__() + " / " + self.__desc_str__()
 
     class Meta:
         verbose_name = 'meeting point'

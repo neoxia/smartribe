@@ -46,8 +46,11 @@ class Request(ReportableModel):
         from core.models.offer import Offer
         return Offer.objects.filter(request=self).count()
 
+    def __desc_str__(self):
+        return self.user.username + " / " + self.category.name + " / " + self.title
+
     def __str__(self):
-        return self.title
+        return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
         verbose_name = 'request'

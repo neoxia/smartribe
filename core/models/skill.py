@@ -32,8 +32,11 @@ class Skill(models.Model):
         from core.models.evaluation import Evaluation
         return Evaluation.objects.filter(offer__skill=self).count()
 
+    def __desc_str__(self):
+        return self.user.username + " / " + self.category.name + " / " + self.get_level_display()
+
     def __str__(self):
-        return self.description
+        return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
         verbose_name = 'skill'

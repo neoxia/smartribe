@@ -41,8 +41,11 @@ class Offer(ReportableModel):
         from core.models.evaluation import Evaluation
         return Evaluation.objects.filter(offer=self).exists()
 
+    def __desc_str__(self):
+        return self.user.username + " (" + self.request.__desc_str__() + ")"
+
     def __str__(self):
-        return self.request.title + ' - ' + self.user.first_name + ' ' + self.user.last_name
+        return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
         verbose_name = 'offer'
