@@ -17,6 +17,7 @@ ENV LC_ALL C.UTF-8
 
 RUN mkdir -p /srv
 ADD . /srv/smartribe
+RUN mkdir -p /srv/smartribe/media
 
 RUN pip3 install -r /srv/smartribe/requirements.prod.txt
 
@@ -28,6 +29,6 @@ USER gunicorn
 WORKDIR /srv/smartribe
 
 EXPOSE 7777
-
+VOLUME /srv/smartribe/media
 CMD ["/srv/smartribe/start.sh"]
 ENTRYPOINT ["/bin/bash"]
