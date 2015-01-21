@@ -40,7 +40,7 @@ class RequestViewSet(CustomViewSet):
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)
-        my_communities = Member.objects.filter(user=user).values('community')
+        my_communities = Member.objects.filter(user=user, status="1").values('community')
         linked_users = Member.objects.filter(community__in=my_communities).values('user')
         return self.model.objects.filter(Q(user__in=linked_users),
                                          Q(community=None) | Q(community__in=my_communities))
