@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import link
 from rest_framework.response import Response
@@ -65,9 +66,9 @@ class LocationViewSet(ReadOnlyModelViewSet):
         if not User.objects.filter(pk=data['other_user']).exists():
             return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
         other_user = User.objects.get(pk=data['other_user'])
-        user_communities = Member.objects.filter(user=user).values('community')
-        other_user_communities = Member.objects.filter(user=other_user).values('community')
-        shared_communities = user_communities and other_user_communities
+        user_communities = Member.objects.filter(user=user, status='1').values('community')
+        other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
+        shared_communities = Community.objects.filter(Q(id__in=user_communities) & Q(id__in=other_user_communities))
         shared_locations = Location.objects.filter(community__in=shared_communities)
         page = self.paginate_queryset(shared_locations)
         if page is not None:
