@@ -54,7 +54,7 @@ class MeetingPointViewSet(CustomViewSet):
         if 'offer' not in data:
             return Response({'detail': 'Missing offer id'}, status=status.HTTP_400_BAD_REQUEST)
         if not Offer.objects.filter(pk=data['offer']).exists():
-            return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'No offer with this id'}, status=status.HTTP_400_BAD_REQUEST)
         offer = Offer.objects.get(pk=data['offer'])
         req = offer.request
         if user != offer.user and user != req.user:

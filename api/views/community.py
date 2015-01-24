@@ -10,7 +10,7 @@ from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMembersSerializer
 from api.serializers.location import LocationSerializer, LocationCreateSerializer
 from api.utils.asyncronous_mail import send_mail
-from core.models import Community, Member, Location
+from core.models import Community, Member, Location, Offer
 from api.serializers import CommunitySerializer
 from api.authenticate import AuthUser
 
@@ -658,6 +658,38 @@ class CommunityViewSet(viewsets.ModelViewSet):
             serializer = self.get_pagination_serializer(page)
         else:
             serializer = self.get_serializer(community_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @link(permission_classes=[IsJWTAuthenticated()])
+    def get_offer_communities(self, request, pk=None):
+        """
+         Get relevant meeting points for an offer
+        """
+        user, _ = AuthUser().authenticate(request)
+        data = request.QUERY_PARAMS
+        if 'offer' not in data:
+            return Response({'detail': 'Missing offer id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Offer.objects.filter(pk=data['offer']).exists():
+            return Response({'detail': 'No offer with this id'}, status=status.HTTP_400_BAD_REQUEST)
+        offer = Offer.objects.get(pk=data['offer'])
+        req = offer.request
+        if user != offer.user and user != req.user:
+            return Response({'detail': 'Operation not allowed'}, status=status.HTTP_403_FORBIDDEN)
+        if user == offer.user:
+            other_user = req.user
+        else:
+            other_user = offer.user
+        if req.community:
+            shared_communities = Community.objects.filter(id=req.community.id)
+        else:
+            user_communities = Member.objects.filter(user=user, status='1').values('community')
+            other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
+            shared_communities = Community.objects.filter(Q(id__in=user_communities) & Q(id__in=other_user_communities))
+        page = self.paginate_queryset(shared_communities)
+        if page is not None:
+            serializer = self.get_pagination_serializer(page)
+        else:
+            serializer = self.get_serializer(shared_communities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def pre_delete_location(self, location, community):
