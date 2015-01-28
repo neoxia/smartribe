@@ -22,11 +22,13 @@ class CommunityAdmin(BasicAdmin):
 
 class LocalCommunityAdmin(CommunityAdmin):
     model = LocalCommunity
-    list_display = ['name', 'zip_code', 'city', 'id', 'get_members_count']
+    list_display = ['name', 'zip_code', 'city', 'id', 'auto_accept_member', 'get_members_count']
+    list_editable = ['auto_accept_member']
     search_fields = ['name', 'description', 'street', 'city', 'zip_code']
 
 
 class TransportCommunityAdmin(CommunityAdmin):
     model = TransportCommunity
-    list_display = ['name', 'departure', 'via', 'arrival', 'id', 'get_members_count']
+    list_display = ['name', 'departure', 'via', 'arrival', 'id', 'auto_accept_member', 'get_members_count']
+    list_editable = ['auto_accept_member']
     search_fields = ['name', 'description', 'departure', 'via', 'arrival']
