@@ -32,7 +32,7 @@ admin.site.register(Profile)
 admin.site.register(SkillCategory)
 admin.site.register(Skill)
 
-#admin.site.register(Community, CommunityAdmin, )
+admin.site.register(Community, CommunityAdmin, )
 admin.site.register(LocalCommunity, LocalCommunityAdmin)
 admin.site.register(TransportCommunity, TransportCommunityAdmin)
 admin.site.register(Location, LocationAdmin)
