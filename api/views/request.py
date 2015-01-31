@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db.models import Q
 from rest_framework.decorators import link, action
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.serializers import RequestSerializer, RequestCreateSerializer
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
-from core.models import Request, Member, Skill, Offer
+from core.models import Request, Member, Skill, Offer, Community
 
 
 class RequestViewSet(CustomViewSet):
@@ -77,6 +78,23 @@ class RequestViewSet(CustomViewSet):
         """
         user, _ = AuthUser().authenticate(self.request)
         requests = self.model.objects.filter(user=user).order_by('-created_on')
+        serializer = self.get_paginated_serializer(requests)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @link()
+    def list_community_requests(self, request, pk=None):
+        """ """
+        # TODO : Rights management & Test
+        user, _ = AuthUser().authenticate(self.request)
+        if not 'community' in request.QUERY_PARAMS:
+            return Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Community.objects.filter(id=request.QUERY_PARAMS['community']).exists():
+            return Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        community = Community.objects.get(id=request.QUERY_PARAMS['community'])
+        members = Member.objects.filter(community=community, status='1').values('user')
+        users = User.objects.filter(id__in=members)
+        requests = Request.objects.filter(Q(community=community)
+                                          | (Q(community=None) & Q(user__in=users))).order_by('-created_on')
         serializer = self.get_paginated_serializer(requests)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
