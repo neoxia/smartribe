@@ -235,6 +235,38 @@ class CommunityTests(CustomAPITestCase):
         data = response.data
         self.assertTrue(data['is_member'])
 
+    def test_get_my_membership_owner(self):
+        """ """
+        url = '/api/v1/communities/4/get_my_membership/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("owner"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertEqual('1', data['status'])
+        self.assertEqual('0', data['role'])
+
+    def test_get_my_membership_member(self):
+        """ """
+        url = '/api/v1/communities/4/get_my_membership/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("member"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertEqual('1', data['status'])
+        self.assertEqual('2', data['role'])
+
+    def test_get_my_membership_other(self):
+        """ """
+        url = '/api/v1/communities/4/get_my_membership/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertEqual({}, data)
+
     def test_get_shared_communities_moderator(self):
         """ """
         url = '/api/v1/communities/0/get_shared_communities/'

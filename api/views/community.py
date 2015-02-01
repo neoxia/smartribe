@@ -239,6 +239,20 @@ class CommunityViewSet(viewsets.ModelViewSet):
         is_member = Member.objects.filter(user=user, community=community).exists()
         return Response({'is_member': is_member}, status=status.HTTP_200_OK)
 
+    @link()
+    def get_my_membership(self, request, pk=None):
+        """ """
+        community, response = self.validate_community(request, pk)
+        if not community:
+            return response
+        user, _ = AuthUser().authenticate(request)
+        if not Member.objects.filter(user=user, community=community).exists():
+            return Response({}, status=status.HTTP_200_OK)
+        member = Member.objects.get(user=user, community=community)
+        serializer = MemberSerializer(member, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
     # Moderator actions
 
     @link(permission_classes=[IsCommunityModerator])
