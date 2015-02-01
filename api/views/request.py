@@ -84,7 +84,6 @@ class RequestViewSet(CustomViewSet):
     @link()
     def list_community_requests(self, request, pk=None):
         """ """
-        # TODO : Rights management & Test
         user, _ = AuthUser().authenticate(self.request)
         if not 'community' in request.QUERY_PARAMS:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -93,9 +92,9 @@ class RequestViewSet(CustomViewSet):
         community = Community.objects.get(id=request.QUERY_PARAMS['community'])
         members = Member.objects.filter(community=community, status='1').values('user')
         users = User.objects.filter(id__in=members)
-        requests = Request.objects.filter(Q(community=community)
-                                          | (Q(community=None) & Q(user__in=users))).order_by('-created_on')
-        serializer = self.get_paginated_serializer(requests)
+        requests = self.get_queryset().filter(Q(community=community)
+                                              | (Q(community=None) & Q(user__in=users)))
+        serializer = self.get_paginated_serializer(requests.order_by('-created_on'))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link()

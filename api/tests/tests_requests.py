@@ -206,3 +206,69 @@ class RequestTests(CustomAPITestCase):
         self.assertEqual(2, data['count'])
         self.assertEqual(1, data['results'][0]['id'])
         self.assertEqual(2, data['results'][1]['id'])
+
+    def test_list_community_requests_user1_com1(self):
+        """ """
+        url = '/api/v1/requests/0/list_community_requests/'
+        data = {'community': 1}
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(3, data['count'])
+        self.assertEqual(2, data['results'][0]['id'])
+        self.assertEqual(1, data['results'][1]['id'])
+        self.assertEqual(5, data['results'][2]['id'])
+
+    def test_list_community_requests_user1_no_community(self):
+        """ """
+        url = '/api/v1/requests/0/list_community_requests/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_list_community_requests_user1_bad_community(self):
+        """ """
+        url = '/api/v1/requests/0/list_community_requests/'
+        data = {'community': 4}
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_list_community_requests_user2_com1(self):
+        """ """
+        url = '/api/v1/requests/0/list_community_requests/'
+        data = {'community': 1}
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user2'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(1, data['count'])
+        self.assertEqual(1, data['results'][0]['id'])
+
+    def test_list_community_requests_user4_com1(self):
+        """ """
+        url = '/api/v1/requests/0/list_community_requests/'
+        data = {'community': 1}
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user4'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(0, data['count'])
+
+    def test_list_community_requests_user1_com2(self):
+        """ """
+        url = '/api/v1/requests/0/list_community_requests/'
+        data = {'community': 2}
+
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user1'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertEqual(3, data['count'])
+        self.assertEqual(1, data['results'][0]['id'])
+        self.assertEqual(3, data['results'][1]['id'])
+        self.assertEqual(4, data['results'][2]['id'])
