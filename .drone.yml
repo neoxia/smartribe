@@ -13,11 +13,6 @@ publish:
       image_name: "docker.smartribe.fr:443/api"
 
 notify:
-  email:
-    recipients:
-      - coleu_y@etna-alternance.net
-      - bordie_r@etna-alternance.net
-      - delabr_e@etna-alternance.net
   slack:
       webhook_url: 'https://hooks.slack.com/services/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'
       channel: '#api'
