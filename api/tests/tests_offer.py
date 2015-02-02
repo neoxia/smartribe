@@ -4,7 +4,7 @@ from rest_framework import status
 import time
 
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Community, Member, SkillCategory, Request, Offer
+from core.models import Community, Member, SkillCategory, Request, Offer, Profile
 from core.models.notification import Notification
 import core.utils
 
@@ -25,6 +25,17 @@ class OfferTests(CustomAPITestCase):
         user3.save()
         user4.save()
         user5.save()
+
+        profile1 = Profile(user=user1)
+        profile2 = Profile(user=user2)
+        profile3 = Profile(user=user3)
+        profile4 = Profile(user=user4)
+        profile5 = Profile(user=user5)
+        profile1.save()
+        profile2.save()
+        profile3.save()
+        profile4.save()
+        profile5.save()
 
         community1 = Community(name='com1', description='desc1')
         community2 = Community(name='com2', description='desc2')
