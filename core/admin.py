@@ -10,7 +10,7 @@ from core.admins.request import RequestAdmin
 from core.models import Member, Location, MeetingPoint, Meeting, FaqSection, Faq, Inappropriate, Suggestion
 from core.models.activation_token import ActivationToken
 from core.models.skill import SkillCategory
-from .models import Profile, Evaluation, Message
+from .models import Profile, Evaluation, Message, Notification
 from .models import Community
 from .models import TransportCommunity
 from .models import LocalCommunity
@@ -50,4 +50,4 @@ admin.site.register(Faq)
 admin.site.register(Inappropriate)
 admin.site.register(Suggestion)
 
-
+admin.site.register(Notification)

@@ -8,7 +8,7 @@ class Notification(models.Model):
 
     message = models.CharField(max_length=255)
 
-    link = models.TextField(max_length=255)
+    link = models.CharField(max_length=255)
 
     seen = models.BooleanField(default=False)
 
