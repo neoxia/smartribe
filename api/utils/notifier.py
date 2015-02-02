@@ -48,7 +48,7 @@ class Notifier():
             user = message.offer.request.user
         else:
             user = message.offer.user
-        s, b = new_message_notification_message(message)
+        s, b = new_message_notification_message(message, message.user, user)
         Notifier.notify(user=user,
                         message='Nouveau message',
                         link='messages/' + str(message.id) + '/',
