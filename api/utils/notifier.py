@@ -1,4 +1,3 @@
-from email import message
 from api.messages_templates.message import new_message_notification_message
 from api.messages_templates.offer import new_offer_notification_message
 from api.utils.asyncronous_mail import send_mail
@@ -34,8 +33,6 @@ class Notifier():
                         link='offers/' + str(offer.id) + '/',
                         mail_subject=s,
                         mail_body=b)
-
-
 
     @staticmethod
     def notify_new_message(message):
