@@ -1,13 +1,15 @@
 FROM debian:jessie
-MAINTAINER Smartribe <contact@smartri.be>
+MAINTAINER Smartribe <contact@smartribe.fr>
 
+RUN apt-get -y update 
+RUN apt-get -y upgrade
 
-RUN apt-get -y update && apt-get -y upgrade
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get -y install 	python3 \
 			python3-pip \ 
-			locales
+			locales \
+			supervisor
 
 ## Setting locales (encoding) ##
 RUN dpkg-reconfigure locales && \
@@ -21,7 +23,6 @@ RUN mkdir -p /srv/smartribe/media
 
 RUN pip3 install -r /srv/smartribe/requirements.prod.txt
 
-
 RUN useradd -d /srv/smartribe gunicorn
 RUN chown -R gunicorn: /srv
 
@@ -30,5 +31,4 @@ WORKDIR /srv/smartribe
 
 EXPOSE 7777
 VOLUME /srv/smartribe/media
-CMD ["/srv/smartribe/start.sh"]
-ENTRYPOINT ["/bin/bash"]
+CMD ["/bin/bash","/srv/smartribe/start.sh"]
