@@ -42,3 +42,5 @@ from core.models.faq_section import FaqSection
 from core.models.faq import Faq
 from core.models.suggestion import Suggestion
 from core.models.inappropriate import Inappropriate
+
+from core.models.notification import Notification

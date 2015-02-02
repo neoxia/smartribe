@@ -1,8 +1,11 @@
+from django.core import mail
 from django.contrib.auth.models import User
 from rest_framework import status
+import time
 
 from api.tests.api_test_case import CustomAPITestCase
 from core.models import Community, Member, SkillCategory, Request, Offer
+from core.models.notification import Notification
 import core.utils
 
 
@@ -131,6 +134,13 @@ class OfferTests(CustomAPITestCase):
 
         response = self.client.post(url, data,  HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+        self.assertEqual(1, Notification.objects.all().count())
+        self.assertEqual('offers/10/', Notification.objects.get(id=1).link)
+        time.sleep(0.2)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].subject,
+                         '[SmarTribe] Nouvelle proposition')
 
     def test_offers_count_on_request(self):
         """ """

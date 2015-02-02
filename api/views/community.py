@@ -89,10 +89,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
         count = Member.objects.filter(community=community).count()
         return Response({'count': count}, status=status.HTTP_200_OK)
 
+    # Members management
 
-    ## Members management
-
-    # Simple user actions
+    ## Simple user actions
 
     @action(methods=['POST', ], permission_classes=[IsJWTAuthenticated()])
     def join_community(self, request, pk=None):
@@ -252,8 +251,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         serializer = MemberSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-    # Moderator actions
+    ## Moderator actions
 
     @link(permission_classes=[IsCommunityModerator])
     def retrieve_members(self, request, pk=None):
@@ -405,7 +403,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Owner actions
+    ## Owner actions
 
     @action(methods=['POST', ], permission_classes=[IsCommunityOwner])
     def promote_moderator(self, request, pk=None):
@@ -451,9 +449,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
         serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    ## Location management
+    # Location management
 
-    # Member actions
+    ## Member actions
 
     @action(methods=['POST'])
     def add_location(self, request, pk=None):
@@ -607,7 +605,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Moderator actions
+    ## Moderator actions
 
     @action(methods=['POST'])
     def delete_location(self, request, pk=None):
@@ -650,6 +648,15 @@ class CommunityViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Bad operation.'}, status=status.HTTP_400_BAD_REQUEST)
         location.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def pre_delete_location(self, location, community):
+        """
+        For indexes management.
+        Might be overridden by child classes.
+        """
+        pass
+
+    # Get communities lists
 
     @link(permission_classes=[IsJWTAuthenticated()])
     def get_shared_communities(self, request, pk=None):
@@ -706,12 +713,6 @@ class CommunityViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(shared_communities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def pre_delete_location(self, location, community):
-        """
-        For indexes management.
-        Might be overridden by child classes.
-        """
-        pass
 
     ## Community permissions
 

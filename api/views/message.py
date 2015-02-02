@@ -6,6 +6,7 @@ from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.message import IsConcernedByOffer
 from api.serializers.message import MessageSerializer, MessageCreateSerializer
+from api.utils.notifier import Notifier
 from core.models import Message
 
 
@@ -44,6 +45,10 @@ class MessageViewSet(mixins.CreateModelMixin,
         user, _ = AuthUser().authenticate(self.request)
         if self.request.method == 'POST':
             obj.user = user
+
+    def post_save(self, obj, created=False):
+        if self.request.method == 'POST':
+            Notifier.notify_new_message(obj)
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)

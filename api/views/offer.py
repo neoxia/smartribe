@@ -4,6 +4,7 @@ from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.permissions.offer import IsJWTSelfAndConcerned
 from api.serializers import OfferSerializer, OfferCreateSerializer
+from api.utils.notifier import Notifier
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Offer
 
@@ -35,6 +36,10 @@ class OfferViewSet(CustomViewSet):
 
     def pre_save(self, obj):
         self.set_auto_user(obj)
+
+    def post_save(self, obj, created=False):
+        if self.request.method == 'POST':
+            Notifier.notify_new_offer(obj)
 
     def get_queryset(self):
         user, _ = AuthUser().authenticate(self.request)

@@ -3,6 +3,16 @@ from rest_framework import serializers
 from core.models import Community, LocalCommunity, TransportCommunity
 
 
+class AbstractCommunitySerializer(serializers.ModelSerializer):
+
+    members_count = serializers.IntegerField(source='get_members_count', read_only=True)
+
+    class Meta:
+        model = Community
+        read_only_fields = ('creation_date', 'last_update')
+        abstract = True
+
+
 class CommunitySerializer(serializers.ModelSerializer):
 
     type = serializers.CharField(max_length=1, source='get_type', read_only=True)
