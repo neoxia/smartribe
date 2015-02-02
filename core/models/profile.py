@@ -52,6 +52,8 @@ class Profile(models.Model):
                               blank=True,
                               null=True)
 
+    mail_notification = models.BooleanField(default=True)
+
     CONTACT_CHOICES = (
         ('E', 'Email'),
         ('P', 'Phone'),
