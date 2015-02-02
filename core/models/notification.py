@@ -10,6 +10,8 @@ class Notification(models.Model):
 
     link = models.TextField(max_length=255)
 
+    seen = models.BooleanField(default=False)
+
     created_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
