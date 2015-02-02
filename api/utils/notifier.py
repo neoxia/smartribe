@@ -7,6 +7,10 @@ from core.models.notification import Notification
 class Notifier():
     """ """
 
+    NOTIFICATION_MESSAGES = {
+        (1, )
+    }
+
     @staticmethod
     def notify(user, message, link, mail_subject, mail_body):
         """

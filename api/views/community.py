@@ -672,13 +672,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
         other_user = User.objects.get(pk=data['other_user'])
         user_communities = Member.objects.filter(user=user, status='1').values('community')
         other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
-        shared_communities = user_communities and other_user_communities
-        community_list = Community.objects.filter(id__in=shared_communities)
-        page = self.paginate_queryset(community_list)
+        shared_communities = Community.objects.filter(Q(id__in=user_communities) & Q(id__in=other_user_communities))
+        page = self.paginate_queryset(shared_communities)
         if page is not None:
             serializer = self.get_pagination_serializer(page)
         else:
-            serializer = self.get_serializer(community_list, many=True)
+            serializer = self.get_serializer(shared_communities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link(permission_classes=[IsJWTAuthenticated()])
