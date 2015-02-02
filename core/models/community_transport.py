@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from core.models.community import Community
 
@@ -17,6 +18,6 @@ class TransportCommunity(Community):
             + ', via '+self.via
 
     class Meta:
-        verbose_name = 'transport community'
-        verbose_name_plural = 'transport communities'
+        verbose_name = _('transport community')
+        verbose_name_plural = _('transport communities')
         app_label = 'core'

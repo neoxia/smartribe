@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 
 
@@ -12,6 +13,6 @@ class Tos(models.Model):
         return self.version
 
     class Meta:
-        verbose_name = 'tos'
-        verbose_name_plural = 'tos'
+        verbose_name = _('tos')
+        verbose_name_plural = _('tos')
         app_label = 'core'

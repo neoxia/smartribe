@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -16,9 +17,9 @@ class Meeting(models.Model):
     date_time = models.DateTimeField()
 
     STATUS_CHOICES = {
-        ('P', 'Pending'),
-        ('A', 'Accepted'),
-        ('R', 'Refused'),
+        ('P', _('Pending')),
+        ('A', _('Accepted')),
+        ('R', _('Refused')),
     }
     status = models.CharField(max_length=1,
                               choices=STATUS_CHOICES,
@@ -34,6 +35,6 @@ class Meeting(models.Model):
         return str(self.id) + ' - Date : ' + str(self.date_time) + ' - Offer : ' + str(self.offer)
 
     class Meta:
-        verbose_name = 'meeting'
-        verbose_name_plural = 'meetings'
+        verbose_name = _('meeting')
+        verbose_name_plural = _('meetings')
         app_label = 'core'

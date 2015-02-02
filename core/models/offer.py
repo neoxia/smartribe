@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -48,6 +49,6 @@ class Offer(ReportableModel):
         return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
-        verbose_name = 'offer'
-        verbose_name_plural = 'offers'
+        verbose_name = _('offer')
+        verbose_name_plural = _('offers')
         app_label = 'core'

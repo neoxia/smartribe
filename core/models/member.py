@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
 from core.models.community import Community
@@ -10,18 +11,18 @@ class Member(models.Model):
     community = models.ForeignKey(Community)
 
     ROLE_CHOICES = (
-                     ("0", 'Owner'),
-                     ("1", 'Moderator'),
-                     ("2", 'Member'),
+                     ("0", _('Owner')),
+                     ("1", _('Moderator')),
+                     ("2", _('Member')),
     )
     role = models.CharField(max_length=10,
                               choices=ROLE_CHOICES,
                               default="2")
 
     STATUS_CHOICES = (
-                     ("0", 'Pending'),
-                     ("1", 'Accepted'),
-                     ("2", 'Banned'),
+                     ("0", _('Pending')),
+                     ("1", _('Accepted')),
+                     ("2", _('Banned')),
     )
     status = models.CharField(max_length=10,
                               choices=STATUS_CHOICES,
@@ -36,6 +37,6 @@ class Member(models.Model):
                self.get_status_display()
 
     class Meta:
-        verbose_name = 'member'
-        verbose_name_plural = 'members'
+        verbose_name = _('member')
+        verbose_name_plural = _('members')
         app_label = 'core'

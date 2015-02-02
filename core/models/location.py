@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from core.models import Community
 from core.models.validator import ZipCodeValidatorFR
@@ -41,6 +42,6 @@ class Location(models.Model):
         return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
-        verbose_name = 'location'
-        verbose_name_plural = 'locations'
+        verbose_name = _('location')
+        verbose_name_plural = _('locations')
         app_label = 'core'

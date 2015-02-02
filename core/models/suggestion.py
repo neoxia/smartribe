@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -5,9 +6,9 @@ from django.contrib.auth.models import User
 class Suggestion(models.Model):
 
     CATEGORY_CHOICES = (
-        ('B', 'Bug report'),
-        ('U', 'Upgrade'),
-        ('O', 'Others'),
+        ('B', _('Bug report')),
+        ('U', _('Upgrade')),
+        ('O', _('Others')),
     )
     category = models.CharField(max_length=1,
                                 choices=CATEGORY_CHOICES,
@@ -28,6 +29,6 @@ class Suggestion(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'suggestion'
-        verbose_name_plural = 'suggestions'
+        verbose_name = _('suggestion')
+        verbose_name_plural = _('suggestions')
         app_label = 'core'

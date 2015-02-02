@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 
 
@@ -11,6 +12,6 @@ class SkillCategory(models.Model):
         return self.name
 
     class Meta():
-        verbose_name = 'skill category'
-        verbose_name_plural = 'skill categories'
+        verbose_name = _('skill category')
+        verbose_name_plural = _('skill categories')
         app_label = 'core'

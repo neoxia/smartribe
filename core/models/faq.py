@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from core.models import FaqSection
 
@@ -20,6 +21,6 @@ class Faq(models.Model):
         return self.question
 
     class Meta:
-        verbose_name = 'frequently asked question'
-        verbose_name_plural = 'frequently asked questions'
+        verbose_name = _('frequently asked question')
+        verbose_name_plural = _('frequently asked questions')
         app_label = 'core'

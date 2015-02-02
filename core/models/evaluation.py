@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from core.models.meeting import Meeting
 from core.models.offer import Offer
@@ -41,6 +42,6 @@ class Evaluation(ReportableModel):
         return self.offer.user.username + ', ' + self.id.__str__()
 
     class Meta:
-        verbose_name = 'evaluation'
-        verbose_name_plural = 'evaluations'
+        verbose_name = _('evaluation')
+        verbose_name_plural = _('evaluations')
         app_label = 'core'

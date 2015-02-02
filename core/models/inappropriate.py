@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -18,7 +19,7 @@ class Inappropriate(models.Model):
         return self.content_identifier
 
     class Meta:
-        verbose_name = 'inappropriate content'
-        verbose_name_plural = 'inappropriate contents'
+        verbose_name = _('inappropriate content')
+        verbose_name_plural = _('inappropriate contents')
         app_label = 'core'
 

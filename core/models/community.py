@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 
 
@@ -55,8 +56,8 @@ class Community(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'community'
-        verbose_name_plural = 'communities'
+        verbose_name = _('community')
+        verbose_name_plural = _('communities')
         app_label = 'core'
 
 

@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -18,6 +19,6 @@ class Notification(models.Model):
         return self.link
 
     class Meta:
-        verbose_name = 'notification'
-        verbose_name_plural = 'notifications'
+        verbose_name = _('notification')
+        verbose_name_plural = _('notifications')
         app_label = 'core'

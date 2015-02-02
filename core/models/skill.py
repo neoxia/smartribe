@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
@@ -16,9 +17,9 @@ class Skill(models.Model):
     HIGH = 2
     EXPERT = 3
     LEVEL_CHOICES = (
-        (MEDIUM, 'Medium'),
-        (HIGH, 'High'),
-        (EXPERT, 'Expert')
+        (MEDIUM, _('Medium')),
+        (HIGH, _('High')),
+        (EXPERT, _('Expert'))
     )
     level = models.IntegerField(default=MEDIUM,
                                 choices=LEVEL_CHOICES)
@@ -39,6 +40,6 @@ class Skill(models.Model):
         return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
-        verbose_name = 'skill'
-        verbose_name_plural = 'skills'
+        verbose_name = _('skill')
+        verbose_name_plural = _('skills')
         app_label = 'core'

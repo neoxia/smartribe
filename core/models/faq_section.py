@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 
 
@@ -9,6 +10,6 @@ class FaqSection(models.Model):
         return self.question
 
     class Meta:
-        verbose_name = 'FAQ section'
-        verbose_name_plural = 'FAQ sections'
+        verbose_name = _('FAQ section')
+        verbose_name_plural = _('FAQ sections')
         app_label = 'core'

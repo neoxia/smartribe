@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from core.models import Location
 
@@ -26,6 +27,6 @@ class MeetingPoint(models.Model):
         return str(self.id) + ' : ' + self.location.__desc_str__() + " / " + self.__desc_str__()
 
     class Meta:
-        verbose_name = 'meeting point'
-        verbose_name_plural = 'meeting points'
+        verbose_name = _('meeting point')
+        verbose_name_plural = _('meeting points')
         app_label = 'core'

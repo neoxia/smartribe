@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -53,6 +54,6 @@ class Request(ReportableModel):
         return str(self.id) + " : " + self.__desc_str__()
 
     class Meta:
-        verbose_name = 'request'
-        verbose_name_plural = 'requests'
+        verbose_name = _('request')
+        verbose_name_plural = _('requests')
         app_label = 'core'

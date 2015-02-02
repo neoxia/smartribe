@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
@@ -13,9 +14,9 @@ def get_photo_path(self, filename):
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     GENDER_CHOICES = (
-                     ('M', 'Male'),
-                     ('F', 'Female'),
-                     ('O', 'Other'),
+                     ('M', _('Male')),
+                     ('F', _('Female')),
+                     ('O', _('Other')),
     )
     gender = models.CharField(max_length=2,
                               choices=GENDER_CHOICES,
@@ -55,9 +56,9 @@ class Profile(models.Model):
     mail_notification = models.BooleanField(default=True)
 
     CONTACT_CHOICES = (
-        ('E', 'Email'),
-        ('P', 'Phone'),
-        ('N', 'None'))
+        ('E', _('Email')),
+        ('P', _('Phone')),
+        ('N', _('None')))
     favorite_contact = models.CharField(max_length=2,
                                         choices=CONTACT_CHOICES,
                                         default='N')
@@ -71,8 +72,8 @@ class Profile(models.Model):
         return self.user.username
 
     class Meta:
-        verbose_name = 'profile'
-        verbose_name_plural = 'profiles'
+        verbose_name = _('profile')
+        verbose_name_plural = _('profiles')
         app_label = 'core'
 
 

@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -28,6 +29,6 @@ class Message(ReportableModel):
         return self.user.first_name + ' ' + self.user.last_name + ' - Offer : ' + str(self.offer.id)
 
     class Meta:
-        verbose_name = 'message'
-        verbose_name_plural = 'messages'
+        verbose_name = _('message')
+        verbose_name_plural = _('messages')
         app_label = 'core'

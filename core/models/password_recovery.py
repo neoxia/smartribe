@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -13,6 +14,6 @@ class PasswordRecovery(models.Model):
     request_datetime = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'password recovery'
-        verbose_name_plural = 'password recoveries'
+        verbose_name = _('password recovery')
+        verbose_name_plural = _('password recoveries')
         app_label = 'core'

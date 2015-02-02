@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from django.db import models
 from core.models.community import Community
 from core.models.validator import ZipCodeValidatorFR
@@ -23,6 +24,6 @@ class LocalCommunity(Community):
     country = models.CharField(max_length=50)
 
     class Meta:
-        verbose_name = 'local community'
-        verbose_name_plural = 'local communities'
+        verbose_name = _('local community')
+        verbose_name_plural = _('local communities')
         app_label = 'core'

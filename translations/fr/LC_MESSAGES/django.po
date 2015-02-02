@@ -1,0 +1,289 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-02-02 22:15+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: core/models/activation_token.py:15
+msgid "activation token"
+msgstr "token d'activation"
+
+#: core/models/activation_token.py:16
+msgid "activation tokens"
+msgstr "tokens d'activation"
+
+#: core/models/community.py:59
+msgid "community"
+msgstr "communauté"
+
+#: core/models/community.py:60
+msgid "communities"
+msgstr "communautés"
+
+#: core/models/community_local.py:27
+#, fuzzy
+#| msgid "community"
+msgid "local community"
+msgstr "communauté locale"
+
+#: core/models/community_local.py:28
+#, fuzzy
+#| msgid "communities"
+msgid "local communities"
+msgstr "communautés locales"
+
+#: core/models/community_transport.py:21
+#, fuzzy
+#| msgid "community"
+msgid "transport community"
+msgstr "communauté de transport"
+
+#: core/models/community_transport.py:22
+#, fuzzy
+#| msgid "communities"
+msgid "transport communities"
+msgstr "communautés de transport"
+
+#: core/models/evaluation.py:45
+msgid "evaluation"
+msgstr "évaluation"
+
+#: core/models/evaluation.py:46
+msgid "evaluations"
+msgstr "évaluations"
+
+#: core/models/faq.py:24
+msgid "frequently asked question"
+msgstr "question fréquente"
+
+#: core/models/faq.py:25
+msgid "frequently asked questions"
+msgstr "questions fréquentes"
+
+#: core/models/faq_section.py:13
+msgid "FAQ section"
+msgstr "section de la FAQ"
+
+#: core/models/faq_section.py:14
+msgid "FAQ sections"
+msgstr "sections de la FAQ"
+
+#: core/models/inappropriate.py:22
+msgid "inappropriate content"
+msgstr "contenu inapproprié"
+
+#: core/models/inappropriate.py:23
+msgid "inappropriate contents"
+msgstr "contenus inappropriés"
+
+#: core/models/location.py:45
+#, fuzzy
+#| msgid "evaluation"
+msgid "location"
+msgstr "lieu"
+
+#: core/models/location.py:46
+#, fuzzy
+#| msgid "evaluations"
+msgid "locations"
+msgstr "lieux"
+
+#: core/models/meeting.py:20 core/models/member.py:23
+msgid "Pending"
+msgstr "En attente"
+
+#: core/models/meeting.py:21 core/models/member.py:24
+msgid "Accepted"
+msgstr "Accepté"
+
+#: core/models/meeting.py:22
+msgid "Refused"
+msgstr "Refusé"
+
+#: core/models/meeting.py:38
+msgid "meeting"
+msgstr "rendez-vous"
+
+#: core/models/meeting.py:39
+msgid "meetings"
+msgstr "rendez-vous"
+
+#: core/models/meeting_point.py:30
+msgid "meeting point"
+msgstr "point de rencontre"
+
+#: core/models/meeting_point.py:31
+msgid "meeting points"
+msgstr "points de rencontre"
+
+#: core/models/member.py:14
+msgid "Owner"
+msgstr "Propriétaire"
+
+#: core/models/member.py:15
+msgid "Moderator"
+msgstr "Modérateur"
+
+#: core/models/member.py:16
+msgid "Member"
+msgstr "Membre"
+
+#: core/models/member.py:25
+msgid "Banned"
+msgstr "Banni"
+
+#: core/models/member.py:40
+msgid "member"
+msgstr "membre"
+
+#: core/models/member.py:41
+msgid "members"
+msgstr "membres"
+
+#: core/models/message.py:32
+msgid "message"
+msgstr "message"
+
+#: core/models/message.py:33
+msgid "messages"
+msgstr "messages"
+
+#: core/models/notification.py:22
+msgid "notification"
+msgstr "notification"
+
+#: core/models/notification.py:23
+msgid "notifications"
+msgstr "notifications"
+
+#: core/models/offer.py:52
+msgid "offer"
+msgstr "offre"
+
+#: core/models/offer.py:53
+msgid "offers"
+msgstr "offres"
+
+#: core/models/password_recovery.py:17
+msgid "password recovery"
+msgstr "réinitialisation de mot de passe"
+
+#: core/models/password_recovery.py:18
+msgid "password recoveries"
+msgstr "réinitialisations de mot de passe"
+
+#: core/models/profile.py:17
+msgid "Male"
+msgstr "Homme"
+
+#: core/models/profile.py:18
+msgid "Female"
+msgstr "Femme"
+
+#: core/models/profile.py:19
+msgid "Other"
+msgstr "Autre"
+
+#: core/models/profile.py:59
+msgid "Email"
+msgstr "Email"
+
+#: core/models/profile.py:60
+msgid "Phone"
+msgstr "Téléphone"
+
+#: core/models/profile.py:61
+msgid "None"
+msgstr "Aucun"
+
+#: core/models/profile.py:75
+msgid "profile"
+msgstr "profil"
+
+#: core/models/profile.py:76
+msgid "profiles"
+msgstr "profils"
+
+#: core/models/request.py:57
+msgid "request"
+msgstr "demande"
+
+#: core/models/request.py:58
+msgid "requests"
+msgstr "demandes"
+
+#: core/models/skill.py:20
+msgid "Medium"
+msgstr "Moyen"
+
+#: core/models/skill.py:21
+msgid "High"
+msgstr "Elevé"
+
+#: core/models/skill.py:22
+msgid "Expert"
+msgstr "Expert"
+
+#: core/models/skill.py:43
+msgid "skill"
+msgstr "compétence"
+
+#: core/models/skill.py:44
+msgid "skills"
+msgstr "compétences"
+
+#: core/models/skill_category.py:15
+msgid "skill category"
+msgstr "catégorie de compétence"
+
+#: core/models/skill_category.py:16
+msgid "skill categories"
+msgstr "catégories de compétence"
+
+#: core/models/suggestion.py:9
+msgid "Bug report"
+msgstr "Signalement de bug"
+
+#: core/models/suggestion.py:10
+msgid "Upgrade"
+msgstr "Amélioration"
+
+#: core/models/suggestion.py:11
+msgid "Others"
+msgstr "Autres"
+
+#: core/models/suggestion.py:32
+msgid "suggestion"
+msgstr "suggestion"
+
+#: core/models/suggestion.py:33
+#, fuzzy
+#| msgid "FAQ sections"
+msgid "suggestions"
+msgstr "suggestions"
+
+#: core/models/tos.py:16 core/models/tos.py:17
+msgid "tos"
+msgstr "cgu"
+
+#: smartribe/settings.py:111
+msgid "English"
+msgstr "Anglais"
+
+#: smartribe/settings.py:112
+msgid "French"
+msgstr "Français"
