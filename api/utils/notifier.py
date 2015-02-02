@@ -1,5 +1,5 @@
-from api.messages_templates.message import new_message_notification_message
-from api.messages_templates.offer import new_offer_notification_message
+from api.mail_templates.message import new_message_notification_message
+from api.mail_templates.offer import new_offer_notification_message
 from api.utils.asyncronous_mail import send_mail
 from core.models.notification import Notification
 

@@ -11,7 +11,7 @@ from rest_framework import status
 import django_filters
 
 from api.authenticate import AuthUser
-from api.messages_templates.user import registration_message, recovery_password_message
+from api.mail_templates.user import registration_message, recovery_password_message
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers import UserCreateSerializer, UserPublicSerializer, UserSerializer
 from api.utils.asyncronous_mail import send_mail
