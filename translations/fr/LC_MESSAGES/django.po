@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-02 22:15+0000\n"
+"POT-Creation-Date: 2015-02-03 10:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: api/views/local_community.py:65
+msgid "detail"
+msgstr "détail"
+
+#: api/views/local_community.py:65
+msgid "Missing GPS coordinates or search radius."
+msgstr "Coordonnées GPS ou rayon de recherche manquant(s)"
 
 #: core/models/activation_token.py:15
 msgid "activation token"
