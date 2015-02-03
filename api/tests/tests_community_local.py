@@ -20,11 +20,11 @@ class LocalCommunityTests(CustomAPITestCase):
         other.save()
 
         com1 = LocalCommunity(name='com1', description='desc1', city='Paris', country='FR', gps_x=0, gps_y=0)
-        com2 = LocalCommunity(name='loc1', description='desc2', city='Paris', country='FR', gps_x=0, gps_y=0,
+        com2 = LocalCommunity(name='loc1', description='desc2', city='Paris', country='FR', gps_x=1, gps_y=1,
                               auto_accept_member=True)
-        com3 = LocalCommunity(name='loccom1', description='desc3', city='Paris', country='FR', gps_x=0, gps_y=0)
-        com4 = LocalCommunity(name='con2', description='desc4', city='Paris', country='FR', gps_x=0, gps_y=0)
-        com5 = LocalCommunity(name='loc2', description='des5', city='Paris', country='FR', gps_x=0, gps_y=0)
+        com3 = LocalCommunity(name='loccom1', description='desc3', city='Paris', country='FR', gps_x=2, gps_y=1)
+        com4 = LocalCommunity(name='con2', description='desc4', city='Paris', country='FR', gps_x=3, gps_y=2)
+        com5 = LocalCommunity(name='loc2', description='des5', city='Paris', country='FR', gps_x=2, gps_y=3)
         com1.save()
         com2.save()
         com3.save()
@@ -243,8 +243,53 @@ class LocalCommunityTests(CustomAPITestCase):
         self.assertEqual(4, LocalCommunity.objects.all().count())
         self.assertEqual(4, Community.objects.all().count())
 
+    def test_list_communities_around_me_1(self):
+        """
+        Ensure a community owner can delete its community
+        """
+        url = '/api/v1/local_communities/0/list_communities_around_me/'
+        data = {
+            'gps_x': 2,
+            'gps_y': 2,
+            'radius': 115
+        }
 
+        response = self.client.get(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        data = response.data
+        self.assertEqual(4, data['count'])
 
+    def test_list_communities_around_me_2(self):
+        """
+        Ensure a community owner can delete its community
+        """
+        url = '/api/v1/local_communities/0/list_communities_around_me/'
+        data = {
+            'gps_x': 1,
+            'gps_y': 1,
+            'radius': 115
+        }
 
+        response = self.client.get(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        data = response.data
+        self.assertEqual(3, data['count'])
+
+    def test_list_communities_around_me_3(self):
+        """
+        Ensure a community owner can delete its community
+        """
+        url = '/api/v1/local_communities/0/list_communities_around_me/'
+        data = {
+            'gps_x': 0,
+            'gps_y': 0,
+            'radius': 115
+        }
+
+        response = self.client.get(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.data
+        self.assertEqual(2, data['count'])
