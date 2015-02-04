@@ -41,7 +41,6 @@ class SkillViewSet(viewsets.ModelViewSet):
     @link()
     def list_my_skills(self, request, pk=None):
         """ """
-        # TODO : Test
         user, _ = AuthUser().authenticate(self.request)
         my_skills = Skill.objects.filter(user=user)
         serializer = self.get_paginated_serializer(my_skills)

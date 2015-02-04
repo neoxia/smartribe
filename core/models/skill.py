@@ -29,9 +29,11 @@ class Skill(models.Model):
         return Evaluation.objects.filter(offer__skill=self).aggregate(average_eval=Avg('mark'))['average_eval']
 
     def get_mark_count(self):
-        # TODO : Test
         from core.models.evaluation import Evaluation
         return Evaluation.objects.filter(offer__skill=self).count()
+
+    def get_category_name(self):
+        return self.category.name
 
     def __desc_str__(self):
         return self.user.username + " / " + self.category.name + " / " + self.get_level_display()
