@@ -30,7 +30,7 @@ class SuggestionTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_create_suggestion_with_auth_for_self(self):
         """

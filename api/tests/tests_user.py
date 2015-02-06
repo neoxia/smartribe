@@ -153,7 +153,7 @@ class AccountTests(CustomAPITestCase):
         url = '/api/v1/users/'
 
         response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_list_users_with_auth(self):
         """
@@ -295,7 +295,7 @@ class AccountTests(CustomAPITestCase):
         url = '/api/v1/users/0/get_my_user/'
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_my_user_with_auth(self):
         """

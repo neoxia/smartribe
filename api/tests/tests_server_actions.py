@@ -212,4 +212,4 @@ class ManageReportedObjectsTests(CustomAPITestCase):
         url = '/api/v1/server_actions/manage_reported_objects/'
 
         response = self.client.post(url, REMOTE_ADDR='212.212.212.212')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)

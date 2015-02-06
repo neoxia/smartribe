@@ -164,7 +164,7 @@ class MemberTests(CustomAPITestCase):
         url = '/api/v1/communities/0/list_my_memberships/'
 
         response = self.client.get(url)
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_list_my_memberships_member(self):
         """
@@ -224,7 +224,7 @@ class MemberTests(CustomAPITestCase):
         url = '/api/v1/communities/3/retrieve_members/'
 
         response = self.client.get(url)
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_list_members_without_member_rights(self):
         """
@@ -306,7 +306,7 @@ class MemberTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_accept_member_with_simple_member(self):
         """
@@ -409,7 +409,7 @@ class MemberTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_ban_member_with_non_member(self):
         """
@@ -509,7 +509,7 @@ class MemberTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_promote_user_with_user(self):
         """

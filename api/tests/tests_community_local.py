@@ -68,7 +68,7 @@ class LocalCommunityTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, format='json')
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
         self.assertEqual(5, Community.objects.all().count())
 
@@ -105,7 +105,7 @@ class LocalCommunityTests(CustomAPITestCase):
         url = '/api/v1/local_communities/'
 
         response = self.client.get(url)
-        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
 
     def test_list_local_communities_with_auth(self):
         """
@@ -160,7 +160,7 @@ class LocalCommunityTests(CustomAPITestCase):
         }
 
         response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_modify_local_community_with_simple_user(self):
         """
