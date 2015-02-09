@@ -50,7 +50,7 @@ class Community(models.Model):
 
     def get_members_count(self):
         from core.models.member import Member
-        return Member.objects.filter(community=self).count()
+        return Member.objects.filter(community=self, status='1').count()
 
     def __str__(self):
         return self.name
