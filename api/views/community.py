@@ -403,6 +403,28 @@ class CommunityViewSet(viewsets.ModelViewSet):
         serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
+    def unban_member(self, request, pk=None):
+        """ """
+        data = request.DATA
+        if 'id' not in data:
+            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Member.objects.filter(id=data['id']).exists():
+            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
+        member = Member.objects.get(id=data['id'])
+        user, _ = AuthUser().authenticate(request)
+        if not self.check_upper_permission(user, member):
+            return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
+        member.status = '1'
+        member.save()
+        send_mail('[Smartribe] Membership reactivated',
+                  'Congratulations!\n\n' +
+                  'You have been accepted as a member of the community '+member.community.__str__(),
+                  'noreply@smartribe.fr',
+                  [member.user.email])
+        serializer = ListCommunityMembersSerializer(member, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     ## Owner actions
 
     @action(methods=['POST', ], permission_classes=[IsCommunityOwner])
@@ -443,8 +465,25 @@ class CommunityViewSet(viewsets.ModelViewSet):
         member = Member.objects.get(id=data['id'])
         user, _ = AuthUser().authenticate(request)
         if not self.check_owner_permission(user, member.community):
-            return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'detail': 'Community owner\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.role = '1'
+        member.save()
+        serializer = ListCommunityMembersSerializer(member, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['POST', ], permission_classes=[IsCommunityOwner])
+    def cancel_moderator(self, request, pk=None):
+        """ """
+        data = request.DATA
+        if 'id' not in data:
+            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Member.objects.filter(id=data['id']).exists():
+            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
+        member = Member.objects.get(id=data['id'])
+        user, _ = AuthUser().authenticate(request)
+        if not self.check_owner_permission(user, member.community):
+            return Response({'detail': 'Community owner\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
+        member.role = '2'
         member.save()
         serializer = ListCommunityMembersSerializer(member, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
