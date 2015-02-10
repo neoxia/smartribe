@@ -1,10 +1,12 @@
+import os
 from django.utils.translation import ugettext as _
 from django.db import models
 from core.models import Location
 
 
 def get_photo_path(self, filename):
-    url = "meeting_points/%s/%s" % (self.id.__str__, filename)
+    _, ext = os.path.splitext(filename)
+    url = "meeting_points/%s/photo.%s" % (str(self.id), ext)
     return url
 
 

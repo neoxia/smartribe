@@ -1,3 +1,4 @@
+import os
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
@@ -5,7 +6,8 @@ from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
 
 def get_photo_path(self, filename):
-    url = "profiles/%s/%s" % (self.user.username, filename)
+    _, ext = os.path.splitext(filename)
+    url = "profiles/%s/picture.%s" % (str(self.user.id), ext)
     return url
 
 #fs = FileSystemStorage(location='/media/photos')

@@ -1,14 +1,17 @@
+import os
 from django.utils.translation import ugettext as _
 from django.db import models
 
 
 def get_banner_path(self, filename):
-    url = "communities/%s/banner/%s" % (self.name, filename)
+    _, ext = os.path.splitext(filename)
+    url = "communities/%s/banner/banner.%s" % (str(self.id), ext)
     return url
 
 
 def get_logo_path(self, filename):
-    url = "communities/%s/logo/%s" % (self.name, filename)
+    _, ext = os.path.splitext(filename)
+    url = "communities/%s/logo/%s" % (str(self.id), ext)
     return url
 
 
