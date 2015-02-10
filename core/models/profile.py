@@ -7,7 +7,7 @@ from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
 def get_photo_path(self, filename):
     _, ext = os.path.splitext(filename)
-    url = "profiles/%s/picture.%s" % (str(self.user.id), ext)
+    url = "profiles/%s/picture%s" % (str(self.user.id), ext)
     return url
 
 #fs = FileSystemStorage(location='/media/photos')

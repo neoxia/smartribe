@@ -6,7 +6,7 @@ from core.models import Location
 
 def get_photo_path(self, filename):
     _, ext = os.path.splitext(filename)
-    url = "meeting_points/%s/photo.%s" % (str(self.id), ext)
+    url = "meeting_points/%s/photo%s" % (str(self.id), ext)
     return url
 
 
