@@ -21,7 +21,7 @@ class SkillViewSet(viewsets.ModelViewSet):
     """
     model = Skill
     serializer_class = SkillSerializer
-    filter_fields = ('user__id', )
+    filter_fields = ('user__id', 'category__id')
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class

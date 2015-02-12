@@ -86,6 +86,9 @@ class RequestTests(CustomAPITestCase):
         data = response.data
         self.assertEqual(5, data['count'])
         self.assertEqual('profiles/user1.jpg', data['results'][0]['user_photo'])
+        self.assertIsNone(data['results'][0]['community_name'])
+        self.assertEqual('com1', data['results'][1]['community_name'])
+        self.assertEqual('cat1', data['results'][0]['category_name'])
 
     def test_list_request_user2(self):
         """
