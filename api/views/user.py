@@ -60,6 +60,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
+        elif self.request.method == 'POST' and 'update_my_password' in self.request.get_full_path():
+            return [IsJWTAuthenticated()]
         elif self.request.method == 'POST':
             return [AllowAny()]
         else:
@@ -190,6 +192,19 @@ class UserViewSet(viewsets.ModelViewSet):
         user.password = make_password(data['password'])
         user.save()
         PasswordRecovery.objects.filter(user=user).delete()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(methods=['POST', ])
+    def update_my_password(self, request, pk=None):
+        """"""
+        fields = {'password_old', 'password_new'}
+        data = request.DATA
+        if any(field not in data for field in fields):
+            return Response({"detail": "Both old and new password are required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not request.user.check_password(data['password_old']):
+            return Response({"detail": "Old password is not correct."}, status=status.HTTP_401_UNAUTHORIZED)
+        request.user.password = make_password(data['password_new'])
+        request.user.save()
         return Response(status=status.HTTP_200_OK)
 
     @link(permission_classes=[IsJWTAuthenticated])

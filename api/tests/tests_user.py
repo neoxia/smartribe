@@ -311,3 +311,19 @@ class AccountTests(CustomAPITestCase):
         self.assertEqual('user1', data['username'])
         self.assertEqual('user1@test.com', data['email'])
         self.assertEqual([], data['groups'])
+
+    def test_update_my_password(self):
+        """
+        Ensure an authenticated user can retrieve his own information
+        """
+        url = '/api/v1/users/0/update_my_password/'
+        data = {
+            'password_old': 'user1',
+            'password_new': 'newuser1',
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        user = User.objects.get(id=1)
+        self.assertTrue(check_password('newuser1', user.password))
