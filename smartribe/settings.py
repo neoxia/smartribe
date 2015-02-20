@@ -146,7 +146,7 @@ JWT_AUTH = {
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
     'JWT_LEEWAY': 0,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600*10)
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600*24*7)
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

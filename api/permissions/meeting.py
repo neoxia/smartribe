@@ -22,10 +22,10 @@ class IsConcernedByMeeting(BasePermission):
             return False
         if not Offer.objects.filter(id=data['offer']).exists():
             return False
-        if not MeetingPoint.objects.filter(id=data['meeting_point']).exists():
-            return False
         of = Offer.objects.get(id=data['offer'])
         if user != of.user and user != of.request.user:
+            return False
+        if not MeetingPoint.objects.filter(id=data['meeting_point']).exists():
             return False
         mp = MeetingPoint.objects.get(id=data['meeting_point'])
         if not Member.objects.filter(user=user, community=mp.location.community, status='1').exists():

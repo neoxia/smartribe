@@ -2,7 +2,7 @@ from django.db.models import Q
 
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
-from api.permissions.offer import IsJWTSelfAndConcerned
+from api.permissions.offer import IsJWTConcernedByOffer
 from api.serializers import OfferSerializer, OfferCreateSerializer
 from api.utils.notifier import Notifier
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
@@ -31,7 +31,7 @@ class OfferViewSet(CustomViewSet):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
         if self.request.method == 'POST':
-            return [IsJWTSelfAndConcerned()]
+            return [IsJWTConcernedByOffer()]
         return [IsJWTOwner()]
 
     def pre_save(self, obj):

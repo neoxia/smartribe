@@ -16,7 +16,7 @@ class MeetingPoint(models.Model):
 
     name = models.CharField(max_length=50)
 
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
 
     photo = models.ImageField(upload_to=get_photo_path,
                               blank=True,

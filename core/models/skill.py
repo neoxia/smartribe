@@ -11,7 +11,9 @@ class Skill(models.Model):
 
     category = models.ForeignKey(SkillCategory)
 
-    description = models.TextField()
+    title = models.CharField(max_length=32)
+
+    description = models.TextField(null=True, blank=True)
 
     MEDIUM = 1
     HIGH = 2

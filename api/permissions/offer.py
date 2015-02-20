@@ -3,7 +3,7 @@ from api.authenticate import AuthUser
 from core.models import Member, Request
 
 
-class IsJWTSelfAndConcerned(BasePermission):
+class IsJWTConcernedByOffer(BasePermission):
     """
 
     """
