@@ -36,7 +36,8 @@ class Notifier():
         if not profile.mail_notification:
             return
         Notifier.notify(user=user,
-                        message='Nouvelle proposition d\'assistance',
+                        message='Nouvelle proposition de %s %s, concernant votre demande "%s"' %
+                                (offer.user.first_name, offer.user.last_name, offer.request.title),
                         link='offers/' + str(offer.id) + '/',
                         mail_subject=s,
                         mail_body=b)
@@ -50,7 +51,8 @@ class Notifier():
             user = message.offer.user
         s, b = new_message_notification_message(message, message.user, user)
         Notifier.notify(user=user,
-                        message='Nouveau message',
+                        message='Nouveau message de %s %s, concernant la demande "%s"' %
+                                (message.user.first_name, message.user.last_name, message.offer.request.title),
                         link='messages/' + str(message.id) + '/',
                         mail_subject=s,
                         mail_body=b)

@@ -523,7 +523,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if pk is None:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
         if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Wrong id parameter'}, status=status.HTTP_404_NOT_FOUND)
         community = self.model.objects.get(id=pk)
         if not self.check_member_permission(user, community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
