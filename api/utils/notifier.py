@@ -9,13 +9,15 @@ class Notifier():
     """ """
 
     @staticmethod
-    def notify(user, message, link, mail_subject, mail_body):
+    def notify(photo, user, title, message, link, mail_subject, mail_body):
         """
         Create Notification object
         Send mail
         """
         profile = Profile.objects.get(user=user)
-        n = Notification(user=user,
+        n = Notification(photo=photo,
+                         user=user,
+                         title=title,
                          message=message,
                          link=link)
         n.save()
@@ -35,24 +37,27 @@ class Notifier():
         s, b = new_offer_notification_message(offer)
         if not profile.mail_notification:
             return
-        Notifier.notify(user=user,
-                        message='Nouvelle proposition de %s %s, concernant votre demande "%s"' %
-                                (offer.user.first_name, offer.user.last_name, offer.request.title),
-                        link='offers/' + str(offer.id) + '/',
+        Notifier.notify(photo=offer.user.profile.photo,
+                        user=user,
+                        title=offer.request.title,
+                        message='Nouvelle proposition de %s %s' % (offer.user.first_name, offer.user.last_name),
+                        link='/offers/' + str(offer.id) + '/',
                         mail_subject=s,
                         mail_body=b)
 
     @staticmethod
     def notify_new_message(message):
         """ """
+        author = message.user
         if message.user.id == message.offer.user.id:
             user = message.offer.request.user
         else:
             user = message.offer.user
         s, b = new_message_notification_message(message, message.user, user)
-        Notifier.notify(user=user,
-                        message='Nouveau message de %s %s, concernant la demande "%s"' %
-                                (message.user.first_name, message.user.last_name, message.offer.request.title),
-                        link='messages/' + str(message.id) + '/',
+        Notifier.notify(photo=author.profile.photo,
+                        user=user,
+                        title=message.offer.request.title,
+                        message='Nouveau message de %s %s' % (message.user.first_name, message.user.last_name),
+                        link='/offers/' + str(message.offer.id) + '/',
                         mail_subject=s,
                         mail_body=b)

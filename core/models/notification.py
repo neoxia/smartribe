@@ -5,7 +5,11 @@ from django.db import models
 
 class Notification(models.Model):
 
+    photo = models.ImageField(null=True, blank=True)
+
     user = models.ForeignKey(User)
+
+    title = models.CharField(max_length=255)
 
     message = models.CharField(max_length=255)
 

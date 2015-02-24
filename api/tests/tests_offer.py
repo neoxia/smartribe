@@ -147,7 +147,7 @@ class OfferTests(CustomAPITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
         self.assertEqual(1, Notification.objects.all().count())
-        self.assertEqual('offers/10/', Notification.objects.get(id=1).link)
+        self.assertEqual('/offers/10/', Notification.objects.get(id=1).link)
         time.sleep(0.2)
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(mail.outbox[0].subject,
