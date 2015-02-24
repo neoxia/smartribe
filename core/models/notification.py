@@ -19,6 +19,8 @@ class Notification(models.Model):
 
     created_on = models.DateTimeField(auto_now_add=True)
 
+    seen_on = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return self.link
 

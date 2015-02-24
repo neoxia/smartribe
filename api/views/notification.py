@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import mixins
 from rest_framework import status
 from rest_framework.decorators import action
@@ -35,6 +36,7 @@ class NotificationViewSet(mixins.RetrieveModelMixin,
             return Response({'detail': 'This object does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         n = self.model.objects.get(id=pk)
         n.seen = True
+        n.seen_on = timezone.now()
         n.save()
         serializer = self.serializer_class(n, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
