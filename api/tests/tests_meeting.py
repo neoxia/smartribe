@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import status
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint, Offer, Meeting
+from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint, Offer, Meeting, Profile
 import core.utils
 
 
@@ -20,13 +20,13 @@ class RequestTests(CustomAPITestCase):
         user4 = User(username='user4', password='user4', email='user4@test.fr')
         user4.save()
 
-        profile1 = User(user=user1)
+        profile1 = Profile(user=user1)
         profile1.save()
-        profile2 = User(user=user2)
+        profile2 = Profile(user=user2)
         profile2.save()
-        profile3 = User(user=user3)
+        profile3 = Profile(user=user3)
         profile3.save()
-        profile4 = User(user=user4)
+        profile4 = Profile(user=user4)
         profile4.save()
 
         community1 = Community(name='com1', description='desc1')
