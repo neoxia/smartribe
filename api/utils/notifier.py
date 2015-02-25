@@ -1,5 +1,6 @@
 from api.mail_templates.message import new_message_notification_message
 from api.mail_templates.offer import new_offer_notification_message
+from api.mail_templates.meeting import new_meeting_notification_message
 from api.utils.asyncronous_mail import send_mail
 from core.models import Profile
 from core.models.notification import Notification
@@ -70,7 +71,7 @@ class Notifier():
             user = meeting.offer.request.user
         else:
             user = meeting.offer.user
-        s, b = new_message_notification_message(meeting, meeting.user, user)
+        s, b = new_meeting_notification_message(meeting, meeting.user, user)
         Notifier.notify(photo=author.profile.photo,
                         user=user,
                         title=meeting.offer.request.title,
