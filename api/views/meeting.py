@@ -8,6 +8,7 @@ from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.meeting import IsConcernedByMeeting
 from api.serializers import MeetingSerializer, MeetingCreateSerializer
+from api.utils.notifier import Notifier
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Meeting
 
@@ -42,6 +43,10 @@ class MeetingViewSet(CustomViewSet):
 
     def pre_save(self, obj):
         self.set_auto_user(obj)
+
+    def post_save(self, obj, created=False):
+        if self.request.method == 'POST':
+            Notifier.notify_new_meeting(obj)
 
     @action(methods=['POST'])
     def accept_meeting(self, request, pk=None):

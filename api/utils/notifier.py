@@ -61,3 +61,20 @@ class Notifier():
                         link='/offers/' + str(message.offer.id) + '/',
                         mail_subject=s,
                         mail_body=b)
+
+    @staticmethod
+    def notify_new_meeting(meeting):
+        """ """
+        author = meeting.user
+        if meeting.user.id == meeting.offer.user.id:
+            user = meeting.offer.request.user
+        else:
+            user = meeting.offer.user
+        s, b = new_message_notification_message(meeting, meeting.user, user)
+        Notifier.notify(photo=author.profile.photo,
+                        user=user,
+                        title=meeting.offer.request.title,
+                        message='Nouveau rendez-vous proposé par %s %s' % (meeting.user.first_name, meeting.user.last_name),
+                        link='/offers/' + str(meeting.offer.id) + '/',
+                        mail_subject=s,
+                        mail_body=b)
