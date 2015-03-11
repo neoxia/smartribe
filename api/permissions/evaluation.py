@@ -26,6 +26,6 @@ class IsEvaluator(BasePermission):
         user, response = AuthUser().authenticate(request)
         if not user:
             return False
-        if user != obj.offer.user:
+        if user != obj.offer.request.user:
             return False
         return True
