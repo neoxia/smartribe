@@ -4,7 +4,7 @@ from api.tests.api_test_case import CustomAPITestCase
 from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint, Offer, Meeting, Evaluation
 
 
-class RequestTests(CustomAPITestCase):
+class EvaluationTests(CustomAPITestCase):
 
     def setUp(self):
         """
@@ -161,6 +161,29 @@ class RequestTests(CustomAPITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertTrue(Offer.objects.get(id=4).closed)
+
+    def test_create_and_update_evaluation(self):
+        """
+
+        """
+        url = '/api/v1/evaluations/'
+        data = {
+            'offer': 4,
+            'mark': 5,
+            'comment': 'blabla5',
+        }
+
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+        url = '/api/v1/evaluations/4/'
+        data = {
+            'comment': 'blabla5 modified',
+        }
+
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('blabla5 modified', Evaluation.objects.get(id=4).comment)
 
     def test_list_evaluations(self):
         """

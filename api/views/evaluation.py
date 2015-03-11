@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
-from api.permissions.evaluation import IsEvaluator
+from api.permissions.evaluation import IsEvaluator, IsEvaluationAuthor
 from api.serializers.evaluation import EvaluationSerializer, EvaluationCreateSerializer
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Evaluation, Offer
@@ -33,7 +33,9 @@ class EvaluationViewSet(CustomViewSet):
     def get_permissions(self):
         if self.request.method == 'GET':
             return [IsJWTAuthenticated()]
-        return [IsEvaluator()]
+        if self.request.method == 'POST':
+            return [IsEvaluator()]
+        return [IsEvaluationAuthor()]
 
     def post_save(self, obj, created=False):
         obj.offer.closed = True

@@ -22,10 +22,12 @@ class IsEvaluator(BasePermission):
             return False
         return True
 
+
+class IsEvaluationAuthor(BasePermission):
+    """ """
     def has_object_permission(self, request, view, obj):
-        user, response = AuthUser().authenticate(request)
-        if not user:
+        if not request.user:
             return False
-        if user != obj.offer.request.user:
+        if request.user != obj.offer.request.user:
             return False
         return True
