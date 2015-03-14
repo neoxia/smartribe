@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
+from api.authenticate import AuthUser
 
 from api.permissions.common import IsJWTSelf
 from api.serializers.suggestion import SuggestionSerializer
@@ -20,6 +21,10 @@ class SuggestionViewSet(CreateModelMixin, GenericViewSet):
     model = Suggestion
     serializer_class = SuggestionSerializer
     permission_classes = [IsJWTSelf]
+
+    def pre_save(self, obj):
+        if self.request.method == 'POST':
+            obj.user = self.request.user
 
     def post_save(self, obj, created=False):
 
