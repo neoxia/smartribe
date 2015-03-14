@@ -84,7 +84,7 @@ class UserViewSet(viewsets.ModelViewSet):
             subject, message = registration_message(token)
             send_mail(subject,
                       message,
-                      'noreply@smartri.be',
+                      'noreply@smartribe.fr',
                       [obj.email],
                       fail_silently=False)
 
@@ -157,7 +157,7 @@ class UserViewSet(viewsets.ModelViewSet):
         subject, message = recovery_password_message(pr)
         send_mail(subject,
                   message,
-                  'noreply@smartri.be',
+                  'noreply@smartribe.fr',
                   [user.email],
                   fail_silently=False)
         return Response(status=status.HTTP_200_OK)
