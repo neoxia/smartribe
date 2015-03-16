@@ -1,6 +1,6 @@
 import os
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
@@ -14,7 +14,8 @@ def get_photo_path(self, filename):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, related_name='profile')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
+
     GENDER_CHOICES = (
                      ('M', _('Male')),
                      ('F', _('Female')),
@@ -71,7 +72,7 @@ class Profile(models.Model):
         return Skill.objects.filter(user=self.user)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
     class Meta:
         verbose_name = _('profile')

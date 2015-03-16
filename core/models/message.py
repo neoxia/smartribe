@@ -10,7 +10,7 @@ class Message(ReportableModel):
 
     offer = models.ForeignKey(Offer)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     content = models.TextField()
 

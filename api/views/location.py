@@ -1,13 +1,11 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import link
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
-from api.permissions.location import IsCommunityMember, IsCommunityModerator
 from api.serializers.location import LocationSerializer, LocationCreateSerializer, TransportLocationCreateSerializer
 from core.models import Member, Location, Community, TransportCommunity
 
@@ -50,8 +48,7 @@ class LocationViewSet(ReadOnlyModelViewSet):
         return serializer_class
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        user_communities = Member.objects.filter(user=user, status='1').values('community')
+        user_communities = Member.objects.filter(user=self.request.user, status='1').values('community')
         return Location.objects.filter(community__in=user_communities)
 
     @link(permission_classes=[IsJWTAuthenticated()])
@@ -59,14 +56,13 @@ class LocationViewSet(ReadOnlyModelViewSet):
         """
          Get locations shared by two users
         """
-        user, _ = AuthUser().authenticate(request)
         data = request.QUERY_PARAMS
         if 'other_user' not in data:
             return Response({'detail': 'Missing other_user id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not User.objects.filter(pk=data['other_user']).exists():
+        if not get_user_model().objects.filter(pk=data['other_user']).exists():
             return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
-        other_user = User.objects.get(pk=data['other_user'])
-        user_communities = Member.objects.filter(user=user, status='1').values('community')
+        other_user = get_user_model().objects.get(pk=data['other_user'])
+        user_communities = Member.objects.filter(user=self.request.user, status='1').values('community')
         other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
         shared_communities = Community.objects.filter(Q(id__in=user_communities) & Q(id__in=other_user_communities))
         shared_locations = Location.objects.filter(community__in=shared_communities)

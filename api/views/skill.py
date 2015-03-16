@@ -1,15 +1,14 @@
-from rest_framework import viewsets
 from rest_framework.decorators import link
 from rest_framework.response import Response
 from rest_framework import status
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTSelf, IsJWTOwner
 from api.serializers import SkillCreateSerializer, SkillSerializer
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Skill
 
 
-class SkillViewSet(viewsets.ModelViewSet):
+class SkillViewSet(CustomViewSet):
     """
     Inherits standard characteristics from ModelViewSet:
             | **Endpoint**: /skills/
@@ -31,18 +30,18 @@ class SkillViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         # TODO : Permissions must be different if pk or not
-        if self.request.method == 'GET':
+        if self.request.method in ['GET', 'POST']:
             return [IsJWTAuthenticated()]
-        elif self.request.method == 'POST':
-            return [IsJWTSelf()]
         else:
             return [IsJWTOwner()]
+
+    def pre_save(self, obj):
+        self.set_auto_user(obj)
 
     @link()
     def list_my_skills(self, request, pk=None):
         """ """
-        user, _ = AuthUser().authenticate(self.request)
-        my_skills = Skill.objects.filter(user=user)
+        my_skills = Skill.objects.filter(user=self.request.user)
         serializer = self.get_paginated_serializer(my_skills)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

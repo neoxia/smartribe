@@ -1,87 +1,66 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from api.tests.api_test_case import CustomAPITestCase
 from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint, Offer, Meeting, Profile
-import core.utils
 
 
-class RequestTests(CustomAPITestCase):
+class MeetingTests(CustomAPITestCase):
 
     def setUp(self):
         """
         
         """
-        user1 = User(username='user1', password='user1', email='user1@test.fr')
-        user1.save()
-        user2 = User(username='user2', password='user2', email='user2@test.fr')
-        user2.save()
-        user3 = User(username='user3', password='user3', email='user3@test.fr')
-        user3.save()
-        user4 = User(username='user4', password='user4', email='user4@test.fr')
-        user4.save()
+        user1 = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        user2 = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
+        user3 = self.user_model.objects.create(password=make_password('user3'), email='user3@test.com',
+                                               first_name='3', last_name='User', is_active=True)
+        user4 = self.user_model.objects.create(password=make_password('user4'), email='user4@test.com',
+                                               first_name='4', last_name='User', is_active=True)
 
-        profile1 = Profile(user=user1)
-        profile1.save()
-        profile2 = Profile(user=user2)
-        profile2.save()
-        profile3 = Profile(user=user3)
-        profile3.save()
-        profile4 = Profile(user=user4)
-        profile4.save()
+        profile1 = Profile.objects.create(user=user1)
+        profile2 = Profile.objects.create(user=user2)
+        profile3 = Profile.objects.create(user=user3)
+        profile4 = Profile.objects.create(user=user4)
 
-        community1 = Community(name='com1', description='desc1')
-        community1.save()
-        community2 = Community(name='com2', description='desc2')
-        community2.save()
+        community1 = Community.objects.create(name='com1', description='desc1')
+        community2 = Community.objects.create(name='com2', description='desc2')
 
-        member1 = Member(user=user1, community=community1, role='0', status='1')
-        member1.save()
-        member2 = Member(user=user2, community=community2, role='0', status='1')
-        member2.save()
-        member3 = Member(user=user3, community=community1, role='2', status='1')
-        member3.save()
-        member4 = Member(user=user3, community=community2, role='2', status='1')
-        member4.save()
+        member1 = Member.objects.create(user=user1, community=community1, role='0', status='1')
+        member2 = Member.objects.create(user=user2, community=community2, role='0', status='1')
+        member3 = Member.objects.create(user=user3, community=community1, role='2', status='1')
+        member4 = Member.objects.create(user=user3, community=community2, role='2', status='1')
 
-        loc1 = Location(community=community1, name='loc1', description='desc loc 1', gps_x=0.1, gps_y=1.1)
-        loc1.save()
-        loc2 = Location(community=community2, name='loc2', description='desc loc 2', gps_x=0.2, gps_y=1.2)
-        loc2.save()
+        loc1 = Location.objects.create(community=community1, name='loc1', description='desc loc 1',
+                                       gps_x=0.1, gps_y=1.1)
+        loc2 = Location.objects.create(community=community2, name='loc2', description='desc loc 2',
+                                       gps_x=0.2, gps_y=1.2)
 
-        mp1 = MeetingPoint(location=loc1, name='mp1', description='desc mp 1')
-        mp1.save()
-        mp2 = MeetingPoint(location=loc2, name='mp2', description='desc mp 2')
-        mp2.save()
+        mp1 = MeetingPoint.objects.create(location=loc1, name='mp1', description='desc mp 1')
+        mp2 = MeetingPoint.objects.create(location=loc2, name='mp2', description='desc mp 2')
 
-        skill_cat = SkillCategory(name='cat', detail='desc')
-        skill_cat.save()
+        skill_cat = SkillCategory.objects.create(name='cat', detail='desc')
 
-        request1 = Request(user=user1, category=skill_cat, title='help1', detail='det help1', )
-        request1.save()
-        request2 = Request(user=user2, category=skill_cat, title='help2', detail='det help2', )
-        request2.save()
-        request3 = Request(user=user3, category=skill_cat, title='help3', detail='det help3', )
-        request3.save()
+        request1 = Request.objects.create(user=user1, category=skill_cat, title='help1', detail='det help1', )
+        request2 = Request.objects.create(user=user2, category=skill_cat, title='help2', detail='det help2', )
+        request3 = Request.objects.create(user=user3, category=skill_cat, title='help3', detail='det help3', )
 
-        offer1= Offer(request=request1, user=user3, detail='det off1')
-        offer1.save()
-        offer2= Offer(request=request2, user=user3, detail='det off2')
-        offer2.save()
-        offer3= Offer(request=request3, user=user1, detail='det off3')
-        offer3.save()
-        offer4= Offer(request=request3, user=user2, detail='det off4')
-        offer4.save()
+        offer1= Offer.objects.create(request=request1, user=user3, detail='det off1')
+        offer2= Offer.objects.create(request=request2, user=user3, detail='det off2')
+        offer3= Offer.objects.create(request=request3, user=user1, detail='det off3')
+        offer4= Offer.objects.create(request=request3, user=user2, detail='det off4')
 
-        meeting1 = Meeting(offer=offer1, user=user1, status='A', meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
-        meeting1.save()
-        meeting2 = Meeting(offer=offer2, user=user2, meeting_point=mp2, date_time='2014-01-01 12:12:12+01')
-        meeting2.save()
+        meeting1 = Meeting.objects.create(offer=offer1, user=user1, status='A', meeting_point=mp1,
+                                          date_time='2014-01-01 12:12:12+01')
+        meeting2 = Meeting.objects.create(offer=offer2, user=user2, meeting_point=mp2,
+                                          date_time='2014-01-01 12:12:12+01')
 
     def test_valid_setup(self):
         """
 
         """
-        self.assertEqual(4, User.objects.all().count())
+        self.assertEqual(4, self.user_model.objects.all().count())
         self.assertEqual(2, Community.objects.all().count())
         self.assertEqual(4, Member.objects.all().count())
         self.assertEqual(2, Location.objects.all().count())

@@ -1,6 +1,4 @@
 from django.db.models import Max
-from rest_framework.decorators import link, action
-from api.permissions.community import IsCommunityModerator, IsCommunityMember
 from api.serializers import TransportCommunitySerializer
 from api.views.community import CommunityViewSet
 from core.models import TransportCommunity, Location

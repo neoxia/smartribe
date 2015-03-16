@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from rest_framework import status
 
@@ -12,68 +13,46 @@ class RequestTests(CustomAPITestCase):
         """
         
         """
-        user1 = User(username='user1', password='user1', email='user1@test.fr')
-        user2 = User(username='user2', password='user2', email='user2@test.fr')
-        user3 = User(username='user3', password='user3', email='user3@test.fr')
-        user4 = User(username='user4', password='user4', email='user4@test.fr')
-        user5 = User(username='user5', password='user5', email='user5@test.fr')
-        user1.save()
-        user2.save()
-        user3.save()
-        user4.save()
-        user5.save()
+        user1 = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        user2 = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
+        user3 = self.user_model.objects.create(password=make_password('user3'), email='user3@test.com',
+                                               first_name='3', last_name='User', is_active=True)
+        user4 = self.user_model.objects.create(password=make_password('user4'), email='user4@test.com',
+                                               first_name='4', last_name='User', is_active=True)
+        user5 = self.user_model.objects.create(password=make_password('user5'), email='user5@test.com',
+                                               first_name='5', last_name='User', is_active=True)
 
-        profile1 = Profile(user=user1, photo='profiles/user1.jpg')
-        profile1.save()
+        profile1 = Profile.objects.create(user=user1, photo='profiles/user1.jpg')
 
-        community1 = Community(name='com1', description='desc1')
-        community2 = Community(name='com2', description='desc2')
-        community1.save()
-        community2.save()
+        community1 = Community.objects.create(name='com1', description='desc1')
+        community2 = Community.objects.create(name='com2', description='desc2')
 
-        category1 = SkillCategory(name='cat1', detail='desc')
-        category2 = SkillCategory(name='cat2', detail='desc')
-        category3 = SkillCategory(name='cat3', detail='desc')
-        category4 = SkillCategory(name='cat4', detail='desc')
-        category1.save()
-        category2.save()
-        category3.save()
-        category4.save()
+        category1 = SkillCategory.objects.create(name='cat1', detail='desc')
+        category2 = SkillCategory.objects.create(name='cat2', detail='desc')
+        category3 = SkillCategory.objects.create(name='cat3', detail='desc')
+        category4 = SkillCategory.objects.create(name='cat4', detail='desc')
 
-        skill1 = Skill(user=user1, category=category1, description='skill desc 1', level=1)
-        skill2 = Skill(user=user1, category=category2, description='skill desc 2', level=3)
-        skill3 = Skill(user=user2, category=category1, description='skill desc 3', level=1)
-        skill4 = Skill(user=user3, category=category1, description='skill desc 4', level=2)
-        skill5 = Skill(user=user3, category=category2, description='skill desc 5', level=2)
-        skill6 = Skill(user=user1, category=category2, description='skill desc 2 bis', level=3)
-        skill1.save()
-        skill2.save()
-        skill3.save()
-        skill4.save()
-        skill5.save()
-        skill6.save()
+        skill1 = Skill.objects.create(user=user1, category=category1, description='skill desc 1', level=1)
+        skill2 = Skill.objects.create(user=user1, category=category2, description='skill desc 2', level=3)
+        skill3 = Skill.objects.create(user=user2, category=category1, description='skill desc 3', level=1)
+        skill4 = Skill.objects.create(user=user3, category=category1, description='skill desc 4', level=2)
+        skill5 = Skill.objects.create(user=user3, category=category2, description='skill desc 5', level=2)
+        skill6 = Skill.objects.create(user=user1, category=category2, description='skill desc 2 bis', level=3)
 
-        member1 = Member(user=user1, community=community1, role='2', status='1')
-        member2 = Member(user=user1, community=community2, role='2', status='1')
-        member3 = Member(user=user2, community=community2, role='2', status='1')
-        member4 = Member(user=user3, community=community1, role='2', status='1')
-        member5 = Member(user=user5, community=community2, role='2', status='1')
-        member1.save()
-        member2.save()
-        member3.save()
-        member4.save()
-        member5.save()
+        member1 = Member.objects.create(user=user1, community=community1, role='2', status='1')
+        member2 = Member.objects.create(user=user1, community=community2, role='2', status='1')
+        member3 = Member.objects.create(user=user2, community=community2, role='2', status='1')
+        member4 = Member.objects.create(user=user3, community=community1, role='2', status='1')
+        member5 = Member.objects.create(user=user5, community=community2, role='2', status='1')
 
-        request1 = Request(user=user1, category=category1, title='help1', detail='det help1', )
-        request2 = Request(user=user1, category=category2, title='help2', detail='det help2', community=community1)
-        request3 = Request(user=user2, category=category1, title='help3', detail='det help3', )
-        request4 = Request(user=user2, category=category3, title='help4', detail='det help4', )
-        request5 = Request(user=user3, category=category4, title='help5', detail='det help5', )
-        request1.save()
-        request2.save()
-        request3.save()
-        request4.save()
-        request5.save()
+        request1 = Request.objects.create(user=user1, category=category1, title='help1', detail='det help1', )
+        request2 = Request.objects.create(user=user1, category=category2, title='help2', detail='det help2',
+                                          community=community1)
+        request3 = Request.objects.create(user=user2, category=category1, title='help3', detail='det help3', )
+        request4 = Request.objects.create(user=user2, category=category3, title='help4', detail='det help4', )
+        request5 = Request.objects.create(user=user3, category=category4, title='help5', detail='det help5', )
 
     def test_list_request_user1(self):
         """

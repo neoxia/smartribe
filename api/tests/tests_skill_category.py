@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
@@ -6,15 +7,17 @@ from api.tests.api_test_case import CustomAPITestCase
 
 class SkillCategoryTests(CustomAPITestCase):
 
+    user_model = get_user_model()
+
     def setUp(self):
         """
         Make a user for authenticating and
         testing skill actions
         """
-        user = User(username="user", password="user", email="user@test.fr")
-        other = User(username="other", password="other", email="other@test.fr")
-        user.save()
-        other.save()
+        user = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                              first_name='1', last_name='User', is_active=True)
+        other = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
 
     def test_create_skill_category_without_auth(self):
         """

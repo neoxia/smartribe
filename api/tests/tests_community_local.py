@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from django.contrib.auth.models import User
 from api.tests.api_test_case import CustomAPITestCase
@@ -6,49 +8,45 @@ from core.models import Member, Community, LocalCommunity
 
 class LocalCommunityTests(CustomAPITestCase):
 
+    user_model = get_user_model()
+
     def setUp(self):
         """
 
         """
-        owner = User(username="owner", password="owner", email="owner@test.fr")
-        moderator = User(username="moderator", password="moderator", email="moderator@test.fr")
-        member = User(username="member", password="member", email="member@test.fr")
-        other = User(username="other", password="other", email="other@test.fr")
-        owner.save()
-        moderator.save()
-        member.save()
-        other.save()
+        owner = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        moderator = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
+        member = self.user_model.objects.create(password=make_password('user3'), email='user3@test.com',
+                                               first_name='3', last_name='User', is_active=True)
+        other = self.user_model.objects.create(password=make_password('user4'), email='user4@test.com',
+                                               first_name='4', last_name='User', is_active=True)
 
-        com1 = LocalCommunity(name='com1', description='desc1', city='Paris', country='FR', gps_x=0, gps_y=0)
-        com2 = LocalCommunity(name='loc1', description='desc2', city='Paris', country='FR', gps_x=1, gps_y=1,
-                              auto_accept_member=True)
-        com3 = LocalCommunity(name='loccom1', description='desc3', city='Paris', country='FR', gps_x=2, gps_y=1)
-        com4 = LocalCommunity(name='con2', description='desc4', city='Paris', country='FR', gps_x=3, gps_y=2)
-        com5 = LocalCommunity(name='loc2', description='des5', city='Paris', country='FR', gps_x=2, gps_y=3)
-        com1.save()
-        com2.save()
-        com3.save()
-        com4.save()
-        com5.save()
 
-        own_mbr = Member(user=owner, community=com1, role='0', status='1')
-        mod_mbr = Member(user=moderator, community=com1, role='1', status='1')
-        spl_mbr = Member(user=member, community=com1, role='2', status='1')
-        own_mbr.save()
-        mod_mbr.save()
-        spl_mbr.save()
+        com1 = LocalCommunity.objects.create(name='com1', description='desc1', city='Paris', country='FR',
+                                             gps_x=0, gps_y=0)
+        com2 = LocalCommunity.objects.create(name='loc1', description='desc2', city='Paris', country='FR',
+                                             gps_x=1, gps_y=1, auto_accept_member=True)
+        com3 = LocalCommunity.objects.create(name='loccom1', description='desc3', city='Paris', country='FR',
+                                             gps_x=2, gps_y=1)
+        com4 = LocalCommunity.objects.create(name='con2', description='desc4', city='Paris', country='FR',
+                                             gps_x=3, gps_y=2)
+        com5 = LocalCommunity.objects.create(name='loc2', description='des5', city='Paris', country='FR',
+                                             gps_x=2, gps_y=3)
 
-        own_mbr = Member(user=owner, community=com2, role='0', status='1')
-        mod_mbr = Member(user=moderator, community=com2, role='1', status='1')
-        spl_mbr = Member(user=member, community=com2, role='2', status='1')
-        own_mbr.save()
-        mod_mbr.save()
-        spl_mbr.save()
+        own_mbr = Member.objects.create(user=owner, community=com1, role='0', status='1')
+        mod_mbr = Member.objects.create(user=moderator, community=com1, role='1', status='1')
+        spl_mbr = Member.objects.create(user=member, community=com1, role='2', status='1')
+
+        own_mbr = Member.objects.create(user=owner, community=com2, role='0', status='1')
+        mod_mbr = Member.objects.create(user=moderator, community=com2, role='1', status='1')
+        spl_mbr = Member.objects.create(user=member, community=com2, role='2', status='1')
 
     def test_setup(self):
         """
         """
-        self.assertEqual(4, User.objects.all().count())
+        self.assertEqual(4, self.user_model.objects.all().count())
         self.assertEqual(5, LocalCommunity.objects.all().count())
         self.assertEqual(5, Community.objects.all().count())
         self.assertEqual(6, Member.objects.all().count())
@@ -86,14 +84,14 @@ class LocalCommunityTests(CustomAPITestCase):
             'gps_y': 1
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth("user1"), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
         self.assertEqual(7, Member.objects.all().count())
         self.assertEqual(6, Community.objects.all().count())
         member = Member.objects.get(id=7)
         community = Community.objects.get(id=6)
-        self.assertEqual(User.objects.get(username="owner"), member.user)
+        self.assertEqual(self.user_model.objects.get(email="user1@test.com"), member.user)
         self.assertEqual(community, member.community)
         self.assertEqual("0", member.role)
         self.assertEqual("1", member.status)
@@ -113,7 +111,7 @@ class LocalCommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/local_communities/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user4"))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(5, data['count'])
@@ -132,7 +130,7 @@ class LocalCommunityTests(CustomAPITestCase):
             'gps_y': 1
         }
 
-        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
+        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth("user1"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
@@ -145,7 +143,7 @@ class LocalCommunityTests(CustomAPITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("owner"), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("user1"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
@@ -173,7 +171,7 @@ class LocalCommunityTests(CustomAPITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("other"), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("user4"), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modify_local_community_with_member(self):
@@ -186,7 +184,7 @@ class LocalCommunityTests(CustomAPITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("member"), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("user3"), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modify_local_community_with_moderator(self):
@@ -199,7 +197,7 @@ class LocalCommunityTests(CustomAPITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("moderator"), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("user2"), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'com1descmodify')
 
@@ -218,7 +216,7 @@ class LocalCommunityTests(CustomAPITestCase):
             'description': 'com1descmodify',
         }
 
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("moderator"), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth("user2"), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_local_community_with_moderator(self):
@@ -227,7 +225,7 @@ class LocalCommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/local_communities/1/'
 
-        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth("moderator"))
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth("user2"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(5, LocalCommunity.objects.all().count())
         self.assertEqual(5, Community.objects.all().count())
@@ -238,7 +236,7 @@ class LocalCommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/local_communities/1/'
 
-        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth("owner"))
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth("user1"))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(4, LocalCommunity.objects.all().count())
         self.assertEqual(4, Community.objects.all().count())

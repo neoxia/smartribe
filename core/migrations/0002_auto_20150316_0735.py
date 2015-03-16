@@ -7,26 +7,26 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0006_auto_20150202_1012'),
+        ('core', '0001_initial'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='notification',
-            name='seen',
-            field=models.BooleanField(default=False),
+        migrations.AlterField(
+            model_name='customuser',
+            name='email',
+            field=models.EmailField(max_length=255, verbose_name='email address', unique=True),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='evaluation',
             name='mark',
-            field=models.IntegerField(choices=[(0, 'Dangerous'), (5, 'Perfect'), (2, 'Neutral'), (3, 'Good'), (4, 'Excellent'), (1, 'Bad')]),
+            field=models.IntegerField(choices=[(1, 'Bad'), (5, 'Perfect'), (4, 'Excellent'), (2, 'Neutral'), (3, 'Good'), (0, 'Dangerous')]),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='meeting',
             name='status',
-            field=models.CharField(default='P', choices=[('A', 'Accepted'), ('R', 'Refused'), ('P', 'Pending')], max_length=1),
+            field=models.CharField(choices=[('R', 'Refusé'), ('A', 'Accepté'), ('P', 'En attente')], max_length=1, default='P'),
             preserve_default=True,
         ),
     ]

@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import check_password, make_password
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
@@ -10,39 +11,40 @@ from core.utils import gen_temporary_token
 
 class AccountTests(CustomAPITestCase):
 
+    model = get_user_model()
+
     def setUp(self):
 
-        user1 = User(username='user1', password=make_password('user1'), email='user1@test.com', is_active=True)
-        user2 = User(username='user2', password=make_password('user2'), email='user2@test.com', is_active=False)
-        user3 = User(username='user3', password=make_password('user3'), email='user3@test.com', is_active=True)
-        user4 = User(username='user4', password=make_password('user4'), email='user4@test.com', is_active=True)
-        user5 = User(username='user5', password=make_password('user5'), email='user5@test.com', is_active=False)
-        user1.save()
-        user2.save()
-        user3.save()
-        user4.save()
-        user5.save()
+        cache.clear()
 
-        profile1 = Profile(user=user1)
-        profile2 = Profile(user=user2)
-        profile3 = Profile(user=user3)
-        profile4 = Profile(user=user4)
-        profile5 = Profile(user=user5)
-        profile1.save()
-        profile2.save()
-        profile3.save()
-        profile4.save()
-        profile5.save()
+        user1 = self.model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                          first_name='1', last_name='User', is_active=True)
+        user2 = self.model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                          first_name='2', last_name='User', is_active=False)
+        user3 = self.model.objects.create(password=make_password('user3'), email='user3@test.com',
+                                          first_name='3', last_name='User', is_active=True)
+        user4 = self.model.objects.create(password=make_password('user4'), email='user4@test.com',
+                                          first_name='4', last_name='User', is_active=True)
+        user5 = self.model.objects.create(password=make_password('user5'), email='user5@test.com',
+                                          first_name='5', last_name='User', is_active=False)
 
-        act_token1 = ActivationToken(user=user2, token=gen_temporary_token())
-        act_token2 = ActivationToken(user=user5, token=gen_temporary_token())
-        act_token1.save()
-        act_token2.save()
+        profile1 = Profile.objects.create(user=user1)
+        profile2 = Profile.objects.create(user=user2)
+        profile3 = Profile.objects.create(user=user3)
+        profile4 = Profile.objects.create(user=user4)
+        profile5 = Profile.objects.create(user=user5)
+
+        act_token1 = ActivationToken.objects.create(user=user2, token=gen_temporary_token())
+        act_token2 = ActivationToken.objects.create(user=user5, token=gen_temporary_token())
 
     def test_setup(self):
-        self.assertEqual(5, User.objects.all().count())
+        self.assertEqual(5, self.model.objects.all().count())
+        self.assertEqual(3, self.model.objects.filter(is_active=True).count())
+        self.assertEqual(2, self.model.objects.filter(is_active=False).count())
         self.assertEqual(5, Profile.objects.all().count())
         self.assertEqual(2, ActivationToken.objects.all().count())
+
+        self.assertTrue(check_password('user1', self.model.objects.get(id=1).password))
 
     def test_create_account(self):
         """
@@ -50,7 +52,6 @@ class AccountTests(CustomAPITestCase):
         """
         url = '/api/v1/users/'
         data = {
-            'username': 'test',
             'email': 'test@test.com',
             'password': 'pass',
             'first_name': 'first',
@@ -60,22 +61,23 @@ class AccountTests(CustomAPITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        self.assertEqual(6, User.objects.all().count())
+        self.assertEqual(6, self.model.objects.all().count())
         self.assertEqual(6, Profile.objects.all().count())
+        self.assertEqual(3, ActivationToken.objects.count())
 
-        self.assertTrue(User.objects.filter(username='test').exists())
-        user = User.objects.get(username='test')
-        self.assertEqual('test@test.com', user.email)
+        self.assertTrue(self.model.objects.filter(email='test@test.com').exists())
+
+        user = self.model.objects.get(email='test@test.com')
         self.assertEqual('first', user.first_name)
         self.assertEqual('last', user.last_name)
         self.assertFalse(user.is_active)
         self.assertTrue(check_password('pass', user.password))
 
-        token = ActivationToken.objects.get(id=3)
-        self.assertEqual(user, token.user)
-
         profile = Profile.objects.get(id=6)
         self.assertEqual(user, profile.user)
+
+        token = ActivationToken.objects.get(id=3)
+        self.assertEqual(user, token.user)
 
     def test_create_two_accounts_with_same_mail(self):
         """
@@ -83,7 +85,6 @@ class AccountTests(CustomAPITestCase):
         """
         url = '/api/v1/users/'
         data = {
-            'username': 'test',
             'email': 'user1@test.com',
             'password': 'pass1',
             'first_name': 'first',
@@ -92,7 +93,7 @@ class AccountTests(CustomAPITestCase):
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(5, User.objects.all().count())
+        self.assertEqual(5, self.model.objects.all().count())
 
     def test_activate_account(self):
         """
@@ -104,26 +105,9 @@ class AccountTests(CustomAPITestCase):
         response = self.client.post(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        user = User.objects.get(username='user2')
+        user = self.model.objects.get(email='user2@test.com')
         self.assertTrue(user.is_active)
         self.assertFalse(ActivationToken.objects.filter(id=1).exists())
-
-    def test_username_is_unique(self):
-        """
-        Ensure only one account can created with a single username.
-        """
-        url = '/api/v1/users/'
-        data = {
-            'username': 'user1',
-            'email': 'test@test.com',
-            'password': 'pass1',
-            'first_name': 'first',
-            'last_name': 'last'
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        self.assertEqual(5, User.objects.filter().count())
 
     def test_recover_password(self):
         """
@@ -135,7 +119,7 @@ class AccountTests(CustomAPITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        token = PasswordRecovery.objects.get(user=User.objects.get(email='user1@test.com')).token
+        token = PasswordRecovery.objects.get(user=self.model.objects.get(email='user1@test.com')).token
         url = '/api/v1/users/'+token+'/set_new_password/'
         data = {'password': 'gloup'}
 
@@ -143,7 +127,8 @@ class AccountTests(CustomAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(0, PasswordRecovery.objects.filter().count())
-        user = User.objects.get(username='user1')
+
+        user = self.model.objects.get(email='user1@test.com')
         self.assertEqual(True, check_password('gloup', user.password))
 
     def test_list_users_without_auth(self):
@@ -166,11 +151,11 @@ class AccountTests(CustomAPITestCase):
 
         data = response.data
         self.assertEqual(5, data['count'])
-        self.assertEqual('user1', data['results'][0]['username'])
-        self.assertEqual('user2', data['results'][1]['username'])
-        self.assertEqual('user3', data['results'][2]['username'])
-        self.assertEqual('user4', data['results'][3]['username'])
-        self.assertEqual('user5', data['results'][4]['username'])
+        self.assertEqual('1', data['results'][0]['first_name'])
+        self.assertEqual('2', data['results'][1]['first_name'])
+        self.assertEqual('3', data['results'][2]['first_name'])
+        self.assertEqual('4', data['results'][3]['first_name'])
+        self.assertEqual('5', data['results'][4]['first_name'])
 
     def test_email_not_in_list(self):
         """  """
@@ -192,7 +177,7 @@ class AccountTests(CustomAPITestCase):
         """
         url = '/api/v1/users/'
 
-        response = self.client.get(url, {'username': 'user'}, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        response = self.client.get(url, {'email': 'user'}, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.data
@@ -202,7 +187,7 @@ class AccountTests(CustomAPITestCase):
         """  """
         url = '/api/v1/users/'
 
-        response = self.client.get(url, {'username': 'r1'}, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        response = self.client.get(url, {'email': 'r1'}, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.data
@@ -219,8 +204,9 @@ class AccountTests(CustomAPITestCase):
 
         data = response.data
         self.assertEqual(1, data['id'])
-        self.assertEqual('user1', data['username'])
         self.assertEqual('user1@test.com', data['email'])
+        self.assertEqual('1', data['first_name'])
+        self.assertEqual('User', data['last_name'])
         self.assertEqual([], data['groups'])
 
     def test_retrieve_other_user(self):
@@ -234,7 +220,8 @@ class AccountTests(CustomAPITestCase):
 
         data = response.data
         self.assertEqual(2, data['id'])
-        self.assertEqual('user2', data['username'])
+        self.assertEqual('2', data['first_name'])
+        self.assertEqual('User', data['last_name'])
         self.assertNotIn('email', data)
         self.assertNotIn('groups', data)
 
@@ -249,7 +236,7 @@ class AccountTests(CustomAPITestCase):
         response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        user = User.objects.get(username='user1')
+        user = self.model.objects.get(email='user1@test.com')
         self.assertTrue(check_password('password', user.password))
 
     def test_update_other_user(self):
@@ -263,7 +250,7 @@ class AccountTests(CustomAPITestCase):
         response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        user = User.objects.get(username='user3')
+        user = self.model.objects.get(email='user3@test.com')
         self.assertTrue(check_password('user3', user.password))
 
     def test_delete_my_user(self):
@@ -275,7 +262,7 @@ class AccountTests(CustomAPITestCase):
         response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        self.assertFalse(User.objects.filter(username='user1').exists())
+        self.assertFalse(self.model.objects.filter(email='user1@test.com').exists())
 
     def test_delete_other_user(self):
         """
@@ -286,7 +273,7 @@ class AccountTests(CustomAPITestCase):
         response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        self.assertTrue(User.objects.filter(username='user2').exists())
+        self.assertTrue(self.model.objects.filter(email='user2@test.com').exists())
 
     def test_get_my_user_without_auth(self):
         """
@@ -308,8 +295,9 @@ class AccountTests(CustomAPITestCase):
 
         data = response.data
         self.assertEqual(1, data['id'])
-        self.assertEqual('user1', data['username'])
         self.assertEqual('user1@test.com', data['email'])
+        self.assertEqual('1', data['first_name'])
+        self.assertEqual('User', data['last_name'])
         self.assertEqual([], data['groups'])
 
     def test_update_my_password(self):
@@ -325,5 +313,5 @@ class AccountTests(CustomAPITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-        user = User.objects.get(id=1)
+        user = self.model.objects.get(id=1)
         self.assertTrue(check_password('newuser1', user.password))

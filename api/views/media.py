@@ -1,10 +1,6 @@
-from PIL.Image import Image
-import django
-from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
-from api.permissions.common import IsJWTAuthenticated
 from django.views.static import serve
 
 

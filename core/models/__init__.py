@@ -1,13 +1,18 @@
 
+
+from core.models.custom_user import CustomUser
+
+
 ## Authentication
 from core.models.password_recovery import PasswordRecovery
 from core.models.activation_token import ActivationToken
+
+
 
 ## Profile
 from core.models.profile import Profile
 
 ## User
-from django.contrib.auth.models import User
 
 ## Skill
 from core.models.skill import SkillCategory

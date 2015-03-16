@@ -19,6 +19,7 @@ class SkillCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
+        exclude = ('user', )
 
 
 class SkillSerializer(serializers.ModelSerializer):

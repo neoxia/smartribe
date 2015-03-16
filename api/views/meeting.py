@@ -2,9 +2,7 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.meeting import IsConcernedByMeeting
 from api.serializers import MeetingSerializer, MeetingCreateSerializer
@@ -38,8 +36,7 @@ class MeetingViewSet(CustomViewSet):
         return [IsConcernedByMeeting()]
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter(Q(offer__user=user) | Q(offer__request__user=user))
+        return self.model.objects.filter(Q(offer__user=self.request.user) | Q(offer__request__user=self.request.user))
 
     def pre_save(self, obj):
         self.set_auto_user(obj)
@@ -71,8 +68,7 @@ class MeetingViewSet(CustomViewSet):
         obj, response = self.validate_object(request, pk)
         if not obj:
             return response
-        user, _ = AuthUser().authenticate(self.request)
-        if user == obj.user:
+        if self.request.user == obj.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         obj.status = 'A'
         obj.save()
@@ -102,8 +98,7 @@ class MeetingViewSet(CustomViewSet):
         obj, response = self.validate_object(request, pk)
         if not obj:
             return response
-        user, _ = AuthUser().authenticate(self.request)
-        if user == obj.user:
+        if self.request.user == obj.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         obj.status = 'R'
         obj.save()
@@ -133,8 +128,7 @@ class MeetingViewSet(CustomViewSet):
         obj, response = self.validate_object(request, pk)
         if not obj:
             return response
-        user, _ = AuthUser().authenticate(self.request)
-        if user != obj.offer.user and user != obj.offer.request.user:
+        if self.request.user != obj.offer.user and self.request.user != obj.offer.request.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         if obj.status != 'A':
             return Response({'detail': 'Status must be \'Accepted\' to validate.'}, status.HTTP_403_FORBIDDEN)

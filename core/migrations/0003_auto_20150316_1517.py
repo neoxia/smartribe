@@ -7,20 +7,20 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0009_auto_20150202_2045'),
+        ('core', '0002_auto_20150316_0735'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='evaluation',
             name='mark',
-            field=models.IntegerField(choices=[(2, 'Neutral'), (3, 'Good'), (0, 'Dangerous'), (4, 'Excellent'), (5, 'Perfect'), (1, 'Bad')]),
+            field=models.IntegerField(choices=[(0, 'Dangerous'), (1, 'Bad'), (2, 'Neutral'), (3, 'Good'), (4, 'Excellent'), (5, 'Perfect')]),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='meeting',
             name='status',
-            field=models.CharField(choices=[('A', 'Accepted'), ('P', 'Pending'), ('R', 'Refused')], default='P', max_length=1),
+            field=models.CharField(default='P', choices=[('P', 'En attente'), ('A', 'Accepté'), ('R', 'Refusé')], max_length=1),
             preserve_default=True,
         ),
     ]

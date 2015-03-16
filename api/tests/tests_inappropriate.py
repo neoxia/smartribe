@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 
 from django.contrib.auth.models import User
@@ -12,10 +13,10 @@ class InappropriateTests(CustomAPITestCase):
         """
         Set data
         """
-        user1 = User(username="test", password="test", email="test@test.com")
-        user2 = User(username="other", password="other", email="other@test.com")
-        user1.save()
-        user2.save()
+        user1 = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        user2 = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
 
     def test_create_inappropriate_without_auth(self):
         """
@@ -40,10 +41,10 @@ class InappropriateTests(CustomAPITestCase):
             'detail': 'the test'
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('test'), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(1, Inappropriate.objects.all().count())
         i = Inappropriate.objects.get(id=1)
-        self.assertEqual(User.objects.get(username="test"), i.user)
+        self.assertEqual(self.user_model.objects.get(email="user1@test.com"), i.user)
         self.assertEqual('Request/1', i.content_identifier)
         self.assertEqual('the test', i.detail)

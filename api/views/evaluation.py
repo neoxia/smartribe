@@ -3,12 +3,11 @@ from rest_framework import status
 from rest_framework.decorators import link
 from rest_framework.response import Response
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.evaluation import IsEvaluator, IsEvaluationAuthor
 from api.serializers.evaluation import EvaluationSerializer, EvaluationCreateSerializer
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
-from core.models import Evaluation, Offer
+from core.models import Evaluation
 
 
 class EvaluationViewSet(CustomViewSet):
@@ -42,9 +41,8 @@ class EvaluationViewSet(CustomViewSet):
         obj.offer.save()
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter(Q(offer__user=user) |
-                                         Q(offer__request__user=user))
+        return self.model.objects.filter(Q(offer__user=self.request.user) |
+                                         Q(offer__request__user=self.request.user))
 
     @link()
     def list_evaluations_about_me(self, request, pk=None):
@@ -72,8 +70,7 @@ class EvaluationViewSet(CustomViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(self.request)
-        qs = self.get_queryset().filter(offer__user=user)
+        qs = self.get_queryset().filter(offer__user=self.request.user)
         serializer = self.get_paginated_serializer(qs)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -103,7 +100,6 @@ class EvaluationViewSet(CustomViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(self.request)
-        qs = self.get_queryset().filter(offer__request__user=user)
+        qs = self.get_queryset().filter(offer__request__user=self.request.user)
         serializer = self.get_paginated_serializer(qs)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
@@ -6,15 +7,21 @@ from core.models import Profile
 
 
 class ProfileTests(CustomAPITestCase):
+
+    user_model = get_user_model()
+
     def setUp(self):
         """
         Make a user for authenticating and
         testing profile actions
         """
-        user = User(username="user", password="user", email="user@test.fr")
-        other = User( username="other", password="other", email="other@test.fr")
-        user.save()
-        other.save()
+
+        user1 = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        user2 = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
+
+        profile1 = Profile.objects.create(user=user1, gender='M', city='Poitiers', country='France')
 
     def test_create_profile_without_auth(self):
         """
@@ -34,10 +41,10 @@ class ProfileTests(CustomAPITestCase):
         """
         url = '/api/v1/profiles/'
         data = {
-            'user': 1,
+            'user': 2,
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_two_profiles_with_auth(self):
@@ -49,10 +56,7 @@ class ProfileTests(CustomAPITestCase):
             'user': 1,
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_profile_for_other(self):
@@ -64,51 +68,37 @@ class ProfileTests(CustomAPITestCase):
             'user': 2,
         }
 
-        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_modify_self_profile(self):
         """
         Ensure an authenticated user can modify his profile
         """
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 1,
-            'gender': 'M',
-            'city': 'Poitiers',
-            'country': 'France'
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         url = '/api/v1/profiles/1/'
         data = {
             'user': 1,
-            #'gender': "M",
             'city': 'Nantes',
             'country': 'France'
         }
-        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Profile.objects.get(id=1).gender, 'M')
         profile = Profile.objects.get(id=1)
+        self.assertEqual('M', profile.gender)
         self.assertEqual('Nantes', profile.city)
 
     def test_profile_user_is_readonly(self):
         """
         Ensure an authenticated user can modify his profile
         """
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 1,
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
         url = '/api/v1/profiles/1/'
         data = {
             'user': 2,
         }
-        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
+        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        original_user = User.objects.get(username="user")
+        original_user = self.user_model.objects.get(id=1)
         profile_user = Profile.objects.get(id=1).user
         self.assertEqual(original_user, profile_user)
 
@@ -116,41 +106,20 @@ class ProfileTests(CustomAPITestCase):
         """
         Ensure an authenticated user can modify his profile
         """
-        # Create user profile
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 1,
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
-        # Create other_user profile
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 2,
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('other'), format='json')
 
-        url = '/api/v1/profiles/2/'
+        url = '/api/v1/profiles/1/'
         data = {
-            'user': 2,
-            'gender': "M",
+            'gender': "F",
         }
-        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
+        response = self.client.put(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_self_profile(self):
         """
         Ensure an authenticated user can modify his profile
         """
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 1,
-            'city': 'Poitiers',
-            'country': 'France'
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
-
         url = '/api/v1/profiles/1/'
-        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user'))
+        response = self.client.delete(url, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         self.assertEqual(False, Profile.objects.filter(id=1).exists())
@@ -159,37 +128,21 @@ class ProfileTests(CustomAPITestCase):
         """
         Ensure an authenticated user can modify his profile
         """
-        # Create user profile
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 1,
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user'), format='json')
-        # Create other_user profile
-        url = '/api/v1/profiles/'
-        data = {
-            'user': 2,
-        }
-        self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('other'), format='json')
-
-        url = '/api/v1/profiles/2/'
-        response = self.client.put(url, HTTP_AUTHORIZATION=self.auth('user'))
+        url = '/api/v1/profiles/1/'
+        response = self.client.put(url, HTTP_AUTHORIZATION=self.auth('user2'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_filter_profiles(self):
         """
         """
-        p_user = Profile(user=User.objects.get(id=1))
-        p_other = Profile(user=User.objects.get(id=2))
-        p_user.save()
-        p_other.save()
+        p_other = Profile.objects.create(user=self.user_model.objects.get(id=2))
 
         url = '/api/v1/profiles/'
         data = {
             'user__id': 1
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user'))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(1, data['count'])

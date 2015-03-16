@@ -1,11 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 import core.utils
 
 
 class CustomAPITestCase(APITestCase):
 
-    def auth(self, username):
-        user = User.objects.get(username=username)
+    user_model = get_user_model()
+
+    def auth(self, name):
+        email = name + '@test.com'
+        user = self.user_model.objects.get(email=email)
         token = core.utils.gen_auth_token(user)
         return 'JWT {0}'.format(token)

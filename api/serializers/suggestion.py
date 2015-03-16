@@ -6,4 +6,4 @@ class SuggestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Suggestion
-        exclude = ('creation_date', 'last_update')
+        exclude = ('user', 'creation_date', 'last_update')

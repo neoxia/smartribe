@@ -5,8 +5,6 @@ from core.models import Request
 
 class RequestCreateSerializer(ReportableModelSerializer):
 
-    user_username = serializers.CharField(max_length=255, source='user.username', read_only=True)
-
     user_first_name = serializers.CharField(max_length=255, source='user.first_name', read_only=True)
 
     user_last_name = serializers.CharField(max_length=255, source='user.last_name', read_only=True)

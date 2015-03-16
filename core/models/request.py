@@ -9,7 +9,7 @@ from core.models.skill import SkillCategory
 
 class Request(ReportableModel):
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     community = models.ForeignKey(Community, blank=True, null=True)
 
@@ -48,7 +48,7 @@ class Request(ReportableModel):
         return Offer.objects.filter(request=self).count()
 
     def __desc_str__(self):
-        return self.user.username + " / " + self.category.name + " / " + self.title
+        return self.user.email + " / " + self.category.name + " / " + self.title
 
     def __str__(self):
         return str(self.id) + " : " + self.__desc_str__()

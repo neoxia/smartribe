@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
@@ -6,21 +7,23 @@ from core.models import Offer
 from core.models import MeetingPoint
 
 
+
+
 class Meeting(models.Model):
 
     offer = models.ForeignKey(Offer)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     meeting_point = models.ForeignKey(MeetingPoint)
 
     date_time = models.DateTimeField()
 
-    STATUS_CHOICES = {
+    STATUS_CHOICES = (
         ('P', _('Pending')),
         ('A', _('Accepted')),
         ('R', _('Refused')),
-    }
+    )
     status = models.CharField(max_length=1,
                               choices=STATUS_CHOICES,
                               default='P')

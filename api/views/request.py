@@ -1,10 +1,9 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework.decorators import link, action
 from rest_framework.response import Response
 from rest_framework import status
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.serializers import RequestSerializer, RequestCreateSerializer
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
@@ -40,8 +39,7 @@ class RequestViewSet(CustomViewSet):
         self.set_auto_user(obj)
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        my_communities = Member.objects.filter(user=user, status="1").values('community')
+        my_communities = Member.objects.filter(user=self.request.user, status="1").values('community')
         linked_users = Member.objects.filter(community__in=my_communities).values('user')
         return self.model.objects.filter(Q(user__in=linked_users),
                                          Q(community=None) | Q(community__in=my_communities))
@@ -76,22 +74,20 @@ class RequestViewSet(CustomViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(self.request)
-        requests = self.model.objects.filter(user=user).order_by('-created_on')
+        requests = self.model.objects.filter(user=self.request.user).order_by('-created_on')
         serializer = self.get_paginated_serializer(requests)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link()
     def list_community_requests(self, request, pk=None):
         """ """
-        user, _ = AuthUser().authenticate(self.request)
         if not 'community' in request.QUERY_PARAMS:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
         if not Community.objects.filter(id=request.QUERY_PARAMS['community']).exists():
             return Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         community = Community.objects.get(id=request.QUERY_PARAMS['community'])
         members = Member.objects.filter(community=community, status='1').values('user')
-        users = User.objects.filter(id__in=members)
+        users = get_user_model().objects.filter(id__in=members)
         requests = self.get_queryset().filter(Q(community=community)
                                               | (Q(community=None) & Q(user__in=users)))
         serializer = self.get_paginated_serializer(requests.order_by('-created_on'))
@@ -100,7 +96,7 @@ class RequestViewSet(CustomViewSet):
     @link()
     def list_suggested_requests_skills(self, request, pk=None):
         """  """
-        user, _ = AuthUser().authenticate(self.request)
+        user = self.request.user
         my_category_list = Skill.objects.filter(user=user).values('category').distinct()
 
         queryset = self.get_queryset().exclude(user=user).filter(category__in=my_category_list).order_by('-created_on')
@@ -139,8 +135,7 @@ class RequestViewSet(CustomViewSet):
         req, response = self.validate_object(request, pk)
         if not req:
             return response
-        user, _ = AuthUser().authenticate(request)
-        if req.user != user:
+        if req.user != self.request.user:
             return Response({'detail': 'Operation not allowed.'}, status.HTTP_403_FORBIDDEN)
         req.closed = True
         req.save()

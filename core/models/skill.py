@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.db import models
 from django.contrib.auth.models import User
@@ -7,7 +8,7 @@ from core.models.skill_category import SkillCategory
 
 class Skill(models.Model):
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     category = models.ForeignKey(SkillCategory)
 
@@ -38,7 +39,7 @@ class Skill(models.Model):
         return self.category.name
 
     def __desc_str__(self):
-        return self.user.username + " / " + self.category.name + " / " + self.get_level_display()
+        return self.user.email + " / " + self.category.name + " / " + self.get_level_display()
 
     def __str__(self):
         return str(self.id) + " : " + self.__desc_str__()

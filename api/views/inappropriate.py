@@ -1,9 +1,8 @@
 from django.core.mail import send_mail
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
-from api.authenticate import AuthUser
 
-from api.permissions.common import IsJWTSelf, IsJWTAuthenticated
+from api.permissions.common import IsJWTAuthenticated
 from api.serializers.inappropriate import InappropriateSerializer
 from core.models import Inappropriate
 
@@ -23,12 +22,12 @@ class InappropriateViewSet(CreateModelMixin, GenericViewSet):
     permission_classes = [IsJWTAuthenticated]
 
     def pre_save(self, obj):
-        user, _ = AuthUser().authenticate(self.request)
-        obj.user = user
+        if self.request.method == 'POST':
+            obj.user = self.request.user
 
     def post_save(self, obj, created=False):
 
-        message = 'Reported by :\n' + obj.user.username \
+        message = 'Reported by :\n' + obj.user.email \
                   + '\n\nTarget content :\n' + obj.content_identifier \
                   + '\n\nDetail :\n' + obj.detail
 

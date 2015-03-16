@@ -1,6 +1,5 @@
 from django.db.models import Q
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.permissions.offer import IsJWTConcernedByOffer
 from api.serializers import OfferSerializer, OfferCreateSerializer
@@ -42,5 +41,4 @@ class OfferViewSet(CustomViewSet):
             Notifier.notify_new_offer(obj)
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        return Offer.objects.filter(Q(user=user) | Q(request__user=user))
+        return Offer.objects.filter(Q(user=self.request.user) | Q(request__user=self.request.user))

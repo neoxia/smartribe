@@ -11,7 +11,7 @@ class Offer(ReportableModel):
 
     request = models.ForeignKey(Request)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     skill = models.ForeignKey(Skill, blank=True, null=True)
 
@@ -43,7 +43,7 @@ class Offer(ReportableModel):
         return Evaluation.objects.filter(offer=self).exists()
 
     def __desc_str__(self):
-        return self.user.username + " (" + self.request.__desc_str__() + ")"
+        return self.user.email + " (" + self.request.__desc_str__() + ")"
 
     def __str__(self):
         return str(self.id) + " : " + self.__desc_str__()

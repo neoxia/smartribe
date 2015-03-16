@@ -1,7 +1,7 @@
 from datetime import timedelta, timezone, datetime
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import User
 from django.db.models import Avg, Min, Max
 from rest_framework import viewsets
 from rest_framework.decorators import action, link
@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework import status
 import django_filters
 
-from api.authenticate import AuthUser
 from api.mail_templates.user import registration_message, recovery_password_message
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers import UserCreateSerializer, UserPublicSerializer, UserSerializer
@@ -23,11 +22,11 @@ class UserFilter(django_filters.FilterSet):
     """
     Specific search filter for users
     """
-    username = django_filters.CharFilter(name='username', lookup_type='contains')
+    email = django_filters.CharFilter(name='email', lookup_type='contains')
 
     class Meta:
-        model = User
-        fields = ['username', ]
+        model = get_user_model()
+        fields = ['email', ]
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -42,16 +41,15 @@ class UserViewSet(viewsets.ModelViewSet):
             |       - POST : AllowAny
 
     """
-    model = User
+    model = get_user_model()
     serializer_class = UserSerializer
     filter_class = UserFilter
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
-        user, _ = AuthUser().authenticate(self.request)
         if self.request.method == 'GET' and 'pk' not in self.kwargs:
             serializer_class = UserPublicSerializer
-        elif self.request.method == 'GET' and not self.object == user:
+        elif self.request.method == 'GET' and not self.object == self.request.user:
             serializer_class = UserPublicSerializer
         elif self.request.method == 'POST':
             serializer_class = UserCreateSerializer
@@ -78,7 +76,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST':
             profile = Profile(user=obj)
             profile.save()
-            token = ActivationToken(user=User.objects.get(username=obj.username),
+            token = ActivationToken(user=obj,
                                     token=core.utils.gen_temporary_token())
             token.save()
             subject, message = registration_message(token)
@@ -140,9 +138,9 @@ class UserViewSet(viewsets.ModelViewSet):
         data = request.DATA
         if 'email' not in data:
             return Response({"detail": "Email address required"}, status=status.HTTP_400_BAD_REQUEST)
-        if not User.objects.filter(email=data['email']).exists():
+        if not get_user_model().objects.filter(email=data['email']).exists():
             return Response({"detail": "Unknown email address"}, status=status.HTTP_400_BAD_REQUEST)
-        user = User.objects.get(email=data['email'])
+        user = get_user_model().objects.get(email=data['email'])
         ip = core.utils.get_client_ip(request)
         user_list = PasswordRecovery.objects.filter(user=user)
         if user_list.count() >= 2:
@@ -225,10 +223,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 |       - groups: array
 
         """
-        user, response = AuthUser().authenticate(request)
-        if not user:
-            return response
-        serializer = UserSerializer(user)
+        serializer = UserSerializer(self.request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @link(permission_classes=[IsJWTAuthenticated])

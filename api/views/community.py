@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import status
@@ -12,7 +12,6 @@ from api.serializers.location import LocationSerializer, LocationCreateSerialize
 from api.utils.asyncronous_mail import send_mail
 from core.models import Community, Member, Location, Offer
 from api.serializers import CommunitySerializer
-from api.authenticate import AuthUser
 
 
 class CommunityViewSet(viewsets.ModelViewSet):
@@ -62,9 +61,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
     def post_save(self, obj, created=False):
         if self.request.method == 'POST':
             # Retrieve request author and creates a member for him, as community owner
-            user, _ = AuthUser().authenticate(self.request)
-            owner = Member(user=user, community=obj, role="0", status="1")
-            owner.save()
+            owner = Member.objects.create(user=self.request.user, community=obj, role="0", status="1")
 
     def validate_community(self, request, pk):
         """
@@ -116,7 +113,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if pk is None:
             return Response({'detail': 'Missing community index.'},
                             status=status.HTTP_400_BAD_REQUEST)
-        user, _ = AuthUser().authenticate(request)
+        user = self.request.user
         if not Community.objects.filter(id=pk).exists():
             return Response({'detail': 'This community does not exist'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -165,8 +162,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(request)
-        my_members = Member.objects.filter(user=user)
+        my_members = Member.objects.filter(user=self.request.user)
         page = self.paginate_queryset(my_members)
         if page is not None:
             serializer = self.get_custom_pagination_serializer(page, MyMembersSerializer)
@@ -196,7 +192,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if pk is None:
             return Response({'detail': 'Missing community index.'},
                             status=status.HTTP_400_BAD_REQUEST)
-        user, _ = AuthUser().authenticate(request)
+        user = self.request.user
         if not Community.objects.filter(id=pk).exists():
             return Response({'detail': 'This community does not exist'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -234,8 +230,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         community, response = self.validate_community(request, pk)
         if not community:
             return response
-        user, _ = AuthUser().authenticate(request)
-        is_member = Member.objects.filter(user=user, community=community).exists()
+        is_member = Member.objects.filter(user=self.request.user, community=community).exists()
         return Response({'is_member': is_member}, status=status.HTTP_200_OK)
 
     @link()
@@ -244,7 +239,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         community, response = self.validate_community(request, pk)
         if not community:
             return response
-        user, _ = AuthUser().authenticate(request)
+        user = self.request.user
         if not Member.objects.filter(user=user, community=community).exists():
             return Response({}, status=status.HTTP_200_OK)
         member = Member.objects.get(user=user, community=community)
@@ -287,13 +282,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
         if pk is None:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
-        user, _ = AuthUser().authenticate(request)
         if not Community.objects.filter(id=pk).exists():
             return Response({'detail': 'This community does not exist.'},
                             status=status.HTTP_400_BAD_REQUEST)
         community = Community.objects.get(id=pk)
         # Check if user is a community moderator
-        if not self.check_moderator_permission(user, community):
+        if not self.check_moderator_permission(self.request.user, community):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         qs = Member.objects.filter(community=community)
 
@@ -341,8 +335,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not Member.objects.filter(id=data['id']).exists():
             return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
         member = Member.objects.get(id=data['id'])
-        user, _ = AuthUser().authenticate(request)
-        if not self.check_moderator_permission(user, member.community):
+        if not self.check_moderator_permission(self.request.user, member.community):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '1'
         member.save()
@@ -390,8 +383,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not Member.objects.filter(id=data['id']).exists():
             return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
         member = Member.objects.get(id=data['id'])
-        user, _ = AuthUser().authenticate(request)
-        if not self.check_upper_permission(user, member):
+        if not self.check_upper_permission(self.request.user, member):
             return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '2'
         member.save()
@@ -412,8 +404,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not Member.objects.filter(id=data['id']).exists():
             return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
         member = Member.objects.get(id=data['id'])
-        user, _ = AuthUser().authenticate(request)
-        if not self.check_upper_permission(user, member):
+        if not self.check_upper_permission(self.request.user, member):
             return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '1'
         member.save()
@@ -463,8 +454,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not Member.objects.filter(id=data['id']).exists():
             return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
         member = Member.objects.get(id=data['id'])
-        user, _ = AuthUser().authenticate(request)
-        if not self.check_owner_permission(user, member.community):
+        if not self.check_owner_permission(self.request.user, member.community):
             return Response({'detail': 'Community owner\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.role = '1'
         member.save()
@@ -480,8 +470,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not Member.objects.filter(id=data['id']).exists():
             return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
         member = Member.objects.get(id=data['id'])
-        user, _ = AuthUser().authenticate(request)
-        if not self.check_owner_permission(user, member.community):
+        if not self.check_owner_permission(self.request.user, member.community):
             return Response({'detail': 'Community owner\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.role = '2'
         member.save()
@@ -519,13 +508,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(request)
         if pk is None:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
         if not self.model.objects.filter(id=pk).exists():
             return Response({'detail': 'Wrong id parameter'}, status=status.HTTP_404_NOT_FOUND)
         community = self.model.objects.get(id=pk)
-        if not self.check_member_permission(user, community):
+        if not self.check_member_permission(self.request.user, community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.DATA
         data['community'] = pk
@@ -576,13 +564,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(request)
         if pk is None:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
         if not self.model.objects.filter(id=pk).exists():
             return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
         loc_community = self.model.objects.get(id=pk)
-        if not self.check_member_permission(user, loc_community):
+        if not self.check_member_permission(self.request.user, loc_community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         locations = Location.objects.filter(community=pk)
 
@@ -621,13 +608,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        user, _ = AuthUser().authenticate(request)
         if pk is None:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
         if not self.model.objects.filter(id=pk).exists():
             return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
         loc_community = self.model.objects.get(id=pk)
-        if not self.check_member_permission(user, loc_community):
+        if not self.check_member_permission(self.request.user, loc_community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.QUERY_PARAMS
         if 'search' not in data:
@@ -667,13 +653,12 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 | **other actions**:
                 |       None
         """
-        user, _ = AuthUser().authenticate(request)
         if pk is None:
             return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
         if not self.model.objects.filter(id=pk).exists():
             return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
         community = self.model.objects.get(id=pk)
-        if not self.check_moderator_permission(user, community):
+        if not self.check_moderator_permission(self.request.user, community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.DATA
         if 'id' not in data:
@@ -702,14 +687,13 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
          Get communities shared by two users
         """
-        user, _ = AuthUser().authenticate(request)
         data = request.QUERY_PARAMS
         if 'other_user' not in data:
             return Response({'detail': 'Missing other_user id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not User.objects.filter(pk=data['other_user']).exists():
+        if not get_user_model().objects.filter(pk=data['other_user']).exists():
             return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
-        other_user = User.objects.get(pk=data['other_user'])
-        user_communities = Member.objects.filter(user=user, status='1').values('community')
+        other_user = get_user_model().objects.get(pk=data['other_user'])
+        user_communities = Member.objects.filter(user=self.request.user, status='1').values('community')
         other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
         shared_communities = Community.objects.filter(Q(id__in=user_communities) & Q(id__in=other_user_communities))
         page = self.paginate_queryset(shared_communities)
@@ -724,7 +708,7 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
          Get relevant meeting points for an offer
         """
-        user, _ = AuthUser().authenticate(request)
+        user = self.request.user
         data = request.QUERY_PARAMS
         if 'offer' not in data:
             return Response({'detail': 'Missing offer id'}, status=status.HTTP_400_BAD_REQUEST)

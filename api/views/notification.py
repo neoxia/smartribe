@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner
 from api.serializers.notification import NotificationSerializer
 from core.models.notification import Notification
@@ -24,8 +23,7 @@ class NotificationViewSet(mixins.RetrieveModelMixin,
         return [IsJWTOwner()]
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter(user=user).order_by('created_on')
+        return self.model.objects.filter(user=self.request.user).order_by('created_on')
 
     @action()
     def tag_as_seen(self, request, pk=None):

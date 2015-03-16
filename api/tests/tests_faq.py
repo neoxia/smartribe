@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.template.defaultfilters import length
 from rest_framework import status
 from django.contrib.auth.models import User
@@ -8,24 +10,20 @@ from core.models import FaqSection, Faq
 
 class FaqTests(CustomAPITestCase):
 
+    user_model = get_user_model()
+
     def setUp(self):
         """
         Set data
         """
-        section = FaqSection(title='General')
-        section.save()
+        section = FaqSection.objects.create(title='General')
 
-        faqA = Faq(section=section, question='why?', answer='because')
-        faqA.save()
+        faqA = Faq.objects.create(section=section, question='why?', answer='because')
+        faqB = Faq.objects.create(section=section, private=True, question='who?', answer='toto')
+        faqC = Faq.objects.create(section=section, private=False, question='where?', answer='kitchen')
 
-        faqB = Faq(section=section, private=True, question='who?', answer='toto')
-        faqB.save()
-
-        faqC = Faq(section=section, private=False, question='where?', answer='kitchen')
-        faqC.save()
-
-        user = User(username="test", password="test", email="test@test.com")
-        user.save()
+        user = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
 
     def test_list_faq_without_auth(self):
         """
@@ -47,7 +45,7 @@ class FaqTests(CustomAPITestCase):
         """
         url = '/api/v1/faq/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('test'))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
         self.assertEqual(3, data['count'])

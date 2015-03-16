@@ -36,9 +36,8 @@ class CustomViewSet(ModelViewSet):
         return object_class.objects.get(id=data[field_name]), None
 
     def set_auto_user(self, obj):
-        user, _ = AuthUser().authenticate(self.request)
         if self.request.method == 'POST':
-            obj.user = user
+            obj.user = self.request.user
 
     def get_paginated_serializer(self, queryset):
         page = self.paginate_queryset(queryset)

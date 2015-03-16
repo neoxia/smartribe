@@ -2,7 +2,6 @@ from django.db.models import Q
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.message import IsConcernedByOffer
 from api.serializers.message import MessageSerializer, MessageCreateSerializer
@@ -42,14 +41,13 @@ class MessageViewSet(mixins.CreateModelMixin,
         return serializer_class
 
     def pre_save(self, obj):
-        user, _ = AuthUser().authenticate(self.request)
         if self.request.method == 'POST':
-            obj.user = user
+            obj.user = self.request.user
 
     def post_save(self, obj, created=False):
         if self.request.method == 'POST':
             Notifier.notify_new_message(obj)
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        return self.model.objects.filter( Q(offer__user=user) | Q(offer__request__user=user)).order_by('creation_date')
+        return self.model.objects.filter( Q(offer__user=self.request.user) |
+                                          Q(offer__request__user=self.request.user)).order_by('creation_date')

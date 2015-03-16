@@ -1,25 +1,15 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
-
-
-def validate_email_unique(value):
-    if User.objects.filter(email=value).exists():
-        raise ValidationError('Email address %s already exists, must be unique' % value)
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
 
-    email = serializers.EmailField(required=True, validators=[validate_email_unique])
-
-    first_name = serializers.CharField(max_length=30, required=True)
-
-    last_name = serializers.CharField(max_length=30, required=True)
-
     class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password', 'is_active')
+        model = get_user_model()
+        fields = ('email', 'first_name', 'last_name', 'password', 'is_active')
         write_only_fields = ('password', )
         exclude = ('groups', )
 
@@ -27,15 +17,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserPublicSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name')
-        read_only_fields = ('username', )
+        model = get_user_model()
+        fields = ('id', 'first_name', 'last_name')
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password', 'groups')
-        read_only_fields = ('username', 'email')
+        model = get_user_model()
+        fields = ('id', 'first_name', 'last_name', 'email', 'password', 'groups')
+        read_only_fields = ('email', )
         write_only_fields = ('password', )

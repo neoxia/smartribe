@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import User
 from django.db import models
@@ -7,7 +8,7 @@ class Notification(models.Model):
 
     photo = models.ImageField(null=True, blank=True)
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     title = models.CharField(max_length=255)
 

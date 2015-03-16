@@ -15,14 +15,14 @@ class Evaluation(ReportableModel):
     GOOD = 3
     EXCELLENT = 4
     PERFECT = 5
-    EVALUATION_CHOICES = {
+    EVALUATION_CHOICES = (
         (DANGEROUS, 'Dangerous'),
         (BAD, 'Bad'),
         (NEUTRAL, 'Neutral'),
         (GOOD, 'Good'),
         (EXCELLENT, 'Excellent'),
         (PERFECT, 'Perfect'),
-    }
+    )
     mark = models.IntegerField(choices=EVALUATION_CHOICES)
 
     usefull = models.BooleanField(default=True)
@@ -39,7 +39,7 @@ class Evaluation(ReportableModel):
         return False
 
     def __str__(self):
-        return self.offer.user.username + ', ' + self.id.__str__()
+        return self.offer.user.email + ', ' + self.id.__str__()
 
     class Meta:
         verbose_name = _('evaluation')

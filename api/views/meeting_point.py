@@ -1,10 +1,7 @@
-from django.contrib.auth.models import User
 from django.db.models import Q
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import link
 from rest_framework import status
 from rest_framework.response import Response
-from api.authenticate import AuthUser
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.meeting_point import IsCommunityMember, IsCommunityModerator
 from api.serializers import MeetingPointSerializer, MeetingPointCreateSerializer
@@ -40,8 +37,7 @@ class MeetingPointViewSet(CustomViewSet):
         return [IsCommunityModerator()]
 
     def get_queryset(self):
-        user, _ = AuthUser().authenticate(self.request)
-        user_communities = Member.objects.filter(user=user, status='1').values('community')
+        user_communities = Member.objects.filter(user=self.request.user, status='1').values('community')
         return self.model.objects.filter(location__community__in=user_communities)
 
     @link(permission_classes=[IsJWTAuthenticated()])
@@ -49,7 +45,7 @@ class MeetingPointViewSet(CustomViewSet):
         """
          Get relevant meeting points for an offer
         """
-        user, _ = AuthUser().authenticate(request)
+        user = self.request.user
         data = request.QUERY_PARAMS
         if 'offer' not in data:
             return Response({'detail': 'Missing offer id'}, status=status.HTTP_400_BAD_REQUEST)

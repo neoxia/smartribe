@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from django.contrib.auth.models import User
 from api.tests.api_test_case import CustomAPITestCase
@@ -6,58 +8,54 @@ from core.models import Member, Community, LocalCommunity, TransportCommunity
 
 class CommunityTests(CustomAPITestCase):
 
+    user_model = get_user_model()
+
     def setUp(self):
         """
         Make a user for authenticating and
         testing community actions
         """
-        owner = User(username="owner", password="owner", email="owner@test.fr")
-        moderator = User(username="moderator", password="moderator", email="moderator@test.fr")
-        member = User(username="member", password="member", email="member@test.fr")
-        other = User(username="other", password="other", email="other@test.fr")
-        owner.save()
-        moderator.save()
-        member.save()
-        other.save()
+        owner = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        moderator = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
+        member = self.user_model.objects.create(password=make_password('user3'), email='user3@test.com',
+                                               first_name='3', last_name='User', is_active=True)
+        other = self.user_model.objects.create(password=make_password('user4'), email='user4@test.com',
+                                               first_name='4', last_name='User', is_active=True)
 
-        lcom1 = LocalCommunity(name='lcom1', description='descl1', city='Paris', country='FR', gps_x=0, gps_y=0)
-        lcom2 = LocalCommunity(name='lcom2', description='descl2', city='Paris', country='FR', gps_x=0, gps_y=0,
-                               auto_accept_member=True)
-        lcom3 = LocalCommunity(name='lcom3', description='descl3', city='Paris', country='FR', gps_x=0, gps_y=0)
-        lcom4 = LocalCommunity(name='lcom4', description='descl4', city='Paris', country='FR', gps_x=0, gps_y=0)
-        lcom5 = LocalCommunity(name='lcom5', description='descl5', city='Paris', country='FR', gps_x=0, gps_y=0)
-        tcom1 = TransportCommunity(name='tcom1', description='desct1', departure='dep1', arrival='arr1')
-        tcom2 = TransportCommunity(name='tcom2', description='desct2', departure='dep2', arrival='arr2')
-        tcom3 = TransportCommunity(name='tcom3', description='desct3', departure='dep3', arrival='arr3')
-        tcom4 = TransportCommunity(name='tcom4', description='desct4', departure='dep4', arrival='arr4')
-        tcom5 = TransportCommunity(name='tcom5', description='desct5', departure='dep4', arrival='arr5')
-        tcom1.save()
-        lcom1.save()
-        tcom2.save()
-        lcom2.save()
-        lcom3.save()
-        tcom3.save()
-        tcom4.save()
-        lcom4.save()
-        lcom5.save()
-        tcom5.save()
+        tcom1 = TransportCommunity.objects.create(name='tcom1', description='desct1',
+                                                  departure='dep1', arrival='arr1')
+        lcom1 = LocalCommunity.objects.create(name='lcom1', description='descl1', city='Paris', country='FR',
+                                              gps_x=0, gps_y=0)
+        tcom2 = TransportCommunity.objects.create(name='tcom2', description='desct2',
+                                                  departure='dep2', arrival='arr2')
+        lcom2 = LocalCommunity.objects.create(name='lcom2', description='descl2', city='Paris', country='FR',
+                                              gps_x=0, gps_y=0, auto_accept_member=True)
+        lcom3 = LocalCommunity.objects.create(name='lcom3', description='descl3', city='Paris', country='FR',
+                                              gps_x=0, gps_y=0)
+        tcom3 = TransportCommunity.objects.create(name='tcom3', description='desct3',
+                                                  departure='dep3', arrival='arr3')
+        tcom4 = TransportCommunity.objects.create(name='tcom4', description='desct4',
+                                                  departure='dep4', arrival='arr4')
+        lcom4 = LocalCommunity.objects.create(name='lcom4', description='descl4', city='Paris', country='FR',
+                                              gps_x=0, gps_y=0)
+        lcom5 = LocalCommunity.objects.create(name='lcom5', description='descl5', city='Paris', country='FR',
+                                              gps_x=0, gps_y=0)
+        tcom5 = TransportCommunity.objects.create(name='tcom5', description='desct5',
+                                                  departure='dep4', arrival='arr5')
 
-        own_mbr = Member(user=owner, community=lcom2, role='0', status='1')
-        mod_mbr = Member(user=moderator, community=lcom2, role='1', status='1')
-        spl_mbr = Member(user=member, community=lcom2, role='2', status='1')
-        own_mbr.save()
-        mod_mbr.save()
-        spl_mbr.save()
+        own_mbr = Member.objects.create(user=owner, community=lcom2, role='0', status='1')
+        mod_mbr = Member.objects.create(user=moderator, community=lcom2, role='1', status='1')
+        spl_mbr = Member.objects.create(user=member, community=lcom2, role='2', status='1')
 
-        own_mbr = Member(user=owner, community=tcom5, role='0', status='1')
-        spl_mbr = Member(user=member, community=tcom5, role='2', status='1')
-        own_mbr.save()
-        spl_mbr.save()
+        own_mbr = Member.objects.create(user=owner, community=tcom5, role='0', status='1')
+        spl_mbr = Member.objects.create(user=member, community=tcom5, role='2', status='1')
 
     def test_setup(self):
         """
         """
-        self.assertEqual(4, User.objects.all().count())
+        self.assertEqual(4, self.user_model.objects.all().count())
         self.assertEqual(5, TransportCommunity.objects.all().count())
         self.assertEqual(5, LocalCommunity.objects.all().count())
         self.assertEqual(10, Community.objects.all().count())
@@ -69,7 +67,7 @@ class CommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/communities/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('member'), format='json')
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual(10, data['count'])
@@ -104,7 +102,7 @@ class CommunityTests(CustomAPITestCase):
             'search': 'com'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user4"))
         data = response.data
         self.assertEqual(10, data['count'])
 
@@ -117,7 +115,7 @@ class CommunityTests(CustomAPITestCase):
             'search': 'lcom'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user4"))
         data = response.data
         self.assertEqual(5, data['count'])
 
@@ -130,7 +128,7 @@ class CommunityTests(CustomAPITestCase):
             'search': 'tcom'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user4"))
         data = response.data
         self.assertEqual(5, data['count'])
 
@@ -143,7 +141,7 @@ class CommunityTests(CustomAPITestCase):
             'search': 'com2'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user4"))
         data = response.data
         self.assertEqual(2, data['count'])
 
@@ -156,7 +154,7 @@ class CommunityTests(CustomAPITestCase):
             'search': 'descl'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user4"))
         data = response.data
         self.assertEqual(5, data['count'])
 
@@ -169,7 +167,7 @@ class CommunityTests(CustomAPITestCase):
             'search': 'scl2'
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user4"))
         data = response.data
         self.assertEqual(1, data['count'])
 
@@ -179,7 +177,7 @@ class CommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/communities/1/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user4"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual('T', data['type'])
@@ -191,7 +189,7 @@ class CommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/communities/4/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user4"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual('L', data['type'])
@@ -203,7 +201,7 @@ class CommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/communities/10/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user4"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual('T', data['type'])
@@ -215,22 +213,22 @@ class CommunityTests(CustomAPITestCase):
         """
         url = '/api/v1/communities/4/am_i_member/'
 
-        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("user4"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertFalse(data['is_member'])
 
-        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("owner"))
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("user1"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertTrue(data['is_member'])
 
-        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("moderator"))
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("user2"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertTrue(data['is_member'])
 
-        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("member"))
+        response = self.client.post(url, HTTP_AUTHORIZATION=self.auth("user3"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertTrue(data['is_member'])
@@ -239,7 +237,7 @@ class CommunityTests(CustomAPITestCase):
         """ """
         url = '/api/v1/communities/4/get_my_membership/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("owner"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user1"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.data
@@ -250,7 +248,7 @@ class CommunityTests(CustomAPITestCase):
         """ """
         url = '/api/v1/communities/4/get_my_membership/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("member"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user3"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.data
@@ -261,7 +259,7 @@ class CommunityTests(CustomAPITestCase):
         """ """
         url = '/api/v1/communities/4/get_my_membership/'
 
-        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("other"))
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth("user4"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         data = response.data
@@ -274,7 +272,7 @@ class CommunityTests(CustomAPITestCase):
             'other_user': 2
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("owner"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user1"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual(1, data['count'])
@@ -288,7 +286,7 @@ class CommunityTests(CustomAPITestCase):
             'other_user': 3
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("owner"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user1"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual(2, data['count'])
@@ -302,7 +300,7 @@ class CommunityTests(CustomAPITestCase):
             'other_user': 4
         }
 
-        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("owner"))
+        response = self.client.get(url, data, HTTP_AUTHORIZATION=self.auth("user1"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.data
         self.assertEqual(0, data['count'])

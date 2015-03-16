@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from api.tests.api_test_case import CustomAPITestCase
 from core.models import Community, Member, SkillCategory, Request, Location, MeetingPoint, Offer, Meeting, Evaluation
@@ -10,62 +10,47 @@ class EvaluationTests(CustomAPITestCase):
         """
         
         """
-        user1 = User(username='user1', password='user1', email='user1@test.fr')
-        user1.save()
-        user2 = User(username='user2', password='user2', email='user2@test.fr')
-        user2.save()
-        user3 = User(username='user3', password='user3', email='user3@test.fr')
-        user3.save()
-        user4 = User(username='user4', password='user4', email='user4@test.fr')
-        user4.save()
+        user1 = self.user_model.objects.create(password=make_password('user1'), email='user1@test.com',
+                                               first_name='1', last_name='User', is_active=True)
+        user2 = self.user_model.objects.create(password=make_password('user2'), email='user2@test.com',
+                                               first_name='2', last_name='User', is_active=True)
+        user3 = self.user_model.objects.create(password=make_password('user3'), email='user3@test.com',
+                                               first_name='3', last_name='User', is_active=True)
+        user4 = self.user_model.objects.create(password=make_password('user4'), email='user4@test.com',
+                                               first_name='4', last_name='User', is_active=True)
 
-        community1 = Community(name='com1', description='desc1')
+        community1 = Community.objects.create(name='com1', description='desc1')
         community1.save()
 
-        member1 = Member(user=user1, community=community1, role='0', status='1')
-        member1.save()
-        member2 = Member(user=user2, community=community1, role='1', status='1')
-        member2.save()
-        member3 = Member(user=user3, community=community1, role='2', status='1')
-        member3.save()
-        member4 = Member(user=user3, community=community1, role='2', status='1')
-        member4.save()
+        member1 = Member.objects.create(user=user1, community=community1, role='0', status='1')
+        member2 = Member.objects.create(user=user2, community=community1, role='1', status='1')
+        member3 = Member.objects.create(user=user3, community=community1, role='2', status='1')
+        member4 = Member.objects.create(user=user3, community=community1, role='2', status='1')
 
-        loc1 = Location(community=community1, name='loc1', description='desc loc 1', gps_x=0.1, gps_y=1.1)
-        loc1.save()
+        loc1 = Location.objects.create(community=community1, name='loc1', description='desc loc 1',
+                                       gps_x=0.1, gps_y=1.1)
 
-        mp1 = MeetingPoint(location=loc1, name='mp1', description='desc mp 1')
-        mp1.save()
+        mp1 = MeetingPoint.objects.create(location=loc1, name='mp1', description='desc mp 1')
 
-        skill_cat = SkillCategory(name='cat', detail='desc')
-        skill_cat.save()
+        skill_cat = SkillCategory.objects.create(name='cat', detail='desc')
 
-        request1 = Request(user=user1, category=skill_cat, title='help1', detail='det help1', )
-        request1.save()
-        request2 = Request(user=user2, category=skill_cat, title='help2', detail='det help2', )
-        request2.save()
+        request1 = Request.objects.create(user=user1, category=skill_cat, title='help1', detail='det help1', )
+        request2 = Request.objects.create(user=user2, category=skill_cat, title='help2', detail='det help2', )
 
-        offer1= Offer(request=request1, user=user2, detail='det off1')
-        offer1.save()
-        offer2= Offer(request=request1, user=user3, detail='det off2')
-        offer2.save()
-        offer3= Offer(request=request2, user=user3, detail='det off3')
-        offer3.save()
-        offer4= Offer(request=request2, user=user1, detail='det off4')
-        offer4.save()
+        offer1= Offer.objects.create(request=request1, user=user2, detail='det off1')
+        offer2= Offer.objects.create(request=request1, user=user3, detail='det off2')
+        offer3= Offer.objects.create(request=request2, user=user3, detail='det off3')
+        offer4= Offer.objects.create(request=request2, user=user1, detail='det off4')
 
-        meeting1 = Meeting(offer=offer1, user=user2, meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
-        meeting1.save()
-        meeting2 = Meeting(offer=offer2, user=user3, meeting_point=mp1, date_time='2014-01-01 12:12:12+01')
-        meeting2.save()
+        meeting1 = Meeting.objects.create(offer=offer1, user=user2, meeting_point=mp1,
+                                          date_time='2014-01-01 12:12:12+01')
+        meeting2 = Meeting.objects.create(offer=offer2, user=user3, meeting_point=mp1,
+                                          date_time='2014-01-01 12:12:12+01')
 
 
-        evaluation1 = Evaluation(offer=offer1, mark=1, comment='blabla1')
-        evaluation1.save()
-        evaluation2 = Evaluation(offer=offer2, mark=2, comment='blabla2')
-        evaluation2.save()
-        evaluation3 = Evaluation(offer=offer3, mark=3, comment='blabla3')
-        evaluation3.save()
+        evaluation1 = Evaluation.objects.create(offer=offer1, mark=1, comment='blabla1')
+        evaluation2 = Evaluation.objects.create(offer=offer2, mark=2, comment='blabla2')
+        evaluation3 = Evaluation.objects.create(offer=offer3, mark=3, comment='blabla3')
 
     def test_get_user_evaluation_user1(self):
         """

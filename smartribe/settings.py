@@ -42,6 +42,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'api',
     'core',
+    'authentication',
+    'administration',
     'django.contrib.admin',
     'django.contrib.auth',
     #'django.contrib.auth.models',
@@ -51,11 +53,13 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 )
 
+AUTH_USER_MODEL='core.CustomUser'
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.BasicAuthentication',
    ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
