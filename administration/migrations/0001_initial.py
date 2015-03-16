@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0003_auto_20150316_1517'),
+        ('core', '0001_initial'),
     ]
 
     operations = [
@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'questions fréquentes',
-                'proxy': True,
                 'verbose_name': 'question fréquente',
+                'proxy': True,
             },
             bases=('core.faq',),
         ),
@@ -28,8 +28,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'sections de la FAQ',
-                'proxy': True,
                 'verbose_name': 'section de la FAQ',
+                'proxy': True,
             },
             bases=('core.faqsection',),
         ),
@@ -39,8 +39,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'contenus inappropriés',
-                'proxy': True,
                 'verbose_name': 'contenu inapproprié',
+                'proxy': True,
             },
             bases=('core.inappropriate',),
         ),
@@ -50,8 +50,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'suggestions',
-                'proxy': True,
                 'verbose_name': 'suggestion',
+                'proxy': True,
             },
             bases=('core.suggestion',),
         ),
@@ -61,8 +61,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name_plural': 'cgu',
-                'proxy': True,
                 'verbose_name': 'cgu',
+                'proxy': True,
             },
             bases=('core.tos',),
         ),
