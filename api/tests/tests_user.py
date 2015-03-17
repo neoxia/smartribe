@@ -9,7 +9,7 @@ from core.models.activation_token import ActivationToken
 from core.utils import gen_temporary_token
 
 
-class AccountTests(CustomAPITestCase):
+class UserTests(CustomAPITestCase):
 
     model = get_user_model()
 

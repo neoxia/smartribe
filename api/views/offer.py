@@ -34,9 +34,11 @@ class OfferViewSet(CustomViewSet):
         return [IsJWTOwner()]
 
     def pre_save(self, obj):
+        super().pre_save(obj)
         self.set_auto_user(obj)
 
     def post_save(self, obj, created=False):
+        super().post_save(obj, created)
         if self.request.method == 'POST':
             Notifier.notify_new_offer(obj)
 

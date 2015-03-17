@@ -40,6 +40,8 @@ class IsJWTSelf(BasePermission):
         data = request.DATA
         if not user:
             return False
+        if not 'user' in data:
+            return False
         elif user.id != data['user']:
             return False
         else:

@@ -1,18 +1,14 @@
 from django.db.models import Q
-from rest_framework import mixins
-from rest_framework.viewsets import GenericViewSet
 
 from api.permissions.common import IsJWTAuthenticated
 from api.permissions.message import IsConcernedByOffer
 from api.serializers.message import MessageSerializer, MessageCreateSerializer
 from api.utils.notifier import Notifier
+from api.views.abstract_viewsets.custom_viewset import CreateAndReadOnlyViewSet
 from core.models import Message
 
 
-class MessageViewSet(mixins.CreateModelMixin,
-                            mixins.RetrieveModelMixin,
-                            mixins.ListModelMixin,
-                            GenericViewSet):
+class MessageViewSet(CreateAndReadOnlyViewSet):
     """
 
     Inherits standard characteristics from ModelViewSet for Create, List and Retrieve actions:
@@ -41,10 +37,11 @@ class MessageViewSet(mixins.CreateModelMixin,
         return serializer_class
 
     def pre_save(self, obj):
-        if self.request.method == 'POST':
-            obj.user = self.request.user
+        super().pre_save(obj)
+        self.set_auto_user(obj)
 
     def post_save(self, obj, created=False):
+        super().post_save(obj, created)
         if self.request.method == 'POST':
             Notifier.notify_new_message(obj)
 

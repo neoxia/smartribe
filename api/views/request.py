@@ -1,3 +1,4 @@
+from django.contrib.admin.models import CHANGE
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from rest_framework.decorators import link, action
@@ -36,6 +37,7 @@ class RequestViewSet(CustomViewSet):
         return [IsJWTOwner()]
 
     def pre_save(self, obj):
+        super().pre_save(obj)
         self.set_auto_user(obj)
 
     def get_queryset(self):
@@ -144,4 +146,5 @@ class RequestViewSet(CustomViewSet):
             offer.closed = True
             offer.save()
         serializer = RequestSerializer(req)
+        self.log(req, CHANGE, None, "Request closed")
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,5 +1,5 @@
 from api.tests.tests_evaluation import EvaluationTests
-from api.tests.tests_user import AccountTests
+from api.tests.tests_user import UserTests
 from api.tests.tests_profile import ProfileTests
 from api.tests.tests_community import CommunityTests
 from api.tests.tests_community_local import LocalCommunityTests
@@ -18,3 +18,4 @@ from api.tests.tests_member import MemberTests
 from api.tests.tests_evaluation import EvaluationTests
 from api.tests.tests_meeting import MeetingTests
 from api.tests.tests_meeting_point import MeetingPointTests
+from api.tests.tests_message import MessageTests

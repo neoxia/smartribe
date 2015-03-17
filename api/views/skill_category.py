@@ -1,18 +1,13 @@
-from rest_framework import viewsets, mixins
 from rest_framework.decorators import link
 from rest_framework.response import Response
 from rest_framework import status
 from api.permissions.common import IsJWTAuthenticated
 from api.serializers import SkillCategorySerializer
+from api.views.abstract_viewsets.custom_viewset import CreateAndReadOnlyViewSet
 from core.models import SkillCategory, Community, Member, Skill
 
-__author__ = 'Renaud'
 
-
-class SkillCategoryViewSet(viewsets.GenericViewSet,
-                           mixins.CreateModelMixin,
-                           mixins.RetrieveModelMixin,
-                           mixins.ListModelMixin):
+class SkillCategoryViewSet(CreateAndReadOnlyViewSet):
     """
     Inherits standard characteristics from GenericViewSet and additionally provides
     'create', 'retrieve' and 'list' methods :

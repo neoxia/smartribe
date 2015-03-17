@@ -1,13 +1,12 @@
 from django.core.mail import send_mail
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import CreateModelMixin
 
 from api.permissions.common import IsJWTAuthenticated
 from api.serializers.suggestion import SuggestionSerializer
+from api.views.abstract_viewsets.custom_viewset import CreateOnlyViewSet
 from core.models import Suggestion
 
 
-class SuggestionViewSet(CreateModelMixin, GenericViewSet):
+class SuggestionViewSet(CreateOnlyViewSet):
     """
     Inherits standard characteristics from CreateModelMixin and GenericViewSet:
 
@@ -22,11 +21,11 @@ class SuggestionViewSet(CreateModelMixin, GenericViewSet):
     permission_classes = [IsJWTAuthenticated]
 
     def pre_save(self, obj):
-        if self.request.method == 'POST':
-            obj.user = self.request.user
+        super().pre_save(obj)
+        self.set_auto_user(obj)
 
     def post_save(self, obj, created=False):
-
+        super().post_save(obj, created)
         message = 'Category :\n' + obj.category \
                   + '\n\nReported by :\n' + obj.user.email \
                   + '\n\nTitle :\n' + obj.title \

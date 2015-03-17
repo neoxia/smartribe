@@ -1,3 +1,4 @@
+from django.contrib.admin.models import CHANGE
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
@@ -39,9 +40,11 @@ class MeetingViewSet(CustomViewSet):
         return self.model.objects.filter(Q(offer__user=self.request.user) | Q(offer__request__user=self.request.user))
 
     def pre_save(self, obj):
+        super().pre_save(obj)
         self.set_auto_user(obj)
 
     def post_save(self, obj, created=False):
+        super().post_save(obj, created)
         if self.request.method == 'POST':
             Notifier.notify_new_meeting(obj)
 
@@ -73,6 +76,7 @@ class MeetingViewSet(CustomViewSet):
         obj.status = 'A'
         obj.save()
         serializer = MeetingSerializer(obj)
+        self.log(obj, CHANGE, None, "Meeting accepted")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'])
@@ -103,6 +107,7 @@ class MeetingViewSet(CustomViewSet):
         obj.status = 'R'
         obj.save()
         serializer = MeetingSerializer(obj)
+        self.log(obj, CHANGE, None, "Meeting refused")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST'])
@@ -135,4 +140,5 @@ class MeetingViewSet(CustomViewSet):
         obj.is_validated = True
         obj.save()
         serializer = MeetingSerializer(obj)
+        self.log(obj, CHANGE, None, "Meeting validated")
         return Response(serializer.data, status=status.HTTP_200_OK)

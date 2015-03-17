@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
+from django.contrib.auth.models import Permission
 from administration.models import ProxySuggestion, ProxyInappropriate, ProxyFaqSection, ProxyTos, ProxyFaq
 
 
 admin.site.register(LogEntry)
+admin.site.register(Permission)
 admin.site.register(ProxyTos)
 admin.site.register(ProxyFaqSection)
 admin.site.register(ProxyFaq)

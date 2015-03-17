@@ -1,10 +1,10 @@
-from rest_framework import viewsets
 from api.permissions.common import IsJWTAuthenticated, IsJWTOwner, IsJWTSelf
 from api.serializers import ProfileCreateSerializer, ProfileSerializer
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Profile
 
 
-class ProfileViewSet(viewsets.ModelViewSet):
+class ProfileViewSet(CustomViewSet):
     """
     Inherits standard characteristics from ModelViewSet:
             | **Endpoint**: /profiles/

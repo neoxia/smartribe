@@ -36,6 +36,7 @@ class SkillViewSet(CustomViewSet):
             return [IsJWTOwner()]
 
     def pre_save(self, obj):
+        super().pre_save(obj)
         self.set_auto_user(obj)
 
     @link()

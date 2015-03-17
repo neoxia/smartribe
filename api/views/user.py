@@ -1,7 +1,9 @@
 from datetime import timedelta, timezone, datetime
+from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Avg, Min, Max
 from rest_framework import viewsets
 from rest_framework.decorators import action, link
@@ -73,7 +75,9 @@ class UserViewSet(viewsets.ModelViewSet):
             obj.is_active = False
 
     def post_save(self, obj, created=False):
+        create = False
         if self.request.method == 'POST':
+            create = True
             profile = Profile(user=obj)
             profile.save()
             token = ActivationToken(user=obj,
@@ -85,6 +89,25 @@ class UserViewSet(viewsets.ModelViewSet):
                       'noreply@smartribe.fr',
                       [obj.email],
                       fail_silently=False)
+        LogEntry.objects.log_action(user_id=obj.id,
+                                    content_type_id=ContentType.objects.get_for_model(self.model).pk,
+                                    object_id=obj.id,
+                                    object_repr=obj.email,
+                                    action_flag=ADDITION if create else CHANGE)
+
+    former_id = None
+
+    def pre_delete(self, obj):
+        super().pre_delete(obj)
+        self.former_id = obj.id
+
+    def post_delete(self, obj):
+        super().post_delete(obj)
+        LogEntry.objects.log_action(user_id=self.former_id,
+                                    content_type_id=ContentType.objects.get_for_model(self.model).pk,
+                                    object_id=self.former_id,
+                                    object_repr=obj.email,
+                                    action_flag=DELETION)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -114,6 +137,12 @@ class UserViewSet(viewsets.ModelViewSet):
         user.is_active = True
         user.save()
         ActivationToken.objects.get(token=token).delete()
+        LogEntry.objects.log_action(user_id=user.id,
+                                    content_type_id=ContentType.objects.get_for_model(self.model).pk,
+                                    object_id=user.id,
+                                    object_repr=user.email,
+                                    action_flag=CHANGE,
+                                    change_message="Registration confirmation")
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['POST', ])
@@ -158,6 +187,12 @@ class UserViewSet(viewsets.ModelViewSet):
                   'noreply@smartribe.fr',
                   [user.email],
                   fail_silently=False)
+        LogEntry.objects.log_action(user_id=user.id,
+                                    content_type_id=ContentType.objects.get_for_model(self.model).pk,
+                                    object_id=user.id,
+                                    object_repr=user.email,
+                                    action_flag=CHANGE,
+                                    change_message="Password recovery request")
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['POST', ])
@@ -190,6 +225,12 @@ class UserViewSet(viewsets.ModelViewSet):
         user.password = make_password(data['password'])
         user.save()
         PasswordRecovery.objects.filter(user=user).delete()
+        LogEntry.objects.log_action(user_id=user.id,
+                                    content_type_id=ContentType.objects.get_for_model(self.model).pk,
+                                    object_id=user.id,
+                                    object_repr=user.email,
+                                    action_flag=CHANGE,
+                                    change_message="Password recovery done")
         return Response(status=status.HTTP_200_OK)
 
     @action(methods=['POST', ])
@@ -203,6 +244,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"detail": "Old password is not correct."}, status=status.HTTP_401_UNAUTHORIZED)
         request.user.password = make_password(data['password_new'])
         request.user.save()
+        LogEntry.objects.log_action(user_id=request.user.id,
+                                    content_type_id=ContentType.objects.get_for_model(self.model).pk,
+                                    object_id=request.user.id,
+                                    object_repr=request.user.email,
+                                    action_flag=CHANGE,
+                                    change_message="Password change")
         return Response(status=status.HTTP_200_OK)
 
     @link(permission_classes=[IsJWTAuthenticated])

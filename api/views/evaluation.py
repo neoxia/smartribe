@@ -37,6 +37,7 @@ class EvaluationViewSet(CustomViewSet):
         return [IsEvaluationAuthor()]
 
     def post_save(self, obj, created=False):
+        super().post_save(obj, created)
         obj.offer.closed = True
         obj.offer.save()
 
