@@ -26,12 +26,12 @@ class SuggestionViewSet(CreateOnlyViewSet):
 
     def post_save(self, obj, created=False):
         super().post_save(obj, created)
-        message = 'Category :\n' + obj.category \
+        message = 'Category :\n' + obj.get_category_display() \
                   + '\n\nReported by :\n' + obj.user.email \
                   + '\n\nTitle :\n' + obj.title \
                   + '\n\nDescription :\n' + obj.description
 
         send_mail('[SmarTribe] New suggestion',
                   message,
-                  'noreply@smartribe.fr',
+                  'suggestions@smartribe.fr',
                   ['contact@smartribe.fr'])

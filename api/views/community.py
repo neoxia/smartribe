@@ -71,21 +71,11 @@ class CommunityViewSet(CustomViewSet):
     def get_queryset(self):
         return self.model.objects.all().order_by('name')
 
-    def validate_community(self, request, pk):
-        """
-        """
-        if pk is None:
-            return None, Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
-        if not self.model.objects.filter(id=pk).exists():
-            return None, Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
-        return self.model.objects.get(id=pk), None
-
-
     @link(permission_classes=[IsJWTAuthenticated])
     def get_members_count(self, request, pk=None):
         """
         """
-        community, response = self.validate_community(request, pk)
+        community, response = self.validate_object(request, pk)
         if not community:
             return response
         count = Member.objects.filter(community=community).count()
@@ -115,7 +105,7 @@ class CommunityViewSet(CustomViewSet):
                 |       None
 
         """
-        community, response = self.validate_community(request, pk)
+        community, response = self.validate_object(request, pk)
         if not community:
             return response
         user = self.request.user
@@ -192,7 +182,7 @@ class CommunityViewSet(CustomViewSet):
                 |       None
 
         """
-        community, response = self.validate_community(request, pk)
+        community, response = self.validate_object(request, pk)
         if not community:
             return response
         user = self.request.user
@@ -228,7 +218,7 @@ class CommunityViewSet(CustomViewSet):
                 |       None
 
         """
-        community, response = self.validate_community(request, pk)
+        community, response = self.validate_object(request, pk)
         if not community:
             return response
         is_member = Member.objects.filter(user=self.request.user, community=community).exists()
@@ -237,7 +227,7 @@ class CommunityViewSet(CustomViewSet):
     @link()
     def get_my_membership(self, request, pk=None):
         """ """
-        community, response = self.validate_community(request, pk)
+        community, response = self.validate_object(request, pk)
         if not community:
             return response
         user = self.request.user
@@ -281,7 +271,7 @@ class CommunityViewSet(CustomViewSet):
                 |       None
 
         """
-        community, response = self.validate_community(request, pk)
+        community, response = self.validate_object(request, pk)
         if not community:
             return response
         # Check if user is a community moderator
@@ -383,7 +373,7 @@ class CommunityViewSet(CustomViewSet):
         member.save()
         send_mail('[Smartribe] Membership cancelled',
                   'Sorry!\n\n' +
-                  'You have been banned from the community '+ member.community.__str__(),
+                  'You have been banned from the community ' + member.community.__str__(),
                   'noreply@smartribe.fr',
                   [member.user.email])
         serializer = ListCommunityMembersSerializer(member, many=False)
@@ -403,7 +393,7 @@ class CommunityViewSet(CustomViewSet):
         member.save()
         send_mail('[Smartribe] Membership reactivated',
                   'Congratulations!\n\n' +
-                  'You have been accepted as a member of the community '+member.community.__str__(),
+                  'You have been accepted as a member of the community ' + member.community.__str__(),
                   'noreply@smartribe.fr',
                   [member.user.email])
         serializer = ListCommunityMembersSerializer(member, many=False)
@@ -651,8 +641,6 @@ class CommunityViewSet(CustomViewSet):
         if not location:
             return response
 
-
-
         """data = request.DATA
         if 'id' not in data:
             return Response({'detail': 'No location id provided.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -689,7 +677,6 @@ class CommunityViewSet(CustomViewSet):
             return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
         other_user = get_user_model().objects.get(pk=data['other_user'])"""
 
-
         other_user, response = self.validate_external_object(get_user_model(), 'other_user', request)
         if not other_user:
             return response
@@ -718,7 +705,6 @@ class CommunityViewSet(CustomViewSet):
             return Response({'detail': 'No offer with this id'}, status=status.HTTP_400_BAD_REQUEST)
         offer = Offer.objects.get(pk=data['offer'])"""
 
-
         offer, response = self.validate_external_object(Offer, 'offer', request)
         if not offer:
             return response
@@ -743,7 +729,6 @@ class CommunityViewSet(CustomViewSet):
         else:
             serializer = self.get_serializer(shared_communities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     ## Community permissions
 
