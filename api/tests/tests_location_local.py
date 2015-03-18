@@ -140,7 +140,7 @@ class LocationLocalCommunityTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
-        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
     def test_list_locations_with_member(self):
         """

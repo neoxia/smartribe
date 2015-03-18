@@ -135,7 +135,9 @@ class CustomViewSet(ModelViewSet):
     @staticmethod
     def validate_external_object(object_class, field_name, request):
         """  """
-        data = request.QUERY_PARAMS
+        data = request.DATA
+        if request.method == 'GET':
+            data = request.QUERY_PARAMS
         if not field_name in data:
             return None, Response({'detail': 'Missing \'' + field_name + '\' in query parameters.'},
                                   status=status.HTTP_400_BAD_REQUEST)

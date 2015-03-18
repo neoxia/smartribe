@@ -1,6 +1,6 @@
+from django.contrib.admin.models import ADDITION, DELETION, CHANGE
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import action, link
 from rest_framework.response import Response
@@ -10,11 +10,12 @@ from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMembersSerializer
 from api.serializers.location import LocationSerializer, LocationCreateSerializer
 from api.utils.asyncronous_mail import send_mail
+from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Community, Member, Location, Offer
 from api.serializers import CommunitySerializer
 
 
-class CommunityViewSet(viewsets.ModelViewSet):
+class CommunityViewSet(CustomViewSet):
     """
     Inherits standard characteristics from ModelViewSet:
 
@@ -58,10 +59,17 @@ class CommunityViewSet(viewsets.ModelViewSet):
         else:
             return [IsJWTAuthenticated()]
 
+    def get_serializer_class(self):
+        return self.serializer_class
+
     def post_save(self, obj, created=False):
+        super().post_save(obj, created)
         if self.request.method == 'POST':
-            # Retrieve request author and creates a member for him, as community owner
+            # Creates a member for user, as community owner
             owner = Member.objects.create(user=self.request.user, community=obj, role="0", status="1")
+
+    def get_queryset(self):
+        return self.model.objects.all().order_by('name')
 
     def validate_community(self, request, pk):
         """
@@ -71,9 +79,6 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if not self.model.objects.filter(id=pk).exists():
             return None, Response({'detail': 'This community does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         return self.model.objects.get(id=pk), None
-
-    def get_queryset(self):
-        return self.model.objects.all().order_by('name')
 
 
     @link(permission_classes=[IsJWTAuthenticated])
@@ -110,14 +115,10 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        community, response = self.validate_community(request, pk)
+        if not community:
+            return response
         user = self.request.user
-        if not Community.objects.filter(id=pk).exists():
-            return Response({'detail': 'This community does not exist'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        community = Community.objects.get(id=pk)
         # Check if member already exists
         if Member.objects.filter(user=user, community=community).exists():
             member = Member.objects.get(user=user, community=community)
@@ -128,6 +129,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
             member.status = "1"
         # Register user as new member
         member.save(force_insert=True)
+        self.log(member, ADDITION, None, "User '" + str(user) + "' joined community '" + community.name
+                                         + "' (" + str(community.id) + ")")
         return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
 
     @link(permission_classes=[IsJWTAuthenticated()])
@@ -189,14 +192,10 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        community, response = self.validate_community(request, pk)
+        if not community:
+            return response
         user = self.request.user
-        if not Community.objects.filter(id=pk).exists():
-            return Response({'detail': 'This community does not exist'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        community = Community.objects.get(id=pk)
         if not Member.objects.filter(user=user, community=community).exists():
             return Response({'detail': 'You are not a member of this community'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -204,6 +203,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
         if member.status == '2':
             return Response({'detail': 'You have been banned from this community. You cannot leave it.'},
                             status=status.HTTP_401_UNAUTHORIZED)
+        self.log(member, DELETION, None, "User '" + str(user) + "' left community '" + community.name
+                                         + "' (" + str(community.id) + ")")
         member.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -280,12 +281,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Community.objects.filter(id=pk).exists():
-            return Response({'detail': 'This community does not exist.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-        community = Community.objects.get(id=pk)
+        community, response = self.validate_community(request, pk)
+        if not community:
+            return response
         # Check if user is a community moderator
         if not self.check_moderator_permission(self.request.user, community):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -329,12 +327,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        data = request.DATA
-        if 'id' not in data:
-            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Member.objects.filter(id=data['id']).exists():
-            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
-        member = Member.objects.get(id=data['id'])
+        member, response = self.validate_external_object(Member, 'id', request)
+        if not member:
+            return response
         if not self.check_moderator_permission(self.request.user, member.community):
             return Response({'detail': 'Community moderator\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '1'
@@ -345,6 +340,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
                   'noreply@smartribe.fr',
                   [member.user.email])
         serializer = ListCommunityMembersSerializer(member, many=False)
+        self.log(member, CHANGE, None, "User '" + str(member.user) + "' accepted as member of community '"
+                                       + member.community.name + "' (" + str(member.community.id) + ")")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
@@ -377,33 +374,29 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        data = request.DATA
-        if 'id' not in data:
-            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Member.objects.filter(id=data['id']).exists():
-            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
-        member = Member.objects.get(id=data['id'])
+        member, response = self.validate_external_object(Member, 'id', request)
+        if not member:
+            return response
         if not self.check_upper_permission(self.request.user, member):
             return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '2'
         member.save()
         send_mail('[Smartribe] Membership cancelled',
                   'Sorry!\n\n' +
-                  'You have been banned from the community '+member.community.__str__(),
+                  'You have been banned from the community '+ member.community.__str__(),
                   'noreply@smartribe.fr',
                   [member.user.email])
         serializer = ListCommunityMembersSerializer(member, many=False)
+        self.log(member, CHANGE, None, "User '" + str(member.user) + "' banned from community '"
+                                       + member.community.name + "' (" + str(member.community.id) + ")")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], permission_classes=[IsCommunityModerator])
     def unban_member(self, request, pk=None):
         """ """
-        data = request.DATA
-        if 'id' not in data:
-            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Member.objects.filter(id=data['id']).exists():
-            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
-        member = Member.objects.get(id=data['id'])
+        member, response = self.validate_external_object(Member, 'id', request)
+        if not member:
+            return response
         if not self.check_upper_permission(self.request.user, member):
             return Response({'detail': 'Action not allowed.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.status = '1'
@@ -414,6 +407,8 @@ class CommunityViewSet(viewsets.ModelViewSet):
                   'noreply@smartribe.fr',
                   [member.user.email])
         serializer = ListCommunityMembersSerializer(member, many=False)
+        self.log(member, CHANGE, None, "User '" + str(member.user) + "' unbanned from community '"
+                                       + member.community.name + "' (" + str(member.community.id) + ")")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     ## Owner actions
@@ -448,33 +443,31 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        data = request.DATA
-        if 'id' not in data:
-            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Member.objects.filter(id=data['id']).exists():
-            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
-        member = Member.objects.get(id=data['id'])
+        member, response = self.validate_external_object(Member, 'id', request)
+        if not member:
+            return response
         if not self.check_owner_permission(self.request.user, member.community):
             return Response({'detail': 'Community owner\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.role = '1'
         member.save()
         serializer = ListCommunityMembersSerializer(member, many=False)
+        self.log(member, CHANGE, None, "User '" + str(member.user) + "' granted as moderator of community '"
+                                       + member.community.name + "' (" + str(member.community.id) + ")")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['POST', ], permission_classes=[IsCommunityOwner])
     def cancel_moderator(self, request, pk=None):
         """ """
-        data = request.DATA
-        if 'id' not in data:
-            return Response({'detail': 'Missing member id'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Member.objects.filter(id=data['id']).exists():
-            return Response({'detail': 'No member with this id'}, status=status.HTTP_404_NOT_FOUND)
-        member = Member.objects.get(id=data['id'])
+        member, response = self.validate_external_object(Member, 'id', request)
+        if not member:
+            return response
         if not self.check_owner_permission(self.request.user, member.community):
             return Response({'detail': 'Community owner\' rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         member.role = '2'
         member.save()
         serializer = ListCommunityMembersSerializer(member, many=False)
+        self.log(member, CHANGE, None, "User '" + str(member.user) + "' cancelled as moderator of community '"
+                                       + member.community.name + "' (" + str(member.community.id) + ")")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # Location management
@@ -508,11 +501,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'Wrong id parameter'}, status=status.HTTP_404_NOT_FOUND)
-        community = self.model.objects.get(id=pk)
+        community, response = self.validate_object(request, pk)
+        if not community:
+            return response
         if not self.check_member_permission(self.request.user, community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.DATA
@@ -524,7 +515,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
             self.pre_add_location(data, community)
         except Exception:
             return Response({'detail': 'Bad or missing index.'}, status=status.HTTP_400_BAD_REQUEST)
-        location.save(force_insert=True)
+        loc = location.save(force_insert=True)
+        self.log(loc, ADDITION, None, "Location '" + str(loc) + "' added for community '"
+                                      + community.name + "' (" + str(community.id) + ")")
         return Response(location.data, status=status.HTTP_201_CREATED)
 
     def pre_add_location(self, data, community):
@@ -564,11 +557,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
-        loc_community = self.model.objects.get(id=pk)
+        loc_community, response = self.validate_object(request, pk)
+        if not loc_community:
+            return response
         if not self.check_member_permission(self.request.user, loc_community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         locations = Location.objects.filter(community=pk)
@@ -608,11 +599,9 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 |       None
 
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
-        loc_community = self.model.objects.get(id=pk)
+        loc_community, response = self.validate_object(request, pk)
+        if not loc_community:
+            return response
         if not self.check_member_permission(self.request.user, loc_community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
         data = request.QUERY_PARAMS
@@ -653,23 +642,29 @@ class CommunityViewSet(viewsets.ModelViewSet):
                 | **other actions**:
                 |       None
         """
-        if pk is None:
-            return Response({'detail': 'Missing community index.'}, status=status.HTTP_404_NOT_FOUND)
-        if not self.model.objects.filter(id=pk).exists():
-            return Response({'detail': 'Wrong pk parameter'}, status=status.HTTP_404_NOT_FOUND)
-        community = self.model.objects.get(id=pk)
+        community, response = self.validate_object(request, pk)
+        if not community:
+            return response
         if not self.check_moderator_permission(self.request.user, community):
             return Response({'detail': 'Community member rights required.'}, status=status.HTTP_401_UNAUTHORIZED)
-        data = request.DATA
+        location, response = self.validate_external_object(Location, 'id', request)
+        if not location:
+            return response
+
+
+
+        """data = request.DATA
         if 'id' not in data:
             return Response({'detail': 'No location id provided.'}, status=status.HTTP_400_BAD_REQUEST)
         if not Location.objects.filter(community=pk, id=data['id']).exists():
             return Response({'detail': 'No such location.'}, status=status.HTTP_404_NOT_FOUND)
-        location = Location.objects.get(id=data['id'])
+        location = Location.objects.get(id=data['id'])"""
         try:
             self.pre_delete_location(location, community)
         except Exception:
             return Response({'detail': 'Bad operation.'}, status=status.HTTP_400_BAD_REQUEST)
+        self.log(location, DELETION, None, "Location '" + str(location) + "' deleted for community '"
+                                           + community.name + "' (" + str(community.id) + ")")
         location.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -687,12 +682,19 @@ class CommunityViewSet(viewsets.ModelViewSet):
         """
          Get communities shared by two users
         """
-        data = request.QUERY_PARAMS
+        """data = request.QUERY_PARAMS
         if 'other_user' not in data:
             return Response({'detail': 'Missing other_user id'}, status=status.HTTP_400_BAD_REQUEST)
         if not get_user_model().objects.filter(pk=data['other_user']).exists():
             return Response({'detail': 'No other_user with this id'}, status=status.HTTP_400_BAD_REQUEST)
-        other_user = get_user_model().objects.get(pk=data['other_user'])
+        other_user = get_user_model().objects.get(pk=data['other_user'])"""
+
+
+        other_user, response = self.validate_external_object(get_user_model(), 'other_user', request)
+        if not other_user:
+            return response
+
+
         user_communities = Member.objects.filter(user=self.request.user, status='1').values('community')
         other_user_communities = Member.objects.filter(user=other_user, status='1').values('community')
         shared_communities = Community.objects.filter(Q(id__in=user_communities) & Q(id__in=other_user_communities))
@@ -709,12 +711,19 @@ class CommunityViewSet(viewsets.ModelViewSet):
          Get relevant meeting points for an offer
         """
         user = self.request.user
-        data = request.QUERY_PARAMS
+        """data = request.QUERY_PARAMS
         if 'offer' not in data:
             return Response({'detail': 'Missing offer id'}, status=status.HTTP_400_BAD_REQUEST)
         if not Offer.objects.filter(pk=data['offer']).exists():
             return Response({'detail': 'No offer with this id'}, status=status.HTTP_400_BAD_REQUEST)
-        offer = Offer.objects.get(pk=data['offer'])
+        offer = Offer.objects.get(pk=data['offer'])"""
+
+
+        offer, response = self.validate_external_object(Offer, 'offer', request)
+        if not offer:
+            return response
+
+
         req = offer.request
         if user != offer.user and user != req.user:
             return Response({'detail': 'Operation not allowed'}, status=status.HTTP_403_FORBIDDEN)

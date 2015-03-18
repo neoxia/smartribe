@@ -340,7 +340,7 @@ class MemberTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
-        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
 
     def test_accept_member_with_not_accepted_moderator(self):
         """
