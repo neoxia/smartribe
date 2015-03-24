@@ -32,6 +32,12 @@ class Offer(ReportableModel):
                 return profile.photo.url[len(settings.MEDIA_URL):]
         return ''
 
+    def get_skill_title(self):
+        """ """
+        if self.skill:
+            return self.skill.title
+        return ''
+
     def get_skill_description(self):
         """ """
         if self.skill:
