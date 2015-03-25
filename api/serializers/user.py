@@ -25,6 +25,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'first_name', 'last_name', 'email', 'password', 'groups')
-        read_only_fields = ('email', )
+        fields = ('id', 'first_name', 'last_name', 'email', 'password', 'groups', 'last_login')
+        read_only_fields = ('email', 'last_login')
         write_only_fields = ('password', )
