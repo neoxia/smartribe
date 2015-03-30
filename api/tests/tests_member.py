@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 import time
 
 from api.tests.api_test_case import CustomAPITestCase
-from core.models import Member, Community, LocalCommunity, TransportCommunity
+from core.models import Member, Community, LocalCommunity, TransportCommunity, Profile, Notification
 
 
 class MemberTests(CustomAPITestCase):
@@ -23,6 +23,11 @@ class MemberTests(CustomAPITestCase):
                                                first_name='3', last_name='User', is_active=True)
         other = self.user_model.objects.create(password=make_password('user4'), email='user4@test.com',
                                                first_name='4', last_name='User', is_active=True)
+
+        Profile.objects.create(user=owner)
+        Profile.objects.create(user=moderator)
+        Profile.objects.create(user=member)
+        Profile.objects.create(user=other)
 
         lcom1 = LocalCommunity.objects.create(name='lcom1', description='descl1', city='Paris', country='FR',
                                               gps_x=0, gps_y=0)
@@ -95,6 +100,13 @@ class MemberTests(CustomAPITestCase):
         self.assertEqual("2", member.role)
         self.assertEqual("0", member.status)
 
+        self.assertEqual(1, Notification.objects.count())
+        time.sleep(1)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].subject,
+                         '[SmarTribe] Nouveau membre')
+        self.assertTrue('demande à faire' in mail.outbox[0].body)
+
         response = self.client.post(url, HTTP_AUTHORIZATION=self.auth('user4'))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
@@ -115,6 +127,13 @@ class MemberTests(CustomAPITestCase):
         self.assertEqual(community, member.community)
         self.assertEqual("2", member.role)
         self.assertEqual("1", member.status)
+
+        self.assertEqual(1, Notification.objects.count())
+        time.sleep(1)
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(mail.outbox[0].subject,
+                         '[SmarTribe] Nouveau membre')
+        self.assertTrue('fait désormais' in mail.outbox[0].body)
 
     def test_leave_community(self):
         """

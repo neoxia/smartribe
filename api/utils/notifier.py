@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
+from api.mail_templates.member import new_member_notification_message
 from api.mail_templates.message import new_message_notification_message
 from api.mail_templates.offer import new_offer_notification_message
 from api.mail_templates.meeting import new_meeting_notification_message
 from api.utils.asyncronous_mail import send_mail
-from core.models import Profile
+from core.models import Profile, Member
 from core.models.notification import Notification
 
 
@@ -79,3 +81,24 @@ class Notifier():
                         link='/offers/' + str(meeting.offer.id) + '/',
                         mail_subject=s,
                         mail_body=b)
+
+    @staticmethod
+    def notify_new_member(member):
+        author = member.user
+        mod_roles=["0", "1"]
+        community = member.community
+        moderators_id = Member.objects.filter(community=community, role__in=mod_roles).values('user')
+        moderators = get_user_model().objects.filter(id__in=moderators_id)
+        if community.auto_accept_member:
+            m = 'Nouveau membre : %s %s' % (author.first_name, author.last_name)
+        else:
+            m = 'Nouveau membre : %s %s (à confirmer)' % (author.first_name, author.last_name)
+        for moderator in moderators:
+            s, b = new_member_notification_message(community, author, moderator)
+            Notifier.notify(photo=author.profile.photo,
+                            user=moderator,
+                            title=community.name,
+                            message=m,
+                            link='/communities/' + str(community.id) + '/',
+                            mail_subject=s,
+                            mail_body=b)

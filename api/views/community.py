@@ -10,6 +10,7 @@ from api.permissions.community import IsCommunityOwner, IsCommunityModerator
 from api.serializers import MemberSerializer, MyMembersSerializer, ListCommunityMembersSerializer
 from api.serializers.location import LocationSerializer, LocationCreateSerializer
 from api.utils.asyncronous_mail import send_mail
+from api.utils.notifier import Notifier
 from api.views.abstract_viewsets.custom_viewset import CustomViewSet
 from core.models import Community, Member, Location, Offer
 from api.serializers import CommunitySerializer
@@ -121,6 +122,7 @@ class CommunityViewSet(CustomViewSet):
         member.save(force_insert=True)
         self.log(member, ADDITION, None, "User '" + str(user) + "' joined community '" + community.name
                                          + "' (" + str(community.id) + ")")
+        Notifier.notify_new_member(member)
         return Response(MemberSerializer(member).data, status=status.HTTP_201_CREATED)
 
     @link(permission_classes=[IsJWTAuthenticated()])
