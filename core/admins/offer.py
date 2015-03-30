@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.forms import BaseInlineFormSet
 from core.admins.basic import BasicAdmin
 from core.models import Message, Meeting, Evaluation, Offer
@@ -9,12 +9,12 @@ class UserBasedFormset(BaseInlineFormSet):
 
     def add_fields(self, form, index):
         super(UserBasedFormset, self).add_fields(form, index)
-        form.fields['user'].queryset = User.objects.all()
+        form.fields['user'].queryset = get_user_model().objects.all()
         try:
             if form.fields['offer'].parent_instance:
                 parent = form.fields['offer'].parent_instance
                 ids = [parent.user.pk, parent.request.user.pk]
-                form.fields['user'].queryset = User.objects.filter(id__in=ids)
+                form.fields['user'].queryset = get_user_model().objects.filter(id__in=ids)
         except:
             pass
 
