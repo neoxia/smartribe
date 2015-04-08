@@ -179,10 +179,12 @@ class EvaluationTests(CustomAPITestCase):
         response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user3'), format='json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         data = response.data
-        self.assertEqual(2, data['count'])
-        self.assertEqual('Evaluation/2', data['results'][0]['reference'])
+        self.assertEqual(3, data['count'])
+        self.assertEqual('Evaluation/1', data['results'][0]['reference'])
         self.assertTrue(data['results'][0]['had_meeting'])
-        self.assertEqual('Evaluation/3', data['results'][1]['reference'])
-        self.assertFalse(data['results'][1]['had_meeting'])
+        self.assertEqual('Evaluation/2', data['results'][1]['reference'])
+        self.assertTrue(data['results'][1]['had_meeting'])
+        self.assertEqual('Evaluation/3', data['results'][2]['reference'])
+        self.assertFalse(data['results'][2]['had_meeting'])
 
 
