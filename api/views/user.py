@@ -1,6 +1,7 @@
 from datetime import timedelta, timezone, datetime
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.contenttypes.models import ContentType
@@ -16,7 +17,7 @@ from api.mail_templates.user import registration_message, recovery_password_mess
 from api.permissions.common import IsJWTAuthenticated, IsJWTMe
 from api.serializers import UserCreateSerializer, UserPublicSerializer, UserSerializer
 from api.utils.asyncronous_mail import send_mail
-from core.models import ActivationToken, PasswordRecovery, Evaluation, Profile
+from core.models import ActivationToken, PasswordRecovery, Evaluation, Profile, Member, LocalCommunity
 import core.utils
 
 
@@ -89,6 +90,11 @@ class UserViewSet(viewsets.ModelViewSet):
                       'noreply@smartribe.fr',
                       [obj.email],
                       fail_silently=False)
+            # First community registration
+            if LocalCommunity.objects.filter(name=settings.INITIAL_COMMUNITY).exists():
+                community = LocalCommunity.objects.get(name=settings.INITIAL_COMMUNITY)
+                Member.objects.create(user=obj, community=community, role="2", status="1")
+
         LogEntry.objects.log_action(user_id=obj.id,
                                     content_type_id=ContentType.objects.get_for_model(self.model).pk,
                                     object_id=obj.id,
