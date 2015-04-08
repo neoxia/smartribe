@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth.models import Permission
-from administration.models import ProxySuggestion, ProxyInappropriate, ProxyFaqSection, ProxyTos, ProxyFaq
+from administration.models import ProxySuggestion, ProxyInappropriate, ProxyFaqSection, ProxyTos, ProxyFaq, ProxyText
 
 
 class SuggestionAdmin(admin.ModelAdmin):
@@ -36,6 +36,11 @@ class FaqAdmin(admin.ModelAdmin):
         return '<a href="../../administration/proxyfaqsection/%d/">%s</a>' % (item.section.id, str(item.section))
     section_link.allow_tags = True
 
+class TextAdmin(admin.ModelAdmin):
+    list_display = ['id', 'tag', 'last_update']
+    list_filter = ['private']
+    search_fields = ['tag', 'content']
+
 
 admin.site.register(LogEntry)
 admin.site.register(Permission)
@@ -44,3 +49,4 @@ admin.site.register(ProxyFaqSection, FaqSectionAdmin)
 admin.site.register(ProxyFaq, FaqAdmin)
 admin.site.register(ProxyInappropriate, InappropriateAdmin)
 admin.site.register(ProxySuggestion, SuggestionAdmin)
+admin.site.register(ProxyText, TextAdmin)

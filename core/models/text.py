@@ -15,7 +15,7 @@ class Text(models.Model):
     last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return self.tag
 
     class Meta:
         verbose_name = _('text')
