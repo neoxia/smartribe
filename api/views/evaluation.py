@@ -27,7 +27,7 @@ class EvaluationViewSet(CustomViewSet):
     model = Evaluation
     create_serializer_class = EvaluationCreateSerializer
     serializer_class = EvaluationSerializer
-    filter_fields = ('offer__id', 'usefull')
+    filter_fields = ('offer__id', 'offer__user__id', 'usefull')
 
     def get_permissions(self):
         if self.request.method == 'GET':
@@ -41,9 +41,9 @@ class EvaluationViewSet(CustomViewSet):
         obj.offer.closed = True
         obj.offer.save()
 
-    def get_queryset(self):
-        return self.model.objects.filter(Q(offer__user=self.request.user) |
-                                         Q(offer__request__user=self.request.user))
+    #def get_queryset(self):
+    #    return self.model.objects.filter(Q(offer__user=self.request.user) |
+    #                                     Q(offer__request__user=self.request.user))
 
     @link()
     def list_evaluations_about_me(self, request, pk=None):
