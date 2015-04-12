@@ -5,11 +5,19 @@ from core.models import Profile
 
 class ProfileCreateSerializer(serializers.ModelSerializer):
 
+    is_early_adopter = serializers.BooleanField(read_only=True)
+
+    is_donor = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+
+    is_early_adopter = serializers.BooleanField(read_only=True)
+
+    is_donor = serializers.BooleanField(read_only=True)
 
     skills = SkillSerializer(source='get_skills', many=True, read_only=True)
 

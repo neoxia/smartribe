@@ -9,4 +9,4 @@ from django.utils.translation import ugettext as _
     (5, _('Toto')),
 )"""
 
-EARLY_ADOPTER_MAX_ID = 3
+EARLY_ADOPTER_MAX_ID = 500

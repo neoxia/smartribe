@@ -4,6 +4,7 @@ from rest_framework import status
 
 from api.tests.api_test_case import CustomAPITestCase
 from core.models import Profile
+from core.models.donation import Donation
 
 
 class ProfileTests(CustomAPITestCase):
@@ -22,6 +23,10 @@ class ProfileTests(CustomAPITestCase):
                                                first_name='2', last_name='User', is_active=True)
 
         profile1 = Profile.objects.create(user=user1, gender='M', city='Poitiers', country='France')
+
+        profile2 = Profile.objects.create(user=user2, gender='M', city='La Rochelle', country='France')
+
+        Donation.objects.create(user=user2, amount=20)
 
     def test_create_profile_without_auth(self):
         """
@@ -45,7 +50,7 @@ class ProfileTests(CustomAPITestCase):
         }
 
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_two_profiles_with_auth(self):
         """
@@ -71,7 +76,7 @@ class ProfileTests(CustomAPITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_get_profile(self):
+    def test_get_profile_user1(self):
         """
         Ensure an authenticated user cannot create a profile for someone else
         """
@@ -83,6 +88,19 @@ class ProfileTests(CustomAPITestCase):
         data = response.data
         self.assertTrue(data['is_early_adopter'])
         self.assertFalse(data['is_donor'])
+
+    def test_get_profile_user2(self):
+        """
+        Ensure an authenticated user cannot create a profile for someone else
+        """
+        url = '/api/v1/profiles/2/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user2'), format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertTrue(data['is_early_adopter'])
+        self.assertTrue(data['is_donor'])
 
     def test_modify_self_profile(self):
         """
@@ -148,7 +166,6 @@ class ProfileTests(CustomAPITestCase):
     def test_filter_profiles(self):
         """
         """
-        p_other = Profile.objects.create(user=self.user_model.objects.get(id=2))
 
         url = '/api/v1/profiles/'
         data = {
