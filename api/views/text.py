@@ -21,6 +21,7 @@ class TextViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [AllowAny]
 
     filter_fields = ('tag', )
+    lookup_field = "tag"
 
 
     def get_queryset(self):

@@ -19,3 +19,4 @@ from api.tests.tests_evaluation import EvaluationTests
 from api.tests.tests_meeting import MeetingTests
 from api.tests.tests_meeting_point import MeetingPointTests
 from api.tests.tests_message import MessageTests
+from api.tests.tests_text import TextTests
