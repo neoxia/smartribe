@@ -71,6 +71,19 @@ class ProfileTests(CustomAPITestCase):
         response = self.client.post(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_get_profile(self):
+        """
+        Ensure an authenticated user cannot create a profile for someone else
+        """
+        url = '/api/v1/profiles/1/'
+
+        response = self.client.get(url, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+        data = response.data
+        self.assertTrue(data['is_early_adopter'])
+        self.assertFalse(data['is_donor'])
+
     def test_modify_self_profile(self):
         """
         Ensure an authenticated user can modify his profile

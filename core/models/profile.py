@@ -2,6 +2,7 @@ import os
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.db import models
+from core.models.donation import Donation
 from core.models.validator import PhoneValidatorFR, ZipCodeValidatorFR
 
 
@@ -65,6 +66,24 @@ class Profile(models.Model):
     favorite_contact = models.CharField(max_length=2,
                                         choices=CONTACT_CHOICES,
                                         default='N')
+
+    @property
+    def is_early_adopter(self):
+        return self.user.id <= settings.EARLY_ADOPTER_MAX_ID
+
+    def early_adopter(self):
+        return self.is_early_adopter
+    early_adopter.boolean = True
+    early_adopter.allow_tags = True
+
+    @property
+    def is_donor(self):
+        return Donation.objects.filter(user=self.user).exists()
+
+    def donor(self):
+        return self.is_donor
+    donor.boolean = True
+    donor.allow_tags = True
 
     def get_skills(self):
         # TODO : Test

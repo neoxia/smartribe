@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 from core.admins.community import CommunityAdmin, LocalCommunityAdmin, TransportCommunityAdmin
 from core.admins.location import LocationAdmin
@@ -8,6 +9,7 @@ from core.admins.message import MessageAdmin
 from core.admins.offer import OfferAdmin
 from core.admins.request import RequestAdmin
 from core.models import Member, Location, MeetingPoint, Meeting
+from core.models.donation import Donation
 from core.models.skill import SkillCategory
 from .models import Profile, Evaluation, Message, Notification
 from .models import Community
@@ -20,7 +22,12 @@ from .models import Offer
 
 admin.autodiscover()
 
-admin.site.register(Profile)
+
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'gender', 'mail_notification', 'early_adopter', 'donor')
+
+
+admin.site.register(Profile, ProfileAdmin)
 admin.site.register(SkillCategory)
 admin.site.register(Skill)
 
@@ -40,3 +47,4 @@ admin.site.register(Meeting)
 
 
 admin.site.register(Notification)
+admin.site.register(Donation)
