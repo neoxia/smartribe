@@ -20,6 +20,7 @@ from api.views import meeting
 from api.views import evaluation
 from api.views import server_action
 from api.views import notification
+from api.views.donation import DonationViewSet
 from api.views.skill_category import SkillCategoryViewSet
 from api.views.text import TextViewSet
 from smartribe.settings import MEDIA_ROOT
@@ -51,6 +52,9 @@ router.register(r'inappropriates', inappropriate.InappropriateViewSet)
 router.register(r'notifications', notification.NotificationViewSet)
 
 router.register(r'texts', TextViewSet)
+
+router.register(r'donations', DonationViewSet)
+
 
 
 # Wire up our API using automatic URL routing.
