@@ -101,6 +101,8 @@ class ProfileTests(CustomAPITestCase):
         data = response.data
         self.assertTrue(data['is_early_adopter'])
         self.assertTrue(data['is_donor'])
+        self.assertIn('title', data)
+        self.assertIn('level', data)
 
     def test_modify_self_profile(self):
         """

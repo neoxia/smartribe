@@ -177,4 +177,4 @@ ALLOWED_IP = ['127.0.0.1', '192.168.161.12']
 INITIAL_COMMUNITY = "Communauté Smartribe"
 
 
-from smartribe.process_settings import *
+from smartribe.process.titles import *

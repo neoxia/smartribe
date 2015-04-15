@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext as _
 from django.db import models
-from core.models import Community
+from core.models.community import Community
 from core.models.validator import ZipCodeValidatorFR
 
 

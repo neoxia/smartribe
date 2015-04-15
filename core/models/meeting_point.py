@@ -1,7 +1,7 @@
 import os
 from django.utils.translation import ugettext as _
 from django.db import models
-from core.models import Location
+from core.models.location import Location
 
 
 def get_photo_path(self, filename):

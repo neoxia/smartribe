@@ -24,7 +24,8 @@ admin.autodiscover()
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'gender', 'mail_notification', 'early_adopter', 'donor')
+    list_display = ('user', 'gender', 'get_profile_completion', 'get_user_level', 'get_title',
+                    'mail_notification', 'early_adopter', 'donor')
 
 
 admin.site.register(Profile, ProfileAdmin)

@@ -1,10 +1,9 @@
 from django.conf import settings
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
 from django.db import models
 
-from core.models import Offer
-from core.models import MeetingPoint
+from core.models.offer import Offer
+from core.models.meeting_point import MeetingPoint
 
 
 

@@ -2,7 +2,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from core.models import Community
+from core.models.community import Community
 from core.models.reportable_model import ReportableModel
 from core.models.skill import SkillCategory
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-03 10:58+0000\n"
+"POT-Creation-Date: 2015-04-15 22:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,54 @@ msgstr "détail"
 msgid "Missing GPS coordinates or search radius."
 msgstr "Coordonnées GPS ou rayon de recherche manquant(s)"
 
+#: core/admins/auth/custom_user_forms.py:14
+msgid "A user with that email already exists."
+msgstr ""
+
+#: core/admins/auth/custom_user_forms.py:15
+msgid "The two password fields didn't match."
+msgstr "Le deux mots de passe ne sont pas identiques"
+
+#: core/admins/auth/custom_user_forms.py:17
+#: core/admins/auth/custom_user_forms.py:64 core/models/profile.py:72
+msgid "Email"
+msgstr "Email"
+
+#: core/admins/auth/custom_user_forms.py:17
+#: core/admins/auth/custom_user_forms.py:65
+msgid "Required."
+msgstr "Requis"
+
+#: core/admins/auth/custom_user_forms.py:19
+#: core/admins/auth/custom_user_forms.py:67
+msgid "Password"
+msgstr "Mot de passe"
+
+#: core/admins/auth/custom_user_forms.py:20
+#, fuzzy
+#| msgid "password recoveries"
+msgid "Password confirmation"
+msgstr "Confirmation du mot de passe"
+
+#: core/admins/auth/custom_user_forms.py:68
+msgid ""
+"Raw passwords are not stored, so there is no way to see this user's "
+"password, but you can change the password using <a href=\"password/\">this "
+"form</a>."
+msgstr ""
+
+#: core/admins/custom_user.py:10
+msgid "Personal info"
+msgstr "Informations personnelles"
+
+#: core/admins/custom_user.py:11
+msgid "Permissions"
+msgstr "Permissions"
+
+#: core/admins/custom_user.py:13
+msgid "Important dates"
+msgstr "Dates importantes"
+
 #: core/models/activation_token.py:15
 msgid "activation token"
 msgstr "token d'activation"
@@ -34,11 +82,11 @@ msgstr "token d'activation"
 msgid "activation tokens"
 msgstr "tokens d'activation"
 
-#: core/models/community.py:59
+#: core/models/community.py:62
 msgid "community"
 msgstr "communauté"
 
-#: core/models/community.py:60
+#: core/models/community.py:63
 msgid "communities"
 msgstr "communautés"
 
@@ -66,6 +114,60 @@ msgstr "communauté de transport"
 msgid "transport communities"
 msgstr "communautés de transport"
 
+#: core/models/custom_user.py:12
+msgid "email address"
+msgstr "adresse email"
+
+#: core/models/custom_user.py:13
+msgid "first name"
+msgstr "prénom"
+
+#: core/models/custom_user.py:14
+msgid "last name"
+msgstr "nom de famille"
+
+#: core/models/custom_user.py:15
+msgid "staff status"
+msgstr "statut équipe"
+
+#: core/models/custom_user.py:16
+msgid "Designates whether the user can log into this admin site."
+msgstr "Indique si l'utilisateur peut accéder au site d'administration"
+
+#: core/models/custom_user.py:17
+msgid "active"
+msgstr "actif"
+
+#: core/models/custom_user.py:18
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+
+#: core/models/custom_user.py:20
+msgid "date joined"
+msgstr "date d'adhésion"
+
+#: core/models/custom_user.py:28
+msgid "user"
+msgstr "utilisateur"
+
+#: core/models/custom_user.py:29
+msgid "users"
+msgstr "utilisateurs"
+
+#: core/models/donation.py:18
+#, fuzzy
+#| msgid "evaluation"
+msgid "donation"
+msgstr "don"
+
+#: core/models/donation.py:19
+#, fuzzy
+#| msgid "evaluations"
+msgid "donations"
+msgstr "dons"
+
 #: core/models/evaluation.py:45
 msgid "evaluation"
 msgstr "évaluation"
@@ -90,11 +192,11 @@ msgstr "section de la FAQ"
 msgid "FAQ sections"
 msgstr "sections de la FAQ"
 
-#: core/models/inappropriate.py:22
+#: core/models/inappropriate.py:23
 msgid "inappropriate content"
 msgstr "contenu inapproprié"
 
-#: core/models/inappropriate.py:23
+#: core/models/inappropriate.py:24
 msgid "inappropriate contents"
 msgstr "contenus inappropriés"
 
@@ -110,55 +212,55 @@ msgstr "lieu"
 msgid "locations"
 msgstr "lieux"
 
-#: core/models/meeting.py:20 core/models/member.py:23
+#: core/models/meeting.py:22 core/models/member.py:24
 msgid "Pending"
 msgstr "En attente"
 
-#: core/models/meeting.py:21 core/models/member.py:24
+#: core/models/meeting.py:23 core/models/member.py:25
 msgid "Accepted"
 msgstr "Accepté"
 
-#: core/models/meeting.py:22
+#: core/models/meeting.py:24
 msgid "Refused"
 msgstr "Refusé"
 
-#: core/models/meeting.py:38
+#: core/models/meeting.py:40
 msgid "meeting"
 msgstr "rendez-vous"
 
-#: core/models/meeting.py:39
+#: core/models/meeting.py:41
 msgid "meetings"
 msgstr "rendez-vous"
 
-#: core/models/meeting_point.py:30
+#: core/models/meeting_point.py:32
 msgid "meeting point"
 msgstr "point de rencontre"
 
-#: core/models/meeting_point.py:31
+#: core/models/meeting_point.py:33
 msgid "meeting points"
 msgstr "points de rencontre"
 
-#: core/models/member.py:14
+#: core/models/member.py:15
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: core/models/member.py:15
+#: core/models/member.py:16
 msgid "Moderator"
 msgstr "Modérateur"
 
-#: core/models/member.py:16
+#: core/models/member.py:17
 msgid "Member"
 msgstr "Membre"
 
-#: core/models/member.py:25
+#: core/models/member.py:26
 msgid "Banned"
 msgstr "Banni"
 
-#: core/models/member.py:40
+#: core/models/member.py:41
 msgid "member"
 msgstr "membre"
 
-#: core/models/member.py:41
+#: core/models/member.py:42
 msgid "members"
 msgstr "membres"
 
@@ -170,59 +272,55 @@ msgstr "message"
 msgid "messages"
 msgstr "messages"
 
-#: core/models/notification.py:22
+#: core/models/notification.py:29
 msgid "notification"
 msgstr "notification"
 
-#: core/models/notification.py:23
+#: core/models/notification.py:30
 msgid "notifications"
 msgstr "notifications"
 
-#: core/models/offer.py:52
+#: core/models/offer.py:57
 msgid "offer"
 msgstr "offre"
 
-#: core/models/offer.py:53
+#: core/models/offer.py:58
 msgid "offers"
 msgstr "offres"
 
-#: core/models/password_recovery.py:17
+#: core/models/password_recovery.py:20
 msgid "password recovery"
 msgstr "réinitialisation de mot de passe"
 
-#: core/models/password_recovery.py:18
+#: core/models/password_recovery.py:21
 msgid "password recoveries"
 msgstr "réinitialisations de mot de passe"
 
-#: core/models/profile.py:17
+#: core/models/profile.py:30
 msgid "Male"
 msgstr "Homme"
 
-#: core/models/profile.py:18
+#: core/models/profile.py:31
 msgid "Female"
 msgstr "Femme"
 
-#: core/models/profile.py:19
+#: core/models/profile.py:32
 msgid "Other"
 msgstr "Autre"
 
-#: core/models/profile.py:59
-msgid "Email"
-msgstr "Email"
-
-#: core/models/profile.py:60
+#: core/models/profile.py:73
 msgid "Phone"
 msgstr "Téléphone"
 
-#: core/models/profile.py:61
+#: core/models/profile.py:74
 msgid "None"
 msgstr "Aucun"
 
-#: core/models/profile.py:75
+#: core/models/profile.py:195
 msgid "profile"
 msgstr "profil"
 
-#: core/models/profile.py:76
+#: core/models/profile.py:196
 msgid "profiles"
 msgstr "profils"
 
@@ -234,23 +332,23 @@ msgstr "demande"
 msgid "requests"
 msgstr "demandes"
 
-#: core/models/skill.py:20
+#: core/models/skill.py:22
 msgid "Medium"
 msgstr "Moyen"
 
-#: core/models/skill.py:21
+#: core/models/skill.py:23
 msgid "High"
 msgstr "Elevé"
 
-#: core/models/skill.py:22
+#: core/models/skill.py:24 smartribe/process/titles.py:4
 msgid "Expert"
 msgstr "Expert"
 
-#: core/models/skill.py:43
+#: core/models/skill.py:47
 msgid "skill"
 msgstr "compétence"
 
-#: core/models/skill.py:44
+#: core/models/skill.py:48
 msgid "skills"
 msgstr "compétences"
 
@@ -262,36 +360,60 @@ msgstr "catégorie de compétence"
 msgid "skill categories"
 msgstr "catégories de compétence"
 
-#: core/models/suggestion.py:9
+#: core/models/suggestion.py:10
 msgid "Bug report"
 msgstr "Signalement de bug"
 
-#: core/models/suggestion.py:10
+#: core/models/suggestion.py:11
 msgid "Upgrade"
 msgstr "Amélioration"
 
-#: core/models/suggestion.py:11
+#: core/models/suggestion.py:12
 msgid "Others"
 msgstr "Autres"
 
-#: core/models/suggestion.py:32
+#: core/models/suggestion.py:33
 msgid "suggestion"
 msgstr "suggestion"
 
-#: core/models/suggestion.py:33
+#: core/models/suggestion.py:34
 #, fuzzy
 #| msgid "FAQ sections"
 msgid "suggestions"
 msgstr "suggestions"
 
+#: core/models/text.py:21
+msgid "text"
+msgstr "texte"
+
+#: core/models/text.py:22
+msgid "texts"
+msgstr "textes"
+
 #: core/models/tos.py:16 core/models/tos.py:17
 msgid "tos"
 msgstr "cgu"
 
-#: smartribe/settings.py:111
+#: smartribe/process/titles.py:4
+msgid "Beginner"
+msgstr "Débutant"
+
+#: smartribe/process/titles.py:4
+msgid "Regular"
+msgstr "Habitué"
+
+#: smartribe/process/titles.py:4
+msgid "Confirmed"
+msgstr "Confirmé"
+
+#: smartribe/process/titles.py:4
+msgid "Master"
+msgstr "Maître"
+
+#: smartribe/settings.py:115
 msgid "English"
 msgstr "Anglais"
 
-#: smartribe/settings.py:112
+#: smartribe/settings.py:116
 msgid "French"
 msgstr "Français"
