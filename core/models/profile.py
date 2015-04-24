@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.db import models
 import math
+from core.models.community import Community
 from core.models.skill import Skill
 from core.models.meeting import Meeting
 from core.models.offer import Offer
@@ -139,6 +140,14 @@ class Profile(models.Model):
         # TOTAL [5]
         total =  profile_level + request_level + offer_level + message_level + meeting_level \
                + evaluation_g_level + evaluation_r_level
+
+        # BONUSES
+        o, m = self.is_community_manager()
+        total += 0.2 * o                            # User owning a community with more than 20 members
+        total += 0.15 * m                           # User moderating a community with more than 20 members
+        total += 0.1 * self.is_early_adopter        # Early adopter
+        total += 0.15 * 0                           # Donor
+
         return round(total, 2)
 
     get_user_level.allow_tags = True
@@ -148,7 +157,7 @@ class Profile(models.Model):
 
     def get_title(self):
         rank = math.floor(self.get_user_level())
-        return settings.XP_TITLE_CHOICES[rank]
+        return settings.XP_TITLE_CHOICES[rank] if rank < 5 else settings.XP_TITLE_CHOICES[5]
     get_title.allow_tags = True
 
     def get_profile_completion(self):
@@ -163,6 +172,14 @@ class Profile(models.Model):
             sum += 1 if getattr(self, field) else 0
         return round(sum / i, 2)
     get_profile_completion.allow_tags = True
+
+    def is_community_manager(self):
+        big_communities = [x for x in Community.objects.all() if x.get_members_count() > settings.BIG_COMMUNITY_TH]
+        o = Member.objects.filter(user=self.user, role="0", status="1",
+                                  community__in=big_communities).exists()
+        m = Member.objects.filter(user=self.user, role="1", status="1",
+                                  community__in=big_communities).exists()
+        return o, m
 
     def get_skills_count(self):
         return Skill.objects.filter(user=self.user).count()
