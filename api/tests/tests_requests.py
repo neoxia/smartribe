@@ -25,6 +25,10 @@ class RequestTests(CustomAPITestCase):
                                                first_name='5', last_name='User', is_active=True)
 
         profile1 = Profile.objects.create(user=user1, photo='profiles/user1.jpg')
+        profile2 = Profile.objects.create(user=user2, photo='profiles/user1.jpg')
+        profile3 = Profile.objects.create(user=user3, photo='profiles/user1.jpg')
+        profile4 = Profile.objects.create(user=user4, photo='profiles/user1.jpg')
+        profile5 = Profile.objects.create(user=user5, photo='profiles/user1.jpg')
 
         community1 = Community.objects.create(name='com1', description='desc1')
         community2 = Community.objects.create(name='com2', description='desc2')

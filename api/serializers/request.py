@@ -11,6 +11,10 @@ class RequestCreateSerializer(ReportableModelSerializer):
 
     user_photo = serializers.CharField(source='get_photo', read_only=True)
 
+    user_is_donor = serializers.BooleanField(source='user.profile.is_donor', read_only=True)
+
+    user_is_early_adopter = serializers.BooleanField(source='user.profile.is_early_adopter', read_only=True)
+
     community_name = serializers.CharField(max_length=255, source='community.name', read_only=True)
 
     category_name = serializers.CharField(max_length=255, source='category.name', read_only=True)
