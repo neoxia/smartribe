@@ -239,6 +239,24 @@ class UserTests(CustomAPITestCase):
         user = self.model.objects.get(email='user1@test.com')
         self.assertTrue(check_password('password', user.password))
 
+    def test_update_my_user_2(self):
+        """
+        Ensure an authenticated user can update his own user.
+        """
+        user = self.model.objects.get(email='user1@test.com')
+        self.assertTrue(check_password('user1', user.password))
+
+        url = '/api/v1/users/1/'
+        data = {
+            'last_name': 'Use'
+        }
+        response = self.client.patch(url, data, HTTP_AUTHORIZATION=self.auth('user1'), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        user = self.model.objects.get(email='user1@test.com')
+        self.assertEqual('Use', user.last_name)
+        self.assertTrue(check_password('user1', user.password))
+
     def test_update_other_user(self):
         """
         Ensure an authenticated user cannot update another user.

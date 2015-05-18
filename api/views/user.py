@@ -70,7 +70,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def pre_save(self, obj):
         super().pre_save(obj)
-        if obj.password:
+        if 'password' in self.request.DATA and self.request.DATA['password']:
             obj.password = make_password(obj.password)
         if self.request.method == 'POST':
             obj.is_active = False
