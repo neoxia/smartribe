@@ -18,7 +18,7 @@ def recovery_password_message(recovery_token):
         'Vous avez demandé à réinitialiser votre mot de passe. Votre demande à été prise en compte.\n' \
         'Vous disposez dès lors de ' + str(settings.PRT_VALIDITY) + ' heures pour vous connecter au site ' \
         'à l\'adresse suivante : \n\n' \
-        'https://smartribe.fr/#/password/' + recovery_token.token + '/edit \n\n' \
+        'https://smartribe.fr/#/password/' + recovery_token.token + '/edition \n\n' \
         'Si vous n\'avez pas pu effectuer cette opération dans ce délai, merci de renouveler votre' \
         'demande.\n\n' \
         'Cordialement.\n\n' \
